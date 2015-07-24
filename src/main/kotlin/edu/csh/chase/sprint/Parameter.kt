@@ -15,4 +15,8 @@ data class Parameter(private val pair: Pair<String, Any?>, val type: ParameterTy
             pair.second = value
         }
 
+    override fun toString(): String {
+        return "$type($key:$value)"
+    }
+
 }
