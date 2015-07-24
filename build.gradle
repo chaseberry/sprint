@@ -1,0 +1,31 @@
+group 'edu.csh.chase.sprint'
+version '0.0.1'
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+buildscript {
+    ext.kotlin_version = '0.12.613'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'com.squareup.okhttp:okhttp:2.4.0'
+}
+
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+}
