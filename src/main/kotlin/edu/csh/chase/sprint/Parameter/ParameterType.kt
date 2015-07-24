@@ -1,4 +1,4 @@
-package edu.csh.chase.sprint
+package edu.csh.chase.sprint.Parameter
 
 enum class ParameterType {
     Header,
