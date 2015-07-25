@@ -34,7 +34,7 @@ SOFTWARE.
  * @author JSON.org
  * @version 2014-05-03
  */
-public class JSONTokener(var reader: Reader) {
+class JsonTokener(var reader: Reader) {
 
     var character = 1L
     var eof = false
@@ -46,7 +46,7 @@ public class JSONTokener(var reader: Reader) {
     /**
      * Construct a JSONTokener from a string.
      *
-     * @param s     A source string.
+     * @param stream     A source string.
      */
     constructor(stream: InputStream) : this(InputStreamReader(stream))
 
@@ -88,17 +88,47 @@ public class JSONTokener(var reader: Reader) {
      * @return  An int between 0 and 15, or -1 if c was not a hex digit.
      */
     //TODO consider moving outside the scope of this class?
-    fun dehexchar(char: Char): Int {
+    fun dehexchar(char: Char): Char {
         if (char >= '0' && char <= '9') {
-            return char - '0'
+            return (char - '0').toChar()
         }
         if (char >= 'A' && char <= 'F') {
-            return char - ('A' - 10)
+            return (char - ('A' - 10)).toChar()
         }
         if (char >= 'a' && char <= 'f') {
-            return char - ('a' - 10)
+            return (char - ('a' - 10)).toChar()
         }
-        return -1
+        return (-1).toChar()
+    }
+
+    fun stringToValue(string: String): Any? {
+        when (string.toLowerCase()) {
+            "true" -> return true
+            "false" -> return false
+            "null" -> return null
+
+        }
+        if ((string[0] >= '0' && string[0] <= '9') || string[0] == '-') {
+            try {
+                //Is it a Double?
+                if (string.contains('.') || string.contains('e') || string.contains('E')) {
+                    val d = string.toDouble()
+                    if (!d.isNaN() && !d.isInfinite()) {
+                        return d
+                    }
+                    //Long or Int
+                } else {
+                    val long = string.toLong()
+                    if (long.compareTo(long.toInt()) == 0) {
+                        return long.toInt()
+                    }
+                    return long
+                }
+            } catch(exception: ClassCastException) {
+
+            }
+        }
+        return string
     }
 
     /**
@@ -328,7 +358,7 @@ public class JSONTokener(var reader: Reader) {
 
             '{' -> {
                 this.back()
-                return JSONObject(this)
+                return JsonObject(this)
             }
             '[' -> {
                 this.back()
@@ -356,7 +386,7 @@ public class JSONTokener(var reader: Reader) {
         if ("".equals(string)) {
             throw this.syntaxError("Missing value")
         }
-        return JSONObject.stringToValue(string)
+        return stringToValue(string)
     }
 
 
