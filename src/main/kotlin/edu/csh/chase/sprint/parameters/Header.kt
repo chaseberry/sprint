@@ -1,3 +1,3 @@
 package edu.csh.chase.sprint.parameters
 
-data class Header private constructor(val name: String, val value: String)
+data class Header constructor(val name: String, val value: String)
