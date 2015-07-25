@@ -1,3 +1,7 @@
 package edu.csh.chase.sprint
 
-class Request
+import java.util.*
+
+data class Request(val url: String, val requestType: RequestType, var extraData: Any? = null) {
+
+}
