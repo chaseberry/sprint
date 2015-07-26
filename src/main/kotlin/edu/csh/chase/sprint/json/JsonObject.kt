@@ -9,6 +9,16 @@ class JsonObject() {
 
     private val map = HashMap<String, Any?>()
 
+    val length: Int
+        get() {
+            return map.size()
+        }
+
+    val keys: Iterator<String>
+        get() {
+            return map.keySet().iterator()
+        }
+
     constructor(tokener: JsonTokener) : this() {
         var c: Char
         var key: String
@@ -334,8 +344,6 @@ class JsonObject() {
     fun write(writer: Writer, indentFactor: Int, indent: Int): Writer {
         try {
             var commanate = false
-            val length = this.length()
-            val keys = this.keys()
             writer.write("{")
 
             if (length == 1) {
@@ -362,7 +370,7 @@ class JsonObject() {
                     if (indentFactor > 0) {
                         writer.write(" ")
                     }
-                    writeValue(writer, this.map.get(key), indentFactor, newindent)
+                    writeValue(writer, map[key], indentFactor, newindent)
                     commanate = true
                 }
                 if (indentFactor > 0) {
