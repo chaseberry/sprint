@@ -4,7 +4,7 @@ import java.util.*
 
 class JsonObject() {
 
-    val map = HashMap<String, Any?>()
+    private val map = HashMap<String, Any?>()
 
     constructor(tokener: JsonTokener) : this() {
         var c: Char
@@ -54,6 +54,16 @@ class JsonObject() {
         }
     }
 
+    constructor(map: HashMap<String, Any?>) : this() {
+        for ((key, value) in map) {
+            putOnce(key, value)
+        }
+    }
+
+    private fun addKeyToValue(key: String, value: Any?) {
+        map[key] = value
+    }
+
     fun putOnce(key: String, value: Any?): JsonObject {
         if (key in map) {
             return this
@@ -62,12 +72,24 @@ class JsonObject() {
         return this
     }
 
-    fun set(key: String, value: Any?) {
-        map[key] = value
+    //Setters
+
+    fun set(key: String, value: Int?) {
+        addKeyToValue(key, value)
     }
 
+    fun set(key: String, value: Boolean?) {
+        addKeyToValue(key, value)
+    }
+
+    fun set(key: String, value: String?) {
+        addKeyToValue(key, value)
+    }
+
+    //Getters
+
     fun get(key: String): Any? {
-        return map[key]
+        return map [key]
     }
 
     fun get(key: String, default: Any): Any {
@@ -75,6 +97,22 @@ class JsonObject() {
             return map[key]!!
         }
         return default
+    }
+
+    fun getInt(key: String): Int? {
+        return get(key) as? Int
+    }
+
+    fun getInt(key: String, default: Int): Int {
+        return getInt(key) ?: return default
+    }
+
+    fun getBoolean(key: String): Boolean? {
+        return get(key) as? Boolean
+    }
+
+    fun getBoolean(key: String, default: Boolean): Boolean {
+        return getBoolean(key) ?: return default
     }
 
     fun contains(key: String): Boolean {
