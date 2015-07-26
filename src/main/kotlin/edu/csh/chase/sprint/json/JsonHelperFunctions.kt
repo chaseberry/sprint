@@ -3,6 +3,8 @@ package edu.csh.chase.sprint.json
 import java.io.IOException
 import java.io.StringWriter
 import java.io.Writer
+import java.util
+import java.util.*
 
 internal fun String.times(indent: Int): String {
     if (indent < 0) {
@@ -162,25 +164,40 @@ fun numberToString(number: Number): String? {
     return string;
 }
 
+//TODO scrap this for a better version
 fun writeValue(writer: Writer, value: Any?, indentFactor: Int, indent: Int): Writer {
-    if (value == null || value.equals(null)) {
-        writer.write("null")
-    } else if (value is JsonObject) {
-        value.write(writer, indentFactor, indent)
-    } else if (value is JsonArray) {
-        //value.write(writer, indentFactor, indent)
-    } else if (value is Number) {
-        writer.write(value.toString())
-    } else if (value is Boolean) {
-        writer.write(value.toString())
-    } else {
-        //A string
-        quote(value.toString(), writer)
+    when (value) {
+        null -> writer.write("null")
+        is Collection<Any?> -> writer.write(JsonArray(value.filter { it.isValidJsonType() }).toString())
+    //the is Map<*, *> should autocast value to a Map<Any?, Any?> for the filter, but apperently not
+        is Map<*, *> -> writer.write(JsonObject((value as Map<Any?, Any?>).jsonMapFilter { it.value.isValidJsonType() }).toString())
+        is String -> writer.write(quote(value))
+        else -> writer.write(value.toString())
     }
     return writer
 }
 
-fun isValidJsonType(value: Any?): Boolean {
-    return value is Boolean || value is Int || value is Double || value is JsonObject
-            || value is JsonArray || value is Long
+internal fun Any?.isValidJsonType(): Boolean {
+    return this is Boolean? || this is Int? || this is Double? || this is JsonObject?
+            || this is JsonArray? || this is Long? || this is Collection<Any?> || this is Map<*, *>
+}
+
+internal fun Map<Any?, Any?>.jsonMapFilter(filterFun: (Map.Entry<Any?, Any?>) -> (Boolean)): Map<String, Any?> {
+    val map = HashMap<String, Any?>()
+    this.forEach {
+        if (filterFun(it) && it.key is String) {
+            map.put(it.key as String, it.value)
+        }
+    }
+    return map
+}
+
+fun Map<Any?, Any?>.filter(filterFun: (Map.Entry<Any?, Any?>) -> (Boolean)): Map<Any?, Any?> {
+    val map = HashMap<Any?, Any?>()
+    this.forEach {
+        if (filterFun(it)) {
+            map.put(it.key, it.value)
+        }
+    }
+    return map
 }
