@@ -5,11 +5,11 @@ import java.io.StringWriter
 import java.io.Writer
 import java.util.*
 
-class JsonArray() {
+class JsonArray():JsonBase() {
 
     private val array = ArrayList<Any?>()
 
-    private val length: Int
+    override val size: Int
         get() {
             return array.size()
         }
@@ -43,6 +43,10 @@ class JsonArray() {
     }
 
     constructor(jsonString: String) : this(JsonTokener(jsonString))
+
+    constructor(list: Collection<Any?>) : this() {
+        array.addAll(list.filter { it.isValidJsonType() })
+    }
 
     private fun getValue(index: Int): Any? {
         if (index !in array.indices) {
@@ -160,7 +164,7 @@ class JsonArray() {
     fun write(writer: Writer, indentFactor: Int, indent: Int): Writer {
         try {
             var addComa = false
-            val length = this.length
+            val length = size
             writer.write("[")
 
             if (length == 1) {
