@@ -162,9 +162,9 @@ class JsonObject() {
      *         brace)</small>.
      */
     fun toString(indentFactor: Int): String {
-        val w = StringWriter()
-        synchronized (w.getBuffer()) {
-            return this.write(w, indentFactor, 0).toString()
+        val writer = StringWriter()
+        synchronized (writer.getBuffer()) {
+            return this.write(writer, indentFactor, 0).toString()
         }
     }
 
