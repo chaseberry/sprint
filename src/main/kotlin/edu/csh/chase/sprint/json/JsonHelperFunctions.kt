@@ -160,3 +160,8 @@ fun numberToString(number: Number): String? {
     }
     return string;
 }
+
+fun isValidJsonType(value: Any?): Boolean {
+    return value is Boolean || value is Int || value is Double || value is JsonObject
+            || value is JsonArray || value is Long
+}
