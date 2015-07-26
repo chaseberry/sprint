@@ -277,7 +277,7 @@ class JsonTokener(var reader: Reader) {
                         'b' -> sb.append('\b')
                         't' -> sb.append('\t')
                         'n' -> sb.append('\n')
-                        //'f' -> sb.append('\f')
+                        'f' -> sb.append('\u000C')
                         'r' -> sb.append('\r')
                         'u' -> sb.append(Integer.parseInt(next(4), 16).toChar())
                         '"' -> sb.append(c)

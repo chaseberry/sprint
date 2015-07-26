@@ -45,6 +45,7 @@ fun quote(string: String): String {
     }
 }
 
+//TODO change this to return a quoted String, not write to a writer
 fun quote(string: String?, w: Writer): Writer {
     if (string == null || string.length() == 0) {
         w.write("\"\"");
@@ -75,7 +76,7 @@ fun quote(string: String?, w: Writer): Writer {
             '\b' -> w.write("\\b");
             '\t' -> w.write("\\t");
             '\n' -> w.write("\\n");
-            '\f' -> w.write("\\f");
+            '\u000C' -> w.write("\\f");
             '\r' -> w.write("\\r");
             else -> {
                 if (c < ' ' || (c >= '\u0080' && c < '\u00a0')
@@ -161,8 +162,7 @@ fun numberToString(number: Number): String? {
     return string;
 }
 
-fun writeValue(writer: Writer, value: Any?,
-               indentFactor: Int, indent: Int): Writer {
+fun writeValue(writer: Writer, value: Any?, indentFactor: Int, indent: Int): Writer {
     if (value == null || value.equals(null)) {
         writer.write("null")
     } else if (value is JsonObject) {
