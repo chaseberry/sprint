@@ -81,6 +81,7 @@ class JsonObject() {
         if (key in map) {
             return this
         }
+        //TODO check validity of value, is it a value Json Value
         map[key] = value
         return this
     }

@@ -43,6 +43,30 @@ class JsonArray() {
         return array[index]
     }
 
+    private fun setValue(index: Int, value: Any?) {
+        if (index !in array.indices) {
+            return
+        }
+        array [index] = value
+
+    }
+
+    //Setters
+
+    fun set(index: Int, value: Any?) {
+        setValue(index, value)
+    }
+
+    //Putters
+
+    fun put(value: Any?): JsonArray {
+        //TODO check the type of value
+        array.add(value)
+        return this
+    }
+
+    //Getters
+
     fun get(index: Int): Any? {
         return getValue(index)
     }
