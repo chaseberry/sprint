@@ -54,6 +54,7 @@ class JsonArray() {
     //Setters
 
     fun set(index: Int, value: Any?) {
+        //TODO check the type of value
         setValue(index, value)
     }
 
