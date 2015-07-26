@@ -14,9 +14,9 @@ internal fun String.times(indent: Int): String {
         return ""
     }
 
-    var str = this
+    var str = ""
 
-    for (z in 0..indent) {
+    for (z in 0..(indent - 1)) {
         str += this
     }
 
