@@ -115,6 +115,14 @@ class JsonObject() {
         return getBoolean(key) ?: return default
     }
 
+    fun getString(key: String): String? {
+        return get(key) as? String
+    }
+
+    fun getString(key: String, default: String): String {
+        return getString(key) ?: return default
+    }
+
     fun contains(key: String): Boolean {
         return key in map
     }
