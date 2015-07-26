@@ -104,6 +104,16 @@ class JsonObject() {
         addKeyToValue(key, value)
     }
 
+    //Putters
+    fun put(key: String, value: Any?): JsonObject {
+        map[key] = value
+        return this
+    }
+
+    fun put(keyValuePair: Pair<String, Any?>): JsonObject {
+        return put(keyValuePair.first, keyValuePair.second)
+    }
+
     //Getters
 
     fun get(key: String): Any? {

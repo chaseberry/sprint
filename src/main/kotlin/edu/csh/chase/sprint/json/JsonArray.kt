@@ -9,6 +9,11 @@ class JsonArray() {
 
     private val array = ArrayList<Any?>()
 
+    private val length: Int
+        get() {
+            return array.size()
+        }
+
     constructor(tokener: JsonTokener) : this() {
         if (tokener.nextClean() != '[') {
             throw tokener.syntaxError("A JSONArray text must start with '['")
@@ -138,6 +143,7 @@ class JsonArray() {
         return this.write(writer, 0, 0)
     }
 
+
     /**
      * Write the contents of the JSONArray as JSON text to a writer. For
      * compactness, no whitespace is added.
@@ -154,7 +160,7 @@ class JsonArray() {
     fun write(writer: Writer, indentFactor: Int, indent: Int): Writer {
         try {
             var addComa = false
-            val length = this.length()
+            val length = this.length
             writer.write("[")
 
             if (length == 1) {
