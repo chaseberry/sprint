@@ -186,7 +186,7 @@ class JsonObject() {
             } catch (Exception e) {
                 throw new JSONException(e)
             }
-            if (object instanceof String) {
+            if (object is String) {
                 return (String) object
             }
             throw new JSONException("Bad value from toJSONString: " + object)
@@ -197,16 +197,6 @@ class JsonObject() {
         if (value is Boolean || value is JsonObject
                 || value is JsonArray) {
             return value.toString()
-        }
-        if (value instanceof Map) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> map = (Map<String, Object>) value
-                    return new JSONObject(map).toString()
-        }
-        if (value instanceof Collection) {
-            @SuppressWarnings("unchecked")
-            Collection<Object> coll = (Collection<Object>) value
-                    return new JSONArray(coll).toString()
         }
         if (value.getClass().isArray()) {
             return new JSONArray(value).toString()
@@ -231,29 +221,29 @@ class JsonObject() {
             if (`object` == null) {
                 return null
             }
-            if (object instanceof JSONObject || object instanceof JSONArray
-                    || NULL.equals(object) || object instanceof JSONString
-                    || object instanceof Byte || object instanceof Character
-            || object instanceof Short || object instanceof Integer
-            || object instanceof Long || object instanceof Boolean
-            || object instanceof Float || object instanceof Double
-            || object instanceof String || object instanceof BigInteger
-            || object instanceof BigDecimal) {
-                return object
+            if (object is JSONObject || `object` is JSONArray
+                    || NULL.equals(`object`) || `object` is JSONString
+                    || `object` is Byte || `object` is Character
+                    || `object` is Short || `object` is Integer
+                    || `object` is Long || `object` is Boolean
+                    || `object` is Float || `object` is Double
+                    || `object` is String || `object` is BigInteger
+                    || `object` is BigDecimal) {
+                return `object`
             }
 
-            if (object.getClass().isArray()) {
-                return new JSONArray(object)
+            if (`object`.getClass().isArray()) {
+                return new JSONArray(`object`)
             }
-            Package objectPackage = object .getClass().getPackage()
+            Package objectPackage = `object` .getClass().getPackage()
             String objectPackageName = objectPackage != null ? objectPackage
             .getName() : ""
             if (objectPackageName.startsWith("java.")
                     || objectPackageName.startsWith("javax.")
                     || object.getClass().getClassLoader() == null) {
-                return object.toString()
+                return `object`.toString()
             }
-            return new JSONObject(object)
+            return new JSONObject(`object`)
         } catch (Exception exception) {
             return null
         }
@@ -286,7 +276,7 @@ class JsonObject() {
             writer.write(value.toString())
         } else if (value is Boolean) {
             writer.write(value.toString())
-        } else if (value instanceof JSONString) {
+        } else if (value is JSONString) {
             Object o
                     try {
                         o = ((JSONString) value).toJSONString()
