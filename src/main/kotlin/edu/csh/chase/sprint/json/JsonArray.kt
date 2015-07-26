@@ -36,4 +36,28 @@ class JsonArray() {
 
     constructor(jsonString: String) : this(JsonTokener(jsonString))
 
+    private fun getValue(index: Int): Any? {
+        if (index !in array.indices) {
+            return null
+        }
+        return array[index]
+    }
+
+    fun get(index: Int): Any? {
+        return getValue(index)
+    }
+
+    fun get(index: Int, default: Any): Any {
+        return getValue(index) ?: return default
+    }
+
+    fun getBoolean(index: Int): Boolean? {
+        return getValue(index) as? Boolean
+    }
+
+    fun getBoolean(index: Int, default: Boolean): Boolean {
+        return getBoolean(index) ?: return default
+    }
+
+
 }
