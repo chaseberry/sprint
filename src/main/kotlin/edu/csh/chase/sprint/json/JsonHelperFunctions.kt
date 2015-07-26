@@ -161,6 +161,25 @@ fun numberToString(number: Number): String? {
     return string;
 }
 
+fun writeValue(writer: Writer, value: Any?,
+               indentFactor: Int, indent: Int): Writer {
+    if (value == null || value.equals(null)) {
+        writer.write("null")
+    } else if (value is JsonObject) {
+        value.write(writer, indentFactor, indent)
+    } else if (value is JsonArray) {
+        value.write(writer, indentFactor, indent)
+    } else if (value is Number) {
+        writer.write(value.toString())
+    } else if (value is Boolean) {
+        writer.write(value.toString())
+    } else {
+        //A string
+        quote(value.toString(), writer)
+    }
+    return writer
+}
+
 fun isValidJsonType(value: Any?): Boolean {
     return value is Boolean || value is Int || value is Double || value is JsonObject
             || value is JsonArray || value is Long

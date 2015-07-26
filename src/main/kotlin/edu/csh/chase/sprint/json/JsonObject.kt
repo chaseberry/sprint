@@ -88,6 +88,8 @@ class JsonObject() {
 
     //Setters
 
+    //One setter that takes an Any? that ignores invalid types?
+
     fun set(key: String, value: Int?) {
         addKeyToValue(key, value)
     }
@@ -103,7 +105,7 @@ class JsonObject() {
     //Getters
 
     fun get(key: String): Any? {
-        return map [key]
+        return map[key]
     }
 
     fun get(key: String, default: Any): Any {
@@ -175,25 +177,6 @@ class JsonObject() {
      */
     public fun write(writer: Writer): Writer {
         return this.write(writer, 0, 0)
-    }
-
-    fun writeValue(writer: Writer, value: Any?,
-                   indentFactor: Int, indent: Int): Writer {
-        if (value == null || value.equals(null)) {
-            writer.write("null")
-        } else if (value is JsonObject) {
-            value.write(writer, indentFactor, indent)
-        } else if (value is JsonArray) {
-            value.write(writer, indentFactor, indent)
-        } else if (value is Number) {
-            writer.write(value.toString())
-        } else if (value is Boolean) {
-            writer.write(value.toString())
-        } else {
-            //A string
-            quote(value.toString(), writer)
-        }
-        return writer
     }
 
 
