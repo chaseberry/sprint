@@ -196,9 +196,9 @@ class JsonObject() {
         try {
             var addComa = false
             writer.write("{")
-
+            val keySet = this.keys
             if (length == 1) {
-                val key = keys.next()
+                val key = keySet.next()
                 writer.write(quote(key.toString()))
                 writer.write(":")
                 if (indentFactor > 0) {
@@ -207,8 +207,8 @@ class JsonObject() {
                 writeValue(writer, map[key], indentFactor, indent)
             } else if (length != 0) {
                 val newindent = indent + indentFactor
-                while (keys.hasNext()) {
-                    val key = keys.next()
+                while (keySet.hasNext()) {
+                    val key = keySet.next()
                     if (addComa) {
                         writer.write(",")
                     }
