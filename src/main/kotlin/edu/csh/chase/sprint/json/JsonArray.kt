@@ -1,5 +1,7 @@
 package edu.csh.chase.sprint.json
 
+import java.io.StringWriter
+import java.io.Writer
 import java.util.*
 
 class JsonArray() {
@@ -84,5 +86,104 @@ class JsonArray() {
         return getBoolean(index) ?: return default
     }
 
+    /**
+     * Make a JSON text of this JSONArray. For compactness, no unnecessary
+     * whitespace is added. If it is not possible to produce a syntactically
+     * correct JSON text then null will be returned instead. This could occur if
+     * the array contains an invalid number.
+     * <p>
+     * Warning: This method assumes that the data structure is acyclical.
+     *
+     * @return a printable, displayable, transmittable representation of the
+     *         array.
+     */
+    override fun toString(): String {
+        try {
+            return this.toString(0);
+        } catch (e: Exception) {
+            return "";
+        }
+    }
+
+    /**
+     * Make a prettyprinted JSON text of this JSONArray. Warning: This method
+     * assumes that the data structure is acyclical.
+     *
+     * @param indentFactor
+     *            The number of spaces to add to each level of indentation.
+     * @return a printable, displayable, transmittable representation of the
+     *         object, beginning with <code>[</code>&nbsp;<small>(left
+     *         bracket)</small> and ending with <code>]</code>
+     *         &nbsp;<small>(right bracket)</small>.
+     * @throws JSONException
+     */
+    fun toString(indentFactor: Int): String {
+        val sw = StringWriter();
+        synchronized (sw.getBuffer()) {
+            return this.write(sw, indentFactor, 0).toString();
+        }
+    }
+
+    /**
+     * Write the contents of the JSONArray as JSON text to a writer. For
+     * compactness, no whitespace is added.
+     * <p>
+     * Warning: This method assumes that the data structure is acyclical.
+     *
+     * @return The writer.
+     * @throws JSONException
+     */
+    fun write(writer: Writer): Writer {
+        return this.write(writer, 0, 0);
+    }
+
+    /**
+     * Write the contents of the JSONArray as JSON text to a writer. For
+     * compactness, no whitespace is added.
+     * <p>
+     * Warning: This method assumes that the data structure is acyclical.
+     *
+     * @param indentFactor
+     *            The number of spaces to add to each level of indentation.
+     * @param indent
+     *            The indention of the top level.
+     * @return The writer.
+     * @throws JSONException
+     */
+    fun write(writer: Writer, indentFactor: Int, indent: Int): Writer {
+        try {
+            boolean commanate = false;
+            int length = this.length();
+            writer.write('[');
+
+            if (length == 1) {
+                JSONObject.writeValue(writer, this.myArrayList.get(0),
+                        indentFactor, indent);
+            } else if (length != 0) {
+                final int newindent = indent + indentFactor;
+
+                for (int i = 0; i < length; i += 1) {
+                    if (commanate) {
+                        writer.write(',');
+                    }
+                    if (indentFactor > 0) {
+                        writer.write('\n');
+                    }
+                    JSONObject.indent(writer, newindent);
+                    JSONObject.writeValue(writer, this.myArrayList.get(i),
+                            indentFactor, newindent);
+                    commanate = true;
+                }
+                if (indentFactor > 0) {
+                    writer.write('\n');
+                }
+                JSONObject.indent(writer, indent);
+            }
+            writer.write(']');
+            return writer;
+        } catch (IOException e) {
+            throw new JSONException(e);
+        }
+    }
 
 }
