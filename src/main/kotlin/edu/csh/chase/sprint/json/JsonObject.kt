@@ -2,12 +2,12 @@ package edu.csh.chase.sprint.json
 
 import java.util.*
 
-class JsonObject {
+class JsonObject() {
 
     val map = HashMap<String, Any?>()
 
-    constructor(tokener: JsonTokener) : this {
-        val c: Char
+    constructor(tokener: JsonTokener) : this() {
+        var c: Char
         var key: String
 
         if (tokener.nextClean() != '{') {
@@ -26,7 +26,6 @@ class JsonObject {
             }
 
             // The key is followed by ':'.
-
             c = tokener.nextClean();
             if (c != ':') {
                 throw tokener.syntaxError("Expected a ':' after a key");
@@ -35,20 +34,51 @@ class JsonObject {
 
             // Pairs are separated by ','.
 
-            switch (tokener.nextClean()) {
-                case ';':
-                case ',':
-                if (tokener.nextClean() == '}') {
-                    return;
+            when (tokener.nextClean()) {
+                ';', ',' -> {
+                    if (tokener.nextClean() == '}') {
+                        return
+                    }
+                    tokener.back()
                 }
-                tokener.back();
-                break;
-                case '}':
-                return;
-                default:
-                        throw tokener.syntaxError("Expected a ',' or '}'");
+                '}' -> return
+                else -> throw tokener.syntaxError("Expected a ',' or '}'")
+
             }
         }
+    }
+
+    constructor(obj: JsonObject, vararg names: String) : this() {
+        for (name in names) {
+            putOnce(name, obj[name])
+        }
+    }
+
+    fun putOnce(key: String, value: Any?): JsonObject {
+        if (key in map) {
+            return this
+        }
+        map[key] = value
+        return this
+    }
+
+    fun set(key: String, value: Any?) {
+        map[key] = value
+    }
+
+    fun get(key: String): Any? {
+        return map[key]
+    }
+
+    fun get(key: String, default: Any): Any {
+        if (key in map && map[key] != null) {
+            return map[key]!!
+        }
+        return default
+    }
+
+    fun contains(key: String): Boolean {
+        return key in map
     }
 
 }
