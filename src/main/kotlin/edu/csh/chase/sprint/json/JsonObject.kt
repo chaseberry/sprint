@@ -191,7 +191,7 @@ class JsonObject() {
      */
     fun write(writer: Writer, indentFactor: Int, indent: Int): Writer {
         try {
-            var commanate = false
+            var addComa = false
             writer.write("{")
 
             if (length == 1) {
@@ -206,7 +206,7 @@ class JsonObject() {
                 val newindent = indent + indentFactor
                 while (keys.hasNext()) {
                     val key = keys.next()
-                    if (commanate) {
+                    if (addComa) {
                         writer.write(",")
                     }
                     if (indentFactor > 0) {
@@ -219,7 +219,7 @@ class JsonObject() {
                         writer.write(" ")
                     }
                     writeValue(writer, map[key], indentFactor, newindent)
-                    commanate = true
+                    addComa = true
                 }
                 if (indentFactor > 0) {
                     writer.write("\n")
