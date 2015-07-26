@@ -34,4 +34,6 @@ class JsonArray() {
         }
     }
 
+    constructor(jsonString: String) : this(JsonTokener(jsonString))
+
 }
