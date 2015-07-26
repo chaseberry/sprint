@@ -1,5 +1,6 @@
 package edu.csh.chase.sprint.json
 
+import java.io.IOException
 import java.io.StringWriter
 import java.io.Writer
 import java.util.*
@@ -99,9 +100,9 @@ class JsonArray() {
      */
     override fun toString(): String {
         try {
-            return this.toString(0);
+            return this.toString(0)
         } catch (e: Exception) {
-            return "";
+            return ""
         }
     }
 
@@ -112,15 +113,15 @@ class JsonArray() {
      * @param indentFactor
      *            The number of spaces to add to each level of indentation.
      * @return a printable, displayable, transmittable representation of the
-     *         object, beginning with <code>[</code>&nbsp;<small>(left
+     *         object, beginning with <code>[</code>&nbsp<small>(left
      *         bracket)</small> and ending with <code>]</code>
-     *         &nbsp;<small>(right bracket)</small>.
+     *         &nbsp<small>(right bracket)</small>.
      * @throws JSONException
      */
     fun toString(indentFactor: Int): String {
-        val sw = StringWriter();
+        val sw = StringWriter()
         synchronized (sw.getBuffer()) {
-            return this.write(sw, indentFactor, 0).toString();
+            return this.write(sw, indentFactor, 0).toString()
         }
     }
 
@@ -134,7 +135,7 @@ class JsonArray() {
      * @throws JSONException
      */
     fun write(writer: Writer): Writer {
-        return this.write(writer, 0, 0);
+        return this.write(writer, 0, 0)
     }
 
     /**
@@ -152,37 +153,35 @@ class JsonArray() {
      */
     fun write(writer: Writer, indentFactor: Int, indent: Int): Writer {
         try {
-            boolean commanate = false;
-            int length = this.length();
-            writer.write('[');
+            var addComa = false
+            val length = this.length()
+            writer.write("[")
 
             if (length == 1) {
-                JSONObject.writeValue(writer, this.myArrayList.get(0),
-                        indentFactor, indent);
+                writeValue(writer, array.get(0), indentFactor, indent)
             } else if (length != 0) {
-                final int newindent = indent + indentFactor;
+                val newindent = indent + indentFactor
 
-                for (int i = 0; i < length; i += 1) {
-                    if (commanate) {
-                        writer.write(',');
+                for (z in array.indices) {
+                    if (addComa) {
+                        writer.write(",")
                     }
                     if (indentFactor > 0) {
-                        writer.write('\n');
+                        writer.write("\n")
                     }
-                    JSONObject.indent(writer, newindent);
-                    JSONObject.writeValue(writer, this.myArrayList.get(i),
-                            indentFactor, newindent);
-                    commanate = true;
+                    indent(writer, newindent)
+                    writeValue(writer, array[z], indentFactor, newindent)
+                    addComa = true
                 }
                 if (indentFactor > 0) {
-                    writer.write('\n');
+                    writer.write("\n")
                 }
-                JSONObject.indent(writer, indent);
+                indent(writer, indent)
             }
-            writer.write(']');
-            return writer;
-        } catch (IOException e) {
-            throw new JSONException(e);
+            writer.write("]")
+            return writer
+        } catch (e: IOException) {
+            throw JsonException(e)
         }
     }
 
