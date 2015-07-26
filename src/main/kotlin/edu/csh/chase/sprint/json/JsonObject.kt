@@ -26,10 +26,11 @@ class JsonObject() : JsonBase() {
         if (tokener.nextClean() != '{') {
             throw tokener.syntaxError("A JSONObject text must begin with '{'")
         }
+
         while (true) {
             c = tokener.nextClean()
             when (c) {
-                0.toChar() -> throw tokener.syntaxError("A JSONObject text must end with '}'")
+                0.toChar() -> throw tokener.syntaxError("A JSONObject text must end with '}'")//EOF
                 '}' -> return
                 else -> {
                     tokener.back()
@@ -210,24 +211,22 @@ class JsonObject() : JsonBase() {
         try {
             var addComa = false
             writer.write("{")
-            for (key in keys) {
+            for ((key, value) in map) {
                 if (addComa) {
                     writer.write(",")
                 }
 
                 if (shouldIndent) {
                     writer.write("\n")
-                }
-
-                if (shouldIndent) {
                     indent(writer, depth)
                 }
+
                 writer.write(quote(key))
                 writer.write(":")
                 if (shouldIndent) {
                     writer.write(" ")
                 }
-                writeValue(writer, map[key])
+                writer.write(getJsonValue(value))
                 addComa = true
             }
             if (shouldIndent) {

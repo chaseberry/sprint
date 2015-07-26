@@ -5,7 +5,7 @@ import java.io.StringWriter
 import java.io.Writer
 import java.util.*
 
-class JsonArray():JsonBase() {
+class JsonArray() : JsonBase() {
 
     private val array = ArrayList<Any?>()
 
@@ -168,7 +168,7 @@ class JsonArray():JsonBase() {
             writer.write("[")
 
             if (length == 1) {
-                writeValue(writer, array.get(0))
+                writer.write(getJsonValue(array[0]))
             } else if (length != 0) {
                 val newindent = indent + indentFactor
 
@@ -180,7 +180,7 @@ class JsonArray():JsonBase() {
                         writer.write("\n")
                     }
                     indent(writer, newindent)
-                    writeValue(writer, array[z])
+                    writer.write(getJsonValue(array[z]))
                     addComa = true
                 }
                 if (indentFactor > 0) {

@@ -38,16 +38,11 @@ internal fun String.times(indent: Int): String {
 fun quote(string: String): String {
     val sw = StringWriter();
     synchronized (sw.getBuffer()) {
-        try {
-            return quote(string, sw).toString();
-        } catch (ignored: IOException) {
-            // will never happen - we are writing to a string writer
-            return "";
-        }
+        return quote(string, sw).toString();
     }
 }
 
-//TODO change this to return a quoted String, not write to a writer
+
 fun quote(string: String?, w: Writer): Writer {
     if (string == null || string.length() == 0) {
         w.write("\"\"");
@@ -57,13 +52,11 @@ fun quote(string: String?, w: Writer): Writer {
     var b: Char
     var c: Char = 0.toChar()
     var hhhh: String
-    var i: Int
-    val len = string.length()
 
     w.write("\"");
-    for (z in 0..(string.length() - 1)) {
-        b = c;
-        c = string.charAt(z);
+    for (z in string.indices) {
+        b = c;//before
+        c = string.charAt(z);//current
         when (c) {
             '\\', '"' -> {
                 w.write("\\\\");
@@ -71,6 +64,7 @@ fun quote(string: String?, w: Writer): Writer {
             }
             '/' -> {
                 if (b == '<') {
+                    // /<?
                     w.write("\\\\");
                 }
                 w.write(c.toString());
@@ -165,16 +159,14 @@ fun numberToString(number: Number): String? {
 }
 
 //TODO scrap this for a better version
-fun writeValue(writer: Writer, value: Any?): Writer {
-    when (value) {
-        null -> writer.write("null")
-        is Collection<Any?> -> writer.write(JsonArray(value.filter { it.isValidJsonType() }).toString())
-    //the is Map<*, *> should autocast value to a Map<Any?, Any?> for the filter, but apperently not
-        is Map<*, *> -> writer.write(JsonObject((value as Map<Any?, Any?>).jsonMapFilter { it.value.isValidJsonType() }).toString())
-        is String -> writer.write(quote(value))
-        else -> writer.write(value.toString())
+fun getJsonValue(value: Any?): String {
+    return when (value) {
+        null -> "null"
+        is Collection<Any?> -> JsonArray(value.filter { it.isValidJsonType() }).toString()
+        is Map<*, *> -> JsonObject(value.jsonMapFilter { it.value.isValidJsonType() }).toString()
+        is String -> quote(value)
+        else -> value.toString()
     }
-    return writer
 }
 
 internal fun Any?.isValidJsonType(): Boolean {
@@ -182,7 +174,7 @@ internal fun Any?.isValidJsonType(): Boolean {
             || this is JsonArray? || this is Long? || this is Collection<Any?> || this is Map<*, *>
 }
 
-internal fun Map<Any?, Any?>.jsonMapFilter(filterFun: (Map.Entry<Any?, Any?>) -> (Boolean)): Map<String, Any?> {
+internal fun Map<*, *>.jsonMapFilter(filterFun: (Map.Entry<Any?, Any?>) -> (Boolean)): Map<String, Any?> {
     val map = HashMap<String, Any?>()
     this.forEach {
         if (filterFun(it) && it.key is String) {
