@@ -175,78 +175,44 @@ class JsonObject() {
      *         brace)</small> and ending with <code>}</code>&nbsp<small>(right
      *         brace)</small>.
      */
-    fun valueToString(value: Any?): String {
-        if (value == null) {
-            return "null"
+    fun valueToString(value: Any?): String? {
+        return when (value) {
+            null -> "null"
+            is Number -> numberToString(value)
+            is Boolean, is JsonObject, is JsonArray -> value.toString()
+            else -> quote(value.toString())
         }
-        if (value is JsonString) {
-            Object object
-            try {
-                object =((JSONString) value ).toJSONString()
-            } catch (Exception e) {
-                throw new JSONException(e)
-            }
-            if (object is String) {
-                return (String) object
-            }
-            throw new JSONException("Bad value from toJSONString: " + object)
-        }
-        if (value is Number) {
-            return numberToString(value)
-        }
-        if (value is Boolean || value is JsonObject
-                || value is JsonArray) {
-            return value.toString()
-        }
-        if (value.getClass().isArray()) {
-            return new JSONArray(value).toString()
-        }
-        return quote(value.toString())
     }
 
     /**
-     * Wrap an object, if necessary. If the object is null, return the NULL
-     * object. If it is an array or collection, wrap it in a JSONArray. If it is
-     * a map, wrap it in a JSONObject. If it is a standard property (Double,
-     * String, et al) then it is already wrapped. Otherwise, if it comes from
-     * one of the java packages, turn it into a string. And if it doesn't, try
-     * to wrap it in a JSONObject. If the wrapping fails, then null is returned.
+     * Produce a string from a Number.
      *
-     * @param object
-     *            The object to wrap
-     * @return The wrapped value
+     * @param number
+     *            A Number
+     * @return A String.
+     * @throws JSONException
+     *             If n is a non-finite number.
      */
-    public fun wrap(`object`: Any?): Any? {
-        try {
-            if (`object` == null) {
+    fun numberToString(number: Number): String? {
+        if (number is Double) {
+            if (number.isInfinite() || number.isNaN()) {
                 return null
             }
-            if (object is JSONObject || `object` is JSONArray
-                    || NULL.equals(`object`) || `object` is JSONString
-                    || `object` is Byte || `object` is Character
-                    || `object` is Short || `object` is Integer
-                    || `object` is Long || `object` is Boolean
-                    || `object` is Float || `object` is Double
-                    || `object` is String || `object` is BigInteger
-                    || `object` is BigDecimal) {
-                return `object`
-            }
-
-            if (`object`.getClass().isArray()) {
-                return new JSONArray(`object`)
-            }
-            Package objectPackage = `object` .getClass().getPackage()
-            String objectPackageName = objectPackage != null ? objectPackage
-            .getName() : ""
-            if (objectPackageName.startsWith("java.")
-                    || objectPackageName.startsWith("javax.")
-                    || object.getClass().getClassLoader() == null) {
-                return `object`.toString()
-            }
-            return new JSONObject(`object`)
-        } catch (Exception exception) {
-            return null
         }
+
+        // Shave off trailing zeros and decimal point, if possible.
+        var string = number.toString();
+        if (string.indexOf('.') > 0 && string.indexOf('e') < 0 && string.indexOf('E') < 0) {
+            while (string.endsWith("0")) {
+                //remove trailing 0s after the decimal
+                string = string.substring(0, string.length() - 1);
+            }
+            if (string.endsWith(".")) {
+                //change 546. to just 546
+                string = string.substring(0, string.length() - 1);
+            }
+        }
+        return string;
     }
 
     /**
@@ -270,21 +236,12 @@ class JsonObject() {
             value.write(writer, indentFactor, indent)
         } else if (value is JsonArray) {
             value.write(writer, indentFactor, indent)
-        } else if (value.getClass().isArray()) {
-            new JSONArray(value).write(writer, indentFactor, indent)
         } else if (value is Number) {
             writer.write(value.toString())
         } else if (value is Boolean) {
             writer.write(value.toString())
-        } else if (value is JSONString) {
-            Object o
-                    try {
-                        o = ((JSONString) value).toJSONString()
-                    } catch (Exception e) {
-                        throw new JSONException(e)
-                    }
-            writer.write(o != null ? o.toString() : quote(value.toString()))
         } else {
+            //A string
             quote(value.toString(), writer)
         }
         return writer
@@ -386,9 +343,9 @@ class JsonObject() {
                 writer.write(quote(key.toString()))
                 writer.write(":")
                 if (indentFactor > 0) {
-                    writer.write(" ")
+                    writer.write(" ")//* indentFactor?
                 }
-                writeValue(writer, this.map.get(key), indentFactor, indent)
+                writeValue(writer, map[key], indentFactor, indent)
             } else if (length != 0) {
                 val newindent = indent + indentFactor
                 while (keys.hasNext()) {
