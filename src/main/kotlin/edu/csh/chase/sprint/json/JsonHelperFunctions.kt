@@ -98,7 +98,7 @@ fun quote(string: String?, w: Writer): Writer {
 }
 
 fun indent(writer: Writer, indent: Int) {
-    writer.write(" " * indent)
+    writer.write("    " * indent)
 }
 
 
@@ -165,7 +165,7 @@ fun numberToString(number: Number): String? {
 }
 
 //TODO scrap this for a better version
-fun writeValue(writer: Writer, value: Any?, indentFactor: Int, indent: Int): Writer {
+fun writeValue(writer: Writer, value: Any?): Writer {
     when (value) {
         null -> writer.write("null")
         is Collection<Any?> -> writer.write(JsonArray(value.filter { it.isValidJsonType() }).toString())
@@ -178,7 +178,7 @@ fun writeValue(writer: Writer, value: Any?, indentFactor: Int, indent: Int): Wri
 }
 
 internal fun Any?.isValidJsonType(): Boolean {
-    return this is Boolean? || this is Int? || this is Double? || this is JsonObject?
+    return this is Boolean? || this is Int? || this is Double? || this is JsonObject? || this is String?
             || this is JsonArray? || this is Long? || this is Collection<Any?> || this is Map<*, *>
 }
 

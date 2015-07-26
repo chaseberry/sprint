@@ -79,12 +79,15 @@ class JsonObject() : JsonBase() {
         if (!value.isValidJsonType()) {
             throw JsonException("$value is not a valid type for Json.")
         }
+        if (value is Double && (value.isInfinite() || value.isNaN())) {
+            throw JsonException("Doubles must be finite and real")
+        }
         map[key] = value
     }
 
     fun putOnce(key: String, value: Any?): JsonObject {
         if (key in map) {
-            return this
+            return this//Throw an error?
         }
         //TODO check validity of value, is it a value Json Value
         addKeyToValue(key, value)
@@ -93,7 +96,7 @@ class JsonObject() : JsonBase() {
 
     //Setters
 
-    //One setter that takes an Any? that ignores invalid types?
+    //One setter that takes an Any? that excepts on invalid types
 
     fun set(key: String, value: Any?) {
         val realValue: Any? = if (value is Collection<Any?>) {
@@ -159,7 +162,7 @@ class JsonObject() : JsonBase() {
     }
 
     override fun toString(): String {
-        return toString(0)
+        return toString(false)
     }
 
     /**
@@ -174,10 +177,10 @@ class JsonObject() : JsonBase() {
      *         brace)</small> and ending with <code>}</code>&nbsp<small>(right
      *         brace)</small>.
      */
-    fun toString(indentFactor: Int): String {
+    fun toString(shouldIndent: Boolean): String {
         val writer = StringWriter()
         synchronized (writer.getBuffer()) {
-            return this.write(writer, indentFactor, 0).toString()
+            return this.write(writer, shouldIndent).toString()
         }
     }
 
@@ -191,7 +194,7 @@ class JsonObject() : JsonBase() {
      * @return The writer.
      */
     public fun write(writer: Writer): Writer {
-        return this.write(writer, 0, 0)
+        return this.write(writer, false)
     }
 
 
@@ -203,20 +206,32 @@ class JsonObject() : JsonBase() {
      *
      * @return The writer.
      */
-    fun write(writer: Writer, indentFactor: Int, indent: Int): Writer {
+    fun write(writer: Writer, shouldIndent: Boolean, depth: Int = 1): Writer {
         try {
             var addComa = false
             writer.write("{")
             for (key in keys) {
-                println("Saving $key")
                 if (addComa) {
                     writer.write(",")
                 }
+
+                if (shouldIndent) {
+                    writer.write("\n")
+                }
+
+                if (shouldIndent) {
+                    indent(writer, depth)
+                }
                 writer.write(quote(key))
                 writer.write(":")
-                writer.write(" " * indentFactor)
-                writeValue(writer, map[key], indentFactor, indent)
-                indent(writer, indent)
+                if (shouldIndent) {
+                    writer.write(" ")
+                }
+                writeValue(writer, map[key])
+                addComa = true
+            }
+            if (shouldIndent) {
+                writer.write("\n")
             }
             writer.write("}")
             return writer

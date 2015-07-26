@@ -168,7 +168,7 @@ class JsonArray():JsonBase() {
             writer.write("[")
 
             if (length == 1) {
-                writeValue(writer, array.get(0), indentFactor, indent)
+                writeValue(writer, array.get(0))
             } else if (length != 0) {
                 val newindent = indent + indentFactor
 
@@ -180,7 +180,7 @@ class JsonArray():JsonBase() {
                         writer.write("\n")
                     }
                     indent(writer, newindent)
-                    writeValue(writer, array[z], indentFactor, newindent)
+                    writeValue(writer, array[z])
                     addComa = true
                 }
                 if (indentFactor > 0) {
