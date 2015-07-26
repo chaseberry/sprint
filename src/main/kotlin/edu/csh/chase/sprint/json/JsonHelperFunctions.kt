@@ -168,7 +168,7 @@ fun writeValue(writer: Writer, value: Any?, indentFactor: Int, indent: Int): Wri
     } else if (value is JsonObject) {
         value.write(writer, indentFactor, indent)
     } else if (value is JsonArray) {
-        value.write(writer, indentFactor, indent)
+        //value.write(writer, indentFactor, indent)
     } else if (value is Number) {
         writer.write(value.toString())
     } else if (value is Boolean) {

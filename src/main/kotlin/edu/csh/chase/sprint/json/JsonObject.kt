@@ -61,6 +61,8 @@ class JsonObject() {
         }
     }
 
+    constructor(stringJson: String) : this(JsonTokener(stringJson))
+
     constructor(obj: JsonObject, vararg names: String) : this() {
         for (name in names) {
             putOnce(name, obj[name])
@@ -165,6 +167,7 @@ class JsonObject() {
             return this.write(w, indentFactor, 0).toString()
         }
     }
+
 
     /**
      * Write the contents of the JSONObject as JSON text to a writer. For
