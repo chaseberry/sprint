@@ -5,11 +5,11 @@ import java.io.StringWriter
 import java.io.Writer
 import java.util.*
 
-class JsonObject() {
+class JsonObject() : JsonBase() {
 
     private val map = HashMap<String, Any?>()
 
-    val length: Int
+    override val size: Int
         get() {
             return map.size()
         }
@@ -69,13 +69,16 @@ class JsonObject() {
         }
     }
 
-    constructor(map: HashMap<String, Any?>) : this() {
+    constructor(map: Map<String, Any?>) : this() {
         for ((key, value) in map) {
             putOnce(key, value)
         }
     }
 
     private fun addKeyToValue(key: String, value: Any?) {
+        if (!value.isValidJsonType()) {
+            throw JsonException("$value is not a valid type for Json.")
+        }
         map[key] = value
     }
 
@@ -84,7 +87,7 @@ class JsonObject() {
             return this
         }
         //TODO check validity of value, is it a value Json Value
-        map[key] = value
+        addKeyToValue(key, value)
         return this
     }
 
@@ -92,16 +95,16 @@ class JsonObject() {
 
     //One setter that takes an Any? that ignores invalid types?
 
-    fun set(key: String, value: Int?) {
-        addKeyToValue(key, value)
+    fun set(key: String, value: Any?) {
+        val realValue: Any? = if (value is Collection<Any?>) {
+            JsonArray(value)
+        } else value
+        addKeyToValue(key, realValue)
     }
 
-    fun set(key: String, value: Boolean?) {
-        addKeyToValue(key, value)
-    }
-
-    fun set(key: String, value: String?) {
-        addKeyToValue(key, value)
+    //Special function needed to type check Maps
+    fun set(key: String, value: Map<String, Any?>) {
+        addKeyToValue(key, JsonObject(map))
     }
 
     //Putters
@@ -186,7 +189,6 @@ class JsonObject() {
      * Warning: This method assumes that the data structure is acyclical.
      *
      * @return The writer.
-     * @throws JSONException
      */
     public fun write(writer: Writer): Writer {
         return this.write(writer, 0, 0)
@@ -200,43 +202,20 @@ class JsonObject() {
      * Warning: This method assumes that the data structure is acyclical.
      *
      * @return The writer.
-     * @throws JSONException
      */
     fun write(writer: Writer, indentFactor: Int, indent: Int): Writer {
         try {
             var addComa = false
             writer.write("{")
-            val keySet = this.keys
-            if (length == 1) {
-                val key = keySet.next()
-                writer.write(quote(key.toString()))
+            for (key in keys) {
+                println("Saving $key")
+                if (addComa) {
+                    writer.write(",")
+                }
+                writer.write(quote(key))
                 writer.write(":")
-                if (indentFactor > 0) {
-                    writer.write(" ")//* indentFactor?
-                }
+                writer.write(" " * indentFactor)
                 writeValue(writer, map[key], indentFactor, indent)
-            } else if (length != 0) {
-                val newindent = indent + indentFactor
-                while (keySet.hasNext()) {
-                    val key = keySet.next()
-                    if (addComa) {
-                        writer.write(",")
-                    }
-                    if (indentFactor > 0) {
-                        writer.write("\n")
-                    }
-                    indent(writer, newindent)
-                    writer.write(quote(key.toString()))
-                    writer.write(":")
-                    if (indentFactor > 0) {
-                        writer.write(" ")
-                    }
-                    writeValue(writer, map[key], indentFactor, newindent)
-                    addComa = true
-                }
-                if (indentFactor > 0) {
-                    writer.write("\n")
-                }
                 indent(writer, indent)
             }
             writer.write("}")
