@@ -169,7 +169,7 @@ class JsonObject() : JsonBase() {
     }
 
     fun isNull(key: String): Boolean {
-        return get(key) == null
+        return key in this && get(key) == null
     }
 
     override fun toString(): String {
