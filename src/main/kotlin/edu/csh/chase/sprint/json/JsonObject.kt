@@ -5,7 +5,7 @@ import java.io.StringWriter
 import java.io.Writer
 import java.util.*
 
-class JsonObject() : JsonBase(), Iterator<Map.Entry<String, Any?>> {
+class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
 
     private val map = HashMap<String, Any?>()
 
@@ -17,6 +17,11 @@ class JsonObject() : JsonBase(), Iterator<Map.Entry<String, Any?>> {
     val keys: Iterator<String>
         get() {
             return map.keySet().iterator()
+        }
+
+    val keySet: Set<String>
+        get() {
+            return map.keySet()
         }
 
     constructor(tokener: JsonTokener) : this() {
@@ -177,7 +182,7 @@ class JsonObject() : JsonBase(), Iterator<Map.Entry<String, Any?>> {
     }
 
     fun plus(other: JsonObject): JsonObject {
-        val newJson = JsonObject(this)
+        val newJson = JsonObject(map)
         for ((key, value) in other) {
             newJson.putOnce(key, value)
         }
@@ -197,12 +202,8 @@ class JsonObject() : JsonBase(), Iterator<Map.Entry<String, Any?>> {
         return this
     }
 
-    override fun next(): Map.Entry<String, Any?> {
-        return map.iterator().next()
-    }
-
-    override fun hasNext(): Boolean {
-        return map.iterator().hasNext()
+    override fun iterator(): Iterator<Map.Entry<String, Any?>> {
+        return map.iterator()
     }
 
     /**
