@@ -91,6 +91,10 @@ class JsonObject() : JsonBase(), Iterator<Map.Entry<String, Any?>> {
         return this
     }
 
+    fun putOnce(keyValuePair: Pair<String, Any?>): JsonObject {
+        return putOnce(keyValuePair.first, keyValuePair.second)
+    }
+
     //Setters
 
     fun set(key: String, value: Any?) {
