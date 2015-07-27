@@ -34,7 +34,7 @@ SOFTWARE.
  * @author JSON.org
  * @version 2014-05-03
  */
-class JsonTokener(var reader: Reader) {
+class JsonTokener(private var reader: Reader) {
 
     var character = 1L
     var eof = false
@@ -87,16 +87,15 @@ class JsonTokener(var reader: Reader) {
      * between 'a' and 'f'.
      * @return  An int between 0 and 15, or -1 if c was not a hex digit.
      */
-    //TODO consider moving outside the scope of this class?
     fun dehexchar(char: Char): Char {
         if (char >= '0' && char <= '9') {
             return (char - '0').toChar()
         }
         if (char >= 'A' && char <= 'F') {
-            return (char - ('A' - 10)).toChar()
+            return (char - ('A' - 10.toChar())).toChar()
         }
         if (char >= 'a' && char <= 'f') {
-            return (char - ('a' - 10)).toChar()
+            return (char - ('a' - 10.toChar())).toChar()
         }
         return (-1).toChar()
     }
@@ -106,7 +105,6 @@ class JsonTokener(var reader: Reader) {
             "true" -> return true
             "false" -> return false
             "null" -> return null
-
         }
         if ((string[0] >= '0' && string[0] <= '9') || string[0] == '-') {
             try {
@@ -166,26 +164,27 @@ class JsonTokener(var reader: Reader) {
             c = this.previous
         } else {
             try {
-                c = this.reader.read().toChar()
+                val charIntVal = this.reader.read()
+                if (charIntVal <= 0) {
+                    // End of stream
+                    this.eof = true
+                    c = 0.toChar()
+                } else {
+                    c = charIntVal.toChar()
+                }
             } catch (exception: IOException) {
                 throw JsonException(exception)
-            }
-
-            if (c <= 0.toChar()) {
-                // End of stream
-                this.eof = true
-                c = 0.toChar()
             }
         }
         this.index += 1
         if (this.previous == '\r') {
-            this.line += 1
+            this.line++
             this.character = if (c == '\n') 0 else 1
         } else if (c == '\n') {
-            this.line += 1
+            this.line++
             this.character = 0
         } else {
-            this.character += 1
+            this.character++
         }
         this.previous = c
         return this.previous
@@ -263,7 +262,7 @@ class JsonTokener(var reader: Reader) {
      * @throws JSONException Unterminated string.
      */
     fun nextString(quote: Char): String {
-        var c = 0.toChar()
+        var c: Char;
         val sb = StringBuilder()
         while (true) {
             c = this.next()
