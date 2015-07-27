@@ -108,11 +108,7 @@ class JsonArray() : JsonBase() {
      *         array.
      */
     override fun toString(): String {
-        try {
-            return this.toString(0)
-        } catch (e: Exception) {
-            return ""
-        }
+        return toString(false)
     }
 
     /**
@@ -127,10 +123,10 @@ class JsonArray() : JsonBase() {
      *         &nbsp<small>(right bracket)</small>.
      * @throws JSONException
      */
-    fun toString(indentFactor: Int): String {
+    fun toString(shouldIndent: Boolean): String {
         val sw = StringWriter()
         synchronized (sw.getBuffer()) {
-            return this.write(sw, indentFactor, 0).toString()
+            return this.write(sw, shouldIndent).toString()
         }
     }
 
@@ -144,7 +140,7 @@ class JsonArray() : JsonBase() {
      * @throws JSONException
      */
     fun write(writer: Writer): Writer {
-        return this.write(writer, 0, 0)
+        return this.write(writer, false)
     }
 
 
@@ -161,7 +157,7 @@ class JsonArray() : JsonBase() {
      * @return The writer.
      * @throws JSONException
      */
-    fun write(writer: Writer, shouldIndent: Boolean, depth: Int): Writer {
+    fun write(writer: Writer, shouldIndent: Boolean, depth: Int = 1): Writer {
         try {
             var addComa = false
             writer.write("[")
