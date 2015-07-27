@@ -107,6 +107,18 @@ class JsonObject() : JsonBase() {
         return put(keyValuePair.first, keyValuePair.second)
     }
 
+    fun putNotNull(key: String, value: Any?): JsonObject {
+        if (value == null) {
+            return this
+        }
+        addKeyToValue(key, value)
+        return this
+    }
+
+    fun putNotNull(keyValuePair: Pair<String, Any?>): JsonObject {
+        return putNotNull(keyValuePair.first, keyValuePair.second)
+    }
+
     //Getters
 
     fun get(key: String): Any? {
@@ -154,6 +166,10 @@ class JsonObject() : JsonBase() {
 
     fun contains(key: String): Boolean {
         return key in map
+    }
+
+    fun isNull(key: String): Boolean {
+        return get(key) == null
     }
 
     override fun toString(): String {
