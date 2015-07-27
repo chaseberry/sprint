@@ -161,32 +161,22 @@ class JsonArray() : JsonBase() {
      * @return The writer.
      * @throws JSONException
      */
-    fun write(writer: Writer, indentFactor: Int, indent: Int): Writer {
+    fun write(writer: Writer, shouldIndent: Boolean, depth: Int): Writer {
         try {
             var addComa = false
-            val length = size
             writer.write("[")
 
-            if (length == 1) {
-                writer.write(getJsonValue(array[0]))
-            } else if (length != 0) {
-                val newindent = indent + indentFactor
+            for (value in array) {
 
-                for (z in array.indices) {
-                    if (addComa) {
-                        writer.write(",")
-                    }
-                    if (indentFactor > 0) {
-                        writer.write("\n")
-                    }
-                    indent(writer, newindent)
-                    writer.write(getJsonValue(array[z]))
-                    addComa = true
+                if (addComa) {
+                    writer.write(",")
                 }
-                if (indentFactor > 0) {
+                if (shouldIndent) {
                     writer.write("\n")
+                    indent(writer, depth)
                 }
-                indent(writer, indent)
+                writer.write(getJsonValue(value))
+                addComa = true
             }
             writer.write("]")
             return writer
