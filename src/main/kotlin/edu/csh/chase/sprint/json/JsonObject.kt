@@ -20,16 +20,14 @@ class JsonObject() : JsonBase() {
         }
 
     constructor(tokener: JsonTokener) : this() {
-        var c: Char
-        var key: String
-
         if (tokener.nextClean() != '{') {
             throw tokener.syntaxError("A JSONObject text must begin with '{'")
         }
 
+        var key: String
+
         while (true) {
-            c = tokener.nextClean()
-            when (c) {
+            when (tokener.nextClean()) {
                 0.toChar() -> throw tokener.syntaxError("A JSONObject text must end with '}'")//EOF
                 '}' -> return
                 else -> {
@@ -40,8 +38,7 @@ class JsonObject() : JsonBase() {
             }
 
             // The key is followed by ':'.
-            c = tokener.nextClean()
-            if (c != ':') {
+            if (tokener.nextClean() != ':') {
                 throw tokener.syntaxError("Expected a ':' after a key")
             }
             this.putOnce(key, tokener.nextValue())
@@ -145,6 +142,14 @@ class JsonObject() : JsonBase() {
 
     fun getString(key: String, default: String): String {
         return getString(key) ?: return default
+    }
+
+    fun getDouble(key: String): Double? {
+        return get(key) as? Double
+    }
+
+    fun getDouble(key: String, default: Double): Double {
+        return getDouble(key) ?: return default
     }
 
     fun contains(key: String): Boolean {
