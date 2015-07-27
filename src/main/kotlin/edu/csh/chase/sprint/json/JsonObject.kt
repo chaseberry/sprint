@@ -7,7 +7,7 @@ import java.util.*
 
 class JsonObject() : JsonBase() {
 
-    val map = HashMap<String, Any?>()
+    private val map = HashMap<String, Any?>()
 
     override val size: Int
         get() {
