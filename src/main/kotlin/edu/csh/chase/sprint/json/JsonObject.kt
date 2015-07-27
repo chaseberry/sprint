@@ -172,6 +172,11 @@ class JsonObject() : JsonBase() {
         return key in this && get(key) == null
     }
 
+    override fun equals(other: Any?): Boolean {
+        //TODO check each key value pair?
+        return other is JsonObject && other.map == map
+    }
+
     override fun toString(): String {
         return toString(false)
     }
