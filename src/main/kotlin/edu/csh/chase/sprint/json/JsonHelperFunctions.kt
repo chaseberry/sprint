@@ -51,7 +51,6 @@ fun quote(string: String?, w: Writer): Writer {
 
     var b: Char
     var c: Char = 0.toChar()
-    var hhhh: String
 
     w.write("\"");
     for (z in string.indices) {
@@ -78,7 +77,7 @@ fun quote(string: String?, w: Writer): Writer {
                 if (c < ' ' || (c >= '\u0080' && c < '\u00a0')
                         || (c >= '\u2000' && c < '\u2100')) {
                     w.write("\\u");
-                    hhhh = Integer.toHexString(c.toInt());
+                    val hhhh = Integer.toHexString(c.toInt());
                     w.write("0000", 0, 4 - hhhh.length());
                     w.write(hhhh);
                 } else {
@@ -92,7 +91,7 @@ fun quote(string: String?, w: Writer): Writer {
 }
 
 fun indent(writer: Writer, indent: Int) {
-    writer.write("    " * indent)
+    writer.write("   " * indent)
 }
 
 
@@ -165,13 +164,14 @@ fun getJsonValue(value: Any?): String {
         is Collection<Any?> -> JsonArray(value.filter { it.isValidJsonType() }).toString()
         is Map<*, *> -> JsonObject(value.jsonMapFilter { it.value.isValidJsonType() }).toString()
         is String -> quote(value)
+        is JsonSerializable -> value.jsonSerialize().toString()
         else -> value.toString()
     }
 }
 
 internal fun Any?.isValidJsonType(): Boolean {
-    return this is Boolean? || this is Int? || this is Double? || this is JsonObject? || this is String?
-            || this is JsonArray? || this is Long? || this is Collection<Any?> || this is Map<*, *>
+    return this is Boolean? || this is Int? || this is Double? || this is String? || this is Collection<Any?>
+            || this is Map<*, *> || this is JsonSerializable?
 }
 
 internal fun Map<*, *>.jsonMapFilter(filterFun: (Map.Entry<Any?, Any?>) -> (Boolean)): Map<String, Any?> {

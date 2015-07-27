@@ -7,6 +7,7 @@ import java.util.*
 
 class JsonArray() : JsonBase() {
 
+
     private val array = ArrayList<Any?>()
 
     override val size: Int
@@ -94,6 +95,10 @@ class JsonArray() : JsonBase() {
 
     fun getBoolean(index: Int, default: Boolean): Boolean {
         return getBoolean(index) ?: return default
+    }
+
+    override fun jsonSerialize(): JsonBase {
+        return this
     }
 
     /**

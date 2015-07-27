@@ -90,30 +90,19 @@ class JsonObject() : JsonBase() {
         if (key in map) {
             return this//Throw an error?
         }
-        //TODO check validity of value, is it a value Json Value
         addKeyToValue(key, value)
         return this
     }
 
     //Setters
 
-    //One setter that takes an Any? that excepts on invalid types
-
     fun set(key: String, value: Any?) {
-        val realValue: Any? = if (value is Collection<Any?>) {
-            JsonArray(value)
-        } else value
-        addKeyToValue(key, realValue)
-    }
-
-    //Special function needed to type check Maps
-    fun set(key: String, value: Map<String, Any?>) {
-        addKeyToValue(key, JsonObject(map))
+        addKeyToValue(key, value)
     }
 
     //Putters
     fun put(key: String, value: Any?): JsonObject {
-        map[key] = value
+        addKeyToValue(key, value)
         return this
     }
 
@@ -164,6 +153,10 @@ class JsonObject() : JsonBase() {
 
     override fun toString(): String {
         return toString(false)
+    }
+
+    override fun jsonSerialize(): JsonBase {
+        return this
     }
 
     /**
