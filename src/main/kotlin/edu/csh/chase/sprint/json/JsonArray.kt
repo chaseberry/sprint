@@ -141,6 +141,8 @@ class JsonArray() : JsonBase() {
         return getJsonArray(index) ?: return default
     }
 
+    //Other Functions
+
     override fun jsonSerialize(): JsonBase {
         return this
     }
@@ -209,6 +211,7 @@ class JsonArray() : JsonBase() {
     fun write(writer: Writer, shouldIndent: Boolean, depth: Int = 1): Writer {
         try {
             var addComa = false
+
             writer.write("[")
 
             for (value in array) {
