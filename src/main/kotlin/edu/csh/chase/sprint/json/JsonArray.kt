@@ -113,6 +113,14 @@ class JsonArray() : JsonBase() {
         return getDouble(index) ?: return default
     }
 
+    fun getString(index: Int): String? {
+        return getValue(index) as? String
+    }
+
+    fun getString(index: Int, default: String): String {
+        return getString(index) ?: return default
+    }
+
     override fun jsonSerialize(): JsonBase {
         return this
     }
