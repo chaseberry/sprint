@@ -121,6 +121,22 @@ class JsonArray() : JsonBase() {
         return getString(index) ?: return default
     }
 
+    fun getJsonObject(index: Int): JsonObject? {
+        return getValue(index) as? JsonObject
+    }
+
+    fun getJsonObject(index: Int, default: JsonObject): JsonObject {
+        return getJsonObject(index) ?: return default
+    }
+
+    fun getJsonArray(index: Int): JsonArray? {
+        return getValue(index) as? JsonArray
+    }
+
+    fun getJsonArray(index: Int, default: JsonArray): JsonArray {
+        return getJsonArray(index) ?: return default
+    }
+
     override fun jsonSerialize(): JsonBase {
         return this
     }
