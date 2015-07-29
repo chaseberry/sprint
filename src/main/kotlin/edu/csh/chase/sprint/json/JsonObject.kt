@@ -191,6 +191,10 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
 
     //Other functions
 
+    fun clear() {
+        map.clear()
+    }
+
     fun contains(key: String): Boolean {
         return key in map
     }
