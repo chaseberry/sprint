@@ -203,11 +203,21 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         return mapClone
     }
 
-
+    /**
+     * Check to see if a given key exists in the map
+     * This function does not care about the value if found
+     *
+     * @return Boolean true if a key exists in this JsonObject, false otherwise
+     */
     fun contains(key: String): Boolean {
         return key in map
     }
 
+    /**
+     * Check to see if a given key exists and it's value is null
+     *
+     * @return Boolean true if the key exists and value of key is null, false otherwise
+     */
     fun isNull(key: String): Boolean {
         return key in this && get(key) == null
     }
