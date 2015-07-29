@@ -191,9 +191,18 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
 
     //Other functions
 
-    fun clear() {
+    /**
+     * Removes all values from this JsonObject
+     * No data is saved and the size is reset to 0
+     *
+     * @return Map<String, Any?> a copy of the key,value pairs that were housed in this JsonObject
+     */
+    fun clear(): HashMap<String, Any?> {
+        val mapClone = HashMap<String, Any?>(map)
         map.clear()
+        return mapClone
     }
+
 
     fun contains(key: String): Boolean {
         return key in map
