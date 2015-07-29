@@ -73,6 +73,7 @@ class JsonObjectTest() {
         } catch(invalidType: JsonException) {
         }
 
+        assertEquals(3, obj.size)
 
     }
 
