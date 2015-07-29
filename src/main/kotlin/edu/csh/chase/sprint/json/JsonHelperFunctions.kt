@@ -6,17 +6,17 @@ import java.io.Writer
 import java.util
 import java.util.*
 
-internal fun String.times(indent: Int): String {
-    if (indent < 0) {
+internal fun String.times(count: Int): String {
+    if (count < 0) {
         return this
     }
-    if (indent == 0) {
+    if (count == 0) {
         return ""
     }
 
     var str = ""
 
-    for (z in 0..(indent - 1)) {
+    for (z in 0..(count - 1)) {
         str += this
     }
 
@@ -125,6 +125,7 @@ fun valueToString(value: Any?): String? {
         else -> quote(value.toString())
     }
 }
+
 
 /**
  * Produce a string from a Number.
