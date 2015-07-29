@@ -4,6 +4,9 @@ import edu.csh.chase.sprint.json.JsonException
 import edu.csh.chase.sprint.json.JsonObject
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 
 class JsonObjectTest() {
@@ -25,20 +28,53 @@ class JsonObjectTest() {
         assert(false, "Should have thrown a Unterminated string JsonException")
     }
 
-    Test fun JsonGetTest1() {
+    Test fun JsonGetNullTest() {
+        val obj = JsonObject()
+
+        //Check default get
+        assertNull(obj["invalidKey"])
+
+        //Check String get
+        assertNull(obj.getString("invalidKey"))
+
+        //Check Boolean get
+        assertNull(obj.getBoolean("invalidKey"))
+
+    }
+
+    Test fun JsonDefaultGetTest() {
+        val obj = JsonObject()
+
+        //Check default String
+        assertEquals("defaultValue", obj.getString("invalidKey", "defaultValue"))
+
+        //Check default Boolean
+        assertTrue(obj.getBoolean("value", true))
+        assertFalse(obj.getBoolean("value", false))
+
+    }
+
+    Test fun JsonGetTestString() {
         val jsonString = "{\"key\":\"value\"}"
         try {
             val obj = JsonObject(jsonString)
             assertEquals(1, obj.size)
+
+            //Check the default get
             assertEquals("value", obj["key"] as String)
             assertEquals("value", obj["key", "defaultValue"] as String)
-            assertEquals(null, obj["invalidKey"])
-            assertEquals(null, obj["invalidKey"])
+
+            //Check the String get
             assertEquals("value", obj.getString("key") as String)
             assertEquals("value", obj.getString("key", "defaultValue"))
-            assertEquals("defaultValue", obj.getString("invalidKey", "defaultValue"))
-            assertEquals(null, obj.getString("invalidKey"))
+
+            //Check cast to String
+            assertNull(obj.getBoolean("value"))
+            assertNull(obj.getInt("value"))
+            assertNull(obj.getJsonObject("value"))
+
             assertEquals("{\"key\":\"value\"}", obj.toString())
+
         } catch(exception: JsonException) {
             assert(false, "Creating valid Json threw exception ${exception.getMessage()}")
         }
