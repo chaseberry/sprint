@@ -64,7 +64,6 @@ class JsonArray() : JsonBase() {
             throw JsonException("$value is not a valid JsonException")
         }
         array [index] = value
-
     }
 
     //Setters
@@ -77,7 +76,9 @@ class JsonArray() : JsonBase() {
     //Putters
 
     fun put(value: Any?): JsonArray {
-        //TODO check the type of value
+        if (!value.isValidJsonType()) {
+            throw JsonException("$value is not a valid JsonException")
+        }
         array.add(value)
         return this
     }
