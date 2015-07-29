@@ -15,7 +15,7 @@ class JsonObjectTest() {
         assertEquals("{\n}", obj.toString(true))
     }
 
-    Test fun invalidJson1Test() {
+    Test fun invalidJsonTest1() {
         val invalidJson = "{\"key\":\"value}"
         try {
             val obj = JsonObject(invalidJson)
@@ -23,6 +23,23 @@ class JsonObjectTest() {
             return
         }
         assert(false, "Should have thrown a Unterminated string JsonException")
+    }
+
+    Test fun JsonGetTest1() {
+        val jsonString = "{\"key\":\"value\"}"
+        try {
+            val obj = JsonObject(jsonString)
+            assertEquals("value", obj["key"] as String)
+            assertEquals("value", obj["key", "defaultValue"] as String)
+            assertEquals(null, obj["invalidKey"])
+            assertEquals(null, obj["invalidKey"])
+            assertEquals("value", obj.getString("key") as String)
+            assertEquals("value", obj.getString("key", "defaultValue"))
+            assertEquals("defaultValue", obj.getString("invalidKey", "defaultValue"))
+            assertEquals(null, obj.getString("invalidKey"))
+        } catch(exception: JsonException) {
+            assert(false, "Creating valid Json threw exception ${exception.getMessage()}")
+        }
     }
 
     Test fun additionObjectTest() {
