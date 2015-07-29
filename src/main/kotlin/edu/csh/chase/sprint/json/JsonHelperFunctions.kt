@@ -185,6 +185,14 @@ internal fun Map<*, *>.jsonMapFilter(filterFun: (Map.Entry<Any?, Any?>) -> (Bool
     return map
 }
 
+fun Int.jsonSerialize(): String {
+    return this.toString()
+}
+
+fun String.jsonSerialize(): String {
+    return quote(this)
+}
+
 fun Map<Any?, Any?>.filter(filterFun: (Map.Entry<Any?, Any?>) -> (Boolean)): Map<Any?, Any?> {
     val map = HashMap<Any?, Any?>()
     this.forEach {
