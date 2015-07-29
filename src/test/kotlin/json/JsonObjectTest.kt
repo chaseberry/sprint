@@ -21,7 +21,7 @@ class JsonObjectTest() {
     Test fun invalidJsonTest1() {
         val invalidJson = "{\"key\":\"value}"
         try {
-            val obj = JsonObject(invalidJson)
+            JsonObject(invalidJson)
         } catch(unterminatedString: JsonException) {
             return
         }
