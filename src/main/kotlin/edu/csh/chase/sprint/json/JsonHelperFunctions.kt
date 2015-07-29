@@ -43,8 +43,8 @@ fun quote(string: String): String {
 }
 
 
-fun quote(string: String?, w: Writer): Writer {
-    if (string == null || string.length() == 0) {
+fun quote(string: String, w: Writer): Writer {
+    if (string.length() == 0) {
         w.write("\"\"");
         return w;
     }
