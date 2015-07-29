@@ -137,3 +137,7 @@ fun Map<Any?, Any?>.filter(filterFun: (Map.Entry<Any?, Any?>) -> (Boolean)): Map
     }
     return map
 }
+
+fun Map<String, Any?>.jsonSerialize(): String {
+    return JsonObject(this).toString()
+}
