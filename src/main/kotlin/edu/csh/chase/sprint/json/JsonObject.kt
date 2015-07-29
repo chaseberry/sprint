@@ -189,6 +189,8 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         return getJsonArray(key) ?: return default
     }
 
+    //Other functions
+
     fun contains(key: String): Boolean {
         return key in map
     }
