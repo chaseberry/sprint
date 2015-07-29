@@ -173,6 +173,14 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         return getDouble(key) ?: return default
     }
 
+    fun getJsonObject(key: String): JsonObject? {
+        return get(key) as? JsonObject
+    }
+
+    fun getJsonObject(key: String, default: JsonObject): JsonObject {
+        return getJsonObject(key) ?: return default
+    }
+
     fun contains(key: String): Boolean {
         return key in map
     }
