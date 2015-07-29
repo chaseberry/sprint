@@ -29,6 +29,7 @@ class JsonObjectTest() {
         val jsonString = "{\"key\":\"value\"}"
         try {
             val obj = JsonObject(jsonString)
+            assertEquals(1, obj.size)
             assertEquals("value", obj["key"] as String)
             assertEquals("value", obj["key", "defaultValue"] as String)
             assertEquals(null, obj["invalidKey"])
@@ -37,9 +38,42 @@ class JsonObjectTest() {
             assertEquals("value", obj.getString("key", "defaultValue"))
             assertEquals("defaultValue", obj.getString("invalidKey", "defaultValue"))
             assertEquals(null, obj.getString("invalidKey"))
+            assertEquals("{\"key\":\"value\"}", obj.toString())
         } catch(exception: JsonException) {
             assert(false, "Creating valid Json threw exception ${exception.getMessage()}")
         }
+    }
+
+    Test fun JsonSetTest1() {
+        val obj = JsonObject()
+        assertEquals(0, obj.size)
+
+        try {
+            obj["string"] = "aString"
+            obj["int"] = 10
+        } catch(invalidValue: JsonException) {
+            assert(false, "Invalid value added to JsonObject ${invalidValue.getMessage()}")
+        }
+
+        assertEquals(2, obj.size)
+
+        try {
+            obj["double"] = 15.0
+            obj["double"] = Double.NEGATIVE_INFINITY
+            assert(false, "An infinite double was added to a JsonObject")
+        } catch(invalidDouble: JsonException) {
+
+        }
+
+        assertEquals(15.0, obj["double"] as Double)
+
+        try {
+            obj["invalidType"] = "key" to "value"
+            assert(false, "An invalid type was added to a JsonObject")
+        } catch(invalidType: JsonException) {
+        }
+
+
     }
 
     Test fun additionObjectTest() {
