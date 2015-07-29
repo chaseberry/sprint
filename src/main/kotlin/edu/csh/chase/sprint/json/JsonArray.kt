@@ -58,7 +58,10 @@ class JsonArray() : JsonBase() {
 
     private fun setValue(index: Int, value: Any?) {
         if (index !in array.indices) {
-            return
+            return//Throws exception?
+        }
+        if (!value.isValidJsonType()) {
+            throw JsonException("$value is not a valid JsonException")
         }
         array [index] = value
 
