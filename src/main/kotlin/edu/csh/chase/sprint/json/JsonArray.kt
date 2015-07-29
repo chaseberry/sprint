@@ -105,6 +105,14 @@ class JsonArray() : JsonBase() {
         return getInt(index) ?: return default
     }
 
+    fun getDouble(index: Int): Double? {
+        return getValue(index) as? Double
+    }
+
+    fun getDouble(index: Int, default: Double): Double {
+        return getDouble(index) ?: return default
+    }
+
     override fun jsonSerialize(): JsonBase {
         return this
     }
