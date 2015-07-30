@@ -28,7 +28,7 @@ SOFTWARE.
 */
 
 /**
- * A JSONTokener takes a source string and extracts characters and tokens from
+ * A JsonTokener takes a source string and extracts characters and tokens from
  * it. It is used by the JSONObject and JSONArray constructors to parse
  * JSON source strings.
  * @author JSON.org
@@ -36,28 +36,28 @@ SOFTWARE.
  */
 class JsonTokener(private var reader: Reader) {
 
-    var character = 1L
-    var eof = false
-    var usePrevious = false
-    var index = 0L
-    var line = 1L
-    var previous = '0'
+    private var character = 1L
+    private var eof = false
+    private var usePrevious = false
+    private var index = 0L
+    private var line = 1L
+    private var previous = '0'
 
     /**
-     * Construct a JSONTokener from a string.
+     * Construct a JsonTokener from a string.
      *
      * @param stream     A source string.
      */
     constructor(stream: InputStream) : this(InputStreamReader(stream))
 
     /**
-     * Construct a JSONTokener from an InputStream.
+     * Construct a JsonTokener from an InputStream.
      * @param inputStream The source.
      */
     constructor(str: String) : this(StringReader(str))
 
     /**
-     * Construct a JSONTokener from a Reader.
+     * Construct a JsonTokener from a Reader.
      *
      * @param reader     A reader.
      */
@@ -74,8 +74,8 @@ class JsonTokener(private var reader: Reader) {
         if (this.usePrevious || this.index <= 0) {
             throw JsonException("Stepping back two steps is not supported")
         }
-        this.index -= 1
-        this.character -= 1
+        this.index--
+        this.character--
         this.usePrevious = true
         this.eof = false
     }
@@ -87,6 +87,7 @@ class JsonTokener(private var reader: Reader) {
      * between 'a' and 'f'.
      * @return  An int between 0 and 15, or -1 if c was not a hex digit.
      */
+    //TODO Remove this from this scope? Or just remove? I don't see where it's used
     fun dehexchar(char: Char): Char {
         if (char >= '0' && char <= '9') {
             return (char - '0').toChar()
@@ -110,9 +111,9 @@ class JsonTokener(private var reader: Reader) {
             try {
                 //Is it a Double?
                 if (string.contains('.') || string.contains('e') || string.contains('E')) {
-                    val d = string.toDouble()
-                    if (!d.isNaN() && !d.isInfinite()) {
-                        return d
+                    val double = string.toDouble()
+                    if (!double.isNaN() && !double.isInfinite()) {
+                        return double
                     }
                     //Long or Int
                 } else {
@@ -142,7 +143,7 @@ class JsonTokener(private var reader: Reader) {
      * can consume.
      * @return true if not yet at the end of the source.
      */
-    fun more(): Boolean {
+    fun hasMore(): Boolean {
         this.next()
         if (this.end()) {
             return false
@@ -168,7 +169,7 @@ class JsonTokener(private var reader: Reader) {
                 if (charIntVal <= 0) {
                     // End of stream
                     this.eof = true
-                    c = 0.toChar()
+                    return 0.toChar()
                 } else {
                     c = charIntVal.toChar()
                 }
@@ -279,10 +280,7 @@ class JsonTokener(private var reader: Reader) {
                         'f' -> sb.append('\u000C')
                         'r' -> sb.append('\r')
                         'u' -> sb.append(Integer.parseInt(next(4), 16).toChar())
-                        '"' -> sb.append(c)
-                        '\'' -> sb.append(c)
-                        '\\' -> sb.append(c)
-                        '/' -> sb.append(c)
+                        '"', '\'', '\\', '/' -> sb.append(c)
                         else -> throw this.syntaxError("Illegal escape.")
                     }
                 }
