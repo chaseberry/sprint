@@ -53,7 +53,6 @@ class JsonArrayTest() {
         assertEquals("String", array[1, "Not String"] as String)
 
         assertNull(array[2])
-        assertNull(array[2, "Some not null value"])
 
         assertEquals(false, array[3] as Boolean)
         assertEquals(false, array[3, true] as Boolean)
