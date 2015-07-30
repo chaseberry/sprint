@@ -147,3 +147,13 @@ fun Map<Any?, Any?>.filter(filterFun: (Map.Entry<Any?, Any?>) -> (Boolean)): Map
 fun Map<String, Any?>.jsonSerialize(): String {
     return JsonObject(this).toString()
 }
+
+/**
+ * Takes a Collection of Any? and creates a Json representation
+ * Any invalid values in the collection will cause a JsonException to be thrown
+ *
+ * @return String a valid JsonObject String from this Collection
+ */
+fun Collection<Any?>.jsonSerialize(): String {
+    return JsonArray(this).toString()
+}
