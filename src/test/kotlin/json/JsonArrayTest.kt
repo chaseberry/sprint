@@ -62,5 +62,11 @@ class JsonArrayTest() {
         assertEquals(15.687, array[4, 1.0] as Double)
     }
 
+    Test fun jsonArrayGetDefaultTest() {
+        val array = JsonArray(arrayOf<Any?>(0, "String", null, false, 15.687))
+
+        assertEquals(15, array[-1, 15])
+        assertEquals("default", array[12, "default"])
+    }
 
 }
