@@ -54,6 +54,10 @@ class JsonArray() : JsonBase() {
         array.addAll(list.filter { it.isValidJsonType() })
     }
 
+    constructor(array: Array<Any?>) : this() {
+        this.array.addAll(array.filter { it.isValidJsonType() })
+    }
+
     private fun getValue(index: Int): Any? {
         if (index !in array.indices) {
             return null
