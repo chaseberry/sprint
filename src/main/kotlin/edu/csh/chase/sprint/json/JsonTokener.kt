@@ -238,7 +238,7 @@ class JsonTokener(private var reader: Reader) {
 
     /**
      * Get the next char in the string, skipping whitespace.
-     * @throws JSONException
+     * @throws JsonException
      * @return  A character, or 0 if there are no more characters.
      */
     fun nextClean(): Char {
@@ -260,7 +260,7 @@ class JsonTokener(private var reader: Reader) {
      *      <code>"</code>&nbsp<small>(double quote)</small> or
      *      <code>'</code>&nbsp<small>(single quote)</small>.
      * @return      A String.
-     * @throws JSONException Unterminated string.
+     * @throws JsonException Unterminated string.
      */
     fun nextString(quote: Char): String {
         var c: Char;
