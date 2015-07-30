@@ -74,7 +74,6 @@ class JsonArray() : JsonBase() {
     //Setters
 
     fun set(index: Int, value: Any?) {
-        //TODO check the type of value
         setValue(index, value)
     }
 
@@ -86,6 +85,13 @@ class JsonArray() : JsonBase() {
         }
         array.add(value)
         return this
+    }
+
+    fun putNotNull(value: Any?): JsonArray {
+        if (value == null) {
+            return this
+        }
+        return put(value)
     }
 
     //Getters
