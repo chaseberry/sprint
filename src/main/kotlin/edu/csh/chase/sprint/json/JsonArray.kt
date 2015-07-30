@@ -15,6 +15,11 @@ class JsonArray() : JsonBase() {
             return array.size()
         }
 
+    val indices: IntRange
+        get() {
+            return array.indices
+        }
+
     constructor(tokener: JsonTokener) : this() {
         if (tokener.nextClean() != '[') {
             throw tokener.syntaxError("A JSONArray text must start with '['")
@@ -142,6 +147,14 @@ class JsonArray() : JsonBase() {
     }
 
     //Other Functions
+
+    fun contains(index: Int): Boolean {
+        return index in array.indices
+    }
+
+    fun forEach(operation: (Any?) -> Unit) {
+        array.forEach(operation)
+    }
 
     override fun jsonSerialize(): JsonBase {
         return this

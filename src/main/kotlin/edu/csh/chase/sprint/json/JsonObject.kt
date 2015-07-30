@@ -230,6 +230,10 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         return key in this && get(key) == null
     }
 
+    fun forEach(operation: (Map.Entry<String, Any?>) -> Unit) {
+        map.forEach(operation)
+    }
+
     fun plus(other: JsonObject): JsonObject {
         val newJson = JsonObject(map)
         for ((key, value) in other) {
