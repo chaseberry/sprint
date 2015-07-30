@@ -1,13 +1,14 @@
 package json
 
 import edu.csh.chase.sprint.json.JsonArray
+import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 
 class JsonArrayTest() {
 
-    fun emptyJsonArrayTest() {
+    Test fun emptyJsonArrayTest() {
         val array = JsonArray()
 
         assertEquals(0, array.size)
