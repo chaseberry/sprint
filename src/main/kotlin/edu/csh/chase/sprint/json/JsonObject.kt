@@ -102,6 +102,14 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
 
     //Setters
 
+    /**
+     * A key, value set function, in Kotlin this can be invoked as jsonObject["key"] = "value"
+     *
+     * @param key String a key for this JsonObject. Will overwrite any data previously stored in this key
+     * @param value Any? a value to be stored at this key. This must be a valid Json type or an exception will be thrown
+     *
+     * @throws JsonException an unchecked exception will be thrown if the passed value is not a valid Json value type
+     */
     fun set(key: String, value: Any?) {
         addKeyToValue(key, value)
     }
