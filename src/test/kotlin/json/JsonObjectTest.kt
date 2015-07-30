@@ -54,6 +54,23 @@ class JsonObjectTest() {
 
     }
 
+    Test fun JsonObjectGetTest() {
+        val obj = JsonObject()
+
+        assertNull(obj["aKey"])
+        assertEquals(0, obj["aKey", 0])
+
+        obj["key"] = "value"
+
+        assertEquals("value", obj["key"])
+        assertEquals("value", obj["key", "defaultValue"])
+        assertEquals("defaultValue", obj["invalidKey", "defaultValue"])
+
+        obj["int"] = 1024
+        assertEquals(1024, obj["int"] as Int)
+
+    }
+
     Test fun JsonGetTestString() {
         val jsonString = "{\"key\":\"value\"}"
         try {
