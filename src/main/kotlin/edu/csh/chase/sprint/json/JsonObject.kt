@@ -251,8 +251,8 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         return toString(false)
     }
 
-    override fun jsonSerialize(): JsonBase {
-        return this
+    override fun jsonSerialize(): String {
+        return this.toString()
     }
 
     override fun iterator(): Iterator<Map.Entry<String, Any?>> {

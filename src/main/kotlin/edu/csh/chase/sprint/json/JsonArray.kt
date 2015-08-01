@@ -166,8 +166,8 @@ class JsonArray() : JsonBase() {
         array.forEach(operation)
     }
 
-    override fun jsonSerialize(): JsonBase {
-        return this
+    override fun jsonSerialize(): String {
+        return this.toString()
     }
 
     /**
