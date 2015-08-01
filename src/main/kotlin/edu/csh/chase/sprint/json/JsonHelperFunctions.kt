@@ -120,14 +120,6 @@ internal fun Map<*, *>.jsonMapFilter(filterFun: (Map.Entry<Any?, Any?>) -> (Bool
     return map
 }
 
-fun Int.jsonSerialize(): String {
-    return this.toString()
-}
-
-fun String.jsonSerialize(): String {
-    return quote(this)
-}
-
 fun Map<Any?, Any?>.filter(filterFun: (Map.Entry<Any?, Any?>) -> (Boolean)): Map<Any?, Any?> {
     val map = HashMap<Any?, Any?>()
     this.forEach {
@@ -156,4 +148,20 @@ fun Map<String, Any?>.jsonSerialize(): String {
  */
 fun Collection<Any?>.jsonSerialize(): String {
     return JsonArray(this).toString()
+}
+
+fun Int?.jsonSerialize(): String {
+    return this.toString()
+}
+
+fun String?.jsonSerialize(): String {
+    return if (null == this) "null" else quote(this)
+}
+
+fun Double?.jsonSerialize(): String {
+    return this.toString()
+}
+
+fun Boolean?.jsonSerialize(): String {
+    return this.toString()
 }
