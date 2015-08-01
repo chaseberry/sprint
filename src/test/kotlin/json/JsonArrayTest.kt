@@ -68,4 +68,21 @@ class JsonArrayTest() {
         assertEquals("default", array[12, "default"])
     }
 
+    Test fun jsonArrayGetBooleanTest() {
+        val array = JsonArray(arrayOf<Any?>(true, false, null, "Not a Boolean"))
+        assertEquals(4, array.size)
+
+        assertTrue(array.getBoolean(0)!!)
+        assertTrue(array.getBoolean(0, false))
+
+        assertFalse(array.getBoolean(1)!!)
+        assertFalse(array.getBoolean(1, true))
+
+        assertNull(array.getBoolean(2))
+        assertTrue(array.getBoolean(2, true))
+
+        assertNull(array.getBoolean(3))
+        assertTrue(array.getBoolean(3, true))
+    }
+
 }
