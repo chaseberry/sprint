@@ -12,4 +12,11 @@ class JsonHelperFunctionTest {
         assertEquals("null", (null as Boolean?).jsonSerialize())
     }
 
+    Test fun doubleJsonSerialize() {
+        assertEquals("15.0", 15.0.jsonSerialize())
+        assertEquals("23.5635", 23.5635.jsonSerialize())
+        assertEquals("14E4", 14E4.toString())
+        assertEquals("null", (null as Double?).jsonSerialize())
+    }
+
 }
