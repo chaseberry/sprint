@@ -85,4 +85,23 @@ class JsonArrayTest() {
         assertTrue(array.getBoolean(3, true))
     }
 
+    Test fun jsonArrayGetIntTest() {
+        val array = JsonArray(arrayOf<Any?>(15, 0, null, 15.9, "A String"))
+        assertEquals(5, array.size)
+
+        assertEquals(15, array.getInt(0)!!)
+        assertEquals(15, array.getInt(0, 0))
+
+        assertEquals(0, array.getInt(1) as Int)
+
+        assertNull(array.get(2))
+        assertEquals(12, array.get(2, 12))
+
+        assertNull(array.get(3))
+        assertEquals(12, array.get(3, 12))
+
+        assertNull(array.get(4))
+        assertEquals(-15, array.get(4, -15))
+    }
+
 }
