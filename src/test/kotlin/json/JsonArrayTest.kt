@@ -94,14 +94,14 @@ class JsonArrayTest() {
 
         assertEquals(0, array.getInt(1) as Int)
 
-        assertNull(array.get(2))
-        assertEquals(12, array.get(2, 12))
+        assertNull(array.getInt(2))
+        assertEquals(12, array.getInt(2, 12))
 
-        assertNull(array.get(3))
-        assertEquals(12, array.get(3, 12))
+        assertNull(array.getInt(3))
+        assertEquals(12, array.getInt(3, 12))
 
-        assertNull(array.get(4))
-        assertEquals(-15, array.get(4, -15))
+        assertNull(array.getInt(4))
+        assertEquals(-15, array.getInt(4, -15))
     }
 
 }
