@@ -8,8 +8,8 @@ import java.io.IOException
 import com.squareup.okhttp.Request as OkRequest
 import com.squareup.okhttp.Response as OkResponse
 
-class RequestProcessor(val request: Request, private val client: OkHttpClient, val successListener: SprintSuccess?,
-                       val failureListener: SprintFailure?) : Callback {
+class RequestProcessor(val request: Request, private val client: OkHttpClient, val listener: SprintListener?) :
+        Callback {
 
     var currentCall: Call? = null
 
@@ -27,10 +27,11 @@ class RequestProcessor(val request: Request, private val client: OkHttpClient, v
         return builder.build()
     }
 
-    fun executeRequest() {
+    fun executeRequest(): RequestProcessor {
         val okRequest = buildOkRequest()
         currentCall = client.newCall(okRequest)
         currentCall!!.enqueue(this)
+        return this
     }
 
     fun cancelRequest() {
@@ -40,7 +41,7 @@ class RequestProcessor(val request: Request, private val client: OkHttpClient, v
 
     override fun onFailure(request: okhttp.Request?, e: IOException) {
         e.printStackTrace()
-        failureListener?.sprintFailure(this.request, Response(-1, null, null))
+        listener?.sprintFailure(this.request, Response(-1, null, null))
     }
 
     override fun onResponse(response: OkResponse) {
@@ -48,9 +49,9 @@ class RequestProcessor(val request: Request, private val client: OkHttpClient, v
         val body = response.body()
         val headers = response.headers()
         if (statusCode in 200..299) {
-            successListener?.sprintSuccess(request, Response(statusCode, body, headers))
+            listener?.sprintSuccess(request, Response(statusCode, body, headers))
         } else {
-            failureListener?.sprintFailure(request, Response(statusCode, body, headers))
+            listener?.sprintFailure(request, Response(statusCode, body, headers))
         }
     }
 
