@@ -8,7 +8,7 @@ import java.io.IOException
 import com.squareup.okhttp.Request as OkRequest
 import com.squareup.okhttp.Response as OkResponse
 
-class RequestProcessor(val request: Request, private val client: OkHttpClient, val listener: SprintListener?) :
+class RequestProcessor(val request: Request, private val client: OkHttpClient, private val listener: SprintListener?) :
         Callback {
 
     var currentCall: Call? = null
