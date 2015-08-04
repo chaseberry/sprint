@@ -6,6 +6,6 @@ interface RequestSerializer {
 
     fun isValidType(requestData: Any?): Boolean
 
-    fun serialize(requestData: Any?): RequestBody
+    fun serialize(requestData: Any?): RequestBody?
 
 }
