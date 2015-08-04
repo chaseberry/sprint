@@ -2,8 +2,16 @@ package edu.csh.chase.sprint
 
 import com.squareup.okhttp.OkHttpClient
 
-abstract class SprintClient(val urlBase: String) {
+abstract class SprintClient(val urlBase: String? = null) {
 
-    abstract val client: OkHttpClient
+    private val client = OkHttpClient()
+
+    init {
+        configureClient(client)
+    }
+
+    abstract fun configureClient(client: OkHttpClient)
+
+    abstract fun defaultRequestSerializer()
 
 }
