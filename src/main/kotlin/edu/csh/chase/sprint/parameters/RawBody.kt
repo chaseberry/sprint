@@ -14,5 +14,4 @@ class RawBody(val rawBody: Any, val contentType: String) : RequestBody() {
         return MediaType.parse(contentType)
     }
 
-
 }
