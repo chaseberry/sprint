@@ -11,8 +11,8 @@ class JsonBody(private val jsonValue: JsonBase) : RequestBody() {
         return MediaType.parse("application/json; charset=utf-8")
     }
 
-    override fun writeTo(sink: BufferedSink?) {
-        sink?.writeUtf8(jsonValue.toString())
+    override fun writeTo(sink: BufferedSink) {
+        sink.writeUtf8(jsonValue.toString())
     }
 
 
