@@ -7,3 +7,7 @@ fun headers(vararg headers: Pair<String, String>): Headers.Builder {
     headers.forEach { builder.add(it.first, it.second) }
     return builder
 }
+
+fun buildEndpoint(urlBase: String, endpoint: String): String {
+
+}
