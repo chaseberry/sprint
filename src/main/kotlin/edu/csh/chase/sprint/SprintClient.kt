@@ -2,7 +2,7 @@ package edu.csh.chase.sprint
 
 import com.squareup.okhttp.Headers
 import com.squareup.okhttp.OkHttpClient
-import edu.csh.chase.sprint.parameters.UrlBody
+import edu.csh.chase.sprint.parameters.UrlParameters
 
 abstract class SprintClient(val urlBase: String? = null) {
 
@@ -20,7 +20,7 @@ abstract class SprintClient(val urlBase: String? = null) {
         return request
     }
 
-    fun get(endpoint: String, urlParameters: UrlBody?, headers: Headers.Builder, listeners: SprintListener): RequestProcessor {
+    fun get(endpoint: String, urlParameters: UrlParameters?, headers: Headers.Builder, listeners: SprintListener): RequestProcessor {
 
     }
 
