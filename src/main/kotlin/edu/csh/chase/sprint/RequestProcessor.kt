@@ -36,14 +36,20 @@ class RequestProcessor(val request: Request, private val client: OkHttpClient, v
         currentCall = null
     }
 
-    override fun onFailure(request: okhttp.Request?, e: IOException?) {
-
+    override fun onFailure(request: okhttp.Request?, e: IOException) {
+        e.printStackTrace()
+        failureListener?.sprintFailure(this.request, Response(-1, null, null))
     }
 
     override fun onResponse(response: OkResponse) {
         val statusCode = response.code()
         val body = response.body()
         val headers = response.headers()
+        if (statusCode in 200..299) {
+            successListener?.sprintSuccess(request, Response(statusCode, body, headers))
+        } else {
+            failureListener?.sprintFailure(request, Response(statusCode, body, headers))
+        }
     }
 
 }
