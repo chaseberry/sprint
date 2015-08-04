@@ -21,7 +21,9 @@ class RequestProcessor(val request: Request, private val client: OkHttpClient, v
             RequestType.Get -> builder.get()
             RequestType.Post -> builder.post(request.body)
         }
-        request.headers?.forEach { builder.addHeader(it.name, it.value) }
+        if (request.headers != null) {
+            builder.headers(request.headers.build())
+        }
         return builder.build()
     }
 

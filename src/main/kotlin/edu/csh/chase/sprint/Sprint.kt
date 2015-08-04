@@ -1,9 +1,8 @@
 package edu.csh.chase.sprint
 
+import com.squareup.okhttp.Headers
 import com.squareup.okhttp.OkHttpClient
-import edu.csh.chase.sprint.parameters.Header
 import edu.csh.chase.sprint.parameters.UrlBody
-import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -17,7 +16,7 @@ public object Sprint {
         client
     }
 
-    public fun get(url: String, urlParameters: UrlBody?, headers: ArrayList<Header>?,
+    public fun get(url: String, urlParameters: UrlBody?, headers: Headers.Builder,
                    requestFinished: ((Request, Response) -> Unit)): RequestProcessor {
         return get(Request(url = url, requestType = RequestType.Get, urlParams = urlParameters, headers = headers),
                 object : SprintSuccess {

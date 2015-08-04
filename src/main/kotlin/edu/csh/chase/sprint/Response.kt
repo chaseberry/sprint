@@ -1,8 +1,8 @@
 package edu.csh.chase.sprint
 
-import edu.csh.chase.sprint.parameters.Header
-import java.util.*
+import com.squareup.okhttp.Headers
+import com.squareup.okhttp.ResponseBody
 
-data class Response(val statusCode: Int, val responseData: Array<Byte>, val headers: ArrayList<Header>) {
+data class Response(val statusCode: Int, val responseData: ResponseBody?, val headers: Headers?) {
 
 }
