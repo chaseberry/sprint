@@ -16,7 +16,7 @@ public object Sprint {
         client
     }
 
-    public fun get(url: String, urlParameters: UrlBody?, headers: Headers.Builder,
+    public fun get(url: String, urlParameters: UrlBody? = null, headers: Headers.Builder? = null,
                    requestFinished: ((Request, Response) -> Unit)): RequestProcessor {
         return get(Request(url = url, requestType = RequestType.Get, urlParams = urlParameters, headers = headers),
                 object : SprintSuccess {
