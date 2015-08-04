@@ -1,10 +1,8 @@
 package edu.csh.chase.sprint.json
 
-import java.io.IOException
 import java.io.StringWriter
 import java.io.Writer
-import java.util
-import java.util.*
+import java.util.HashMap
 
 internal fun String.times(count: Int): String {
     if (count < 0) {
@@ -164,4 +162,18 @@ fun Double?.jsonSerialize(): String {
 
 fun Boolean?.jsonSerialize(): String {
     return this.toString()
+}
+
+fun parseJsonString(jsonString: String): JsonBase? {
+    try {
+        return JsonObject(jsonString)
+    } catch(excep: JsonException) {
+
+    }
+    try {
+        return JsonArray(jsonString)
+    } catch(excep: JsonException) {
+
+    }
+    return null
 }
