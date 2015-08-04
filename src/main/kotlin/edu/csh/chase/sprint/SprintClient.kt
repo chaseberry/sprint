@@ -20,12 +20,14 @@ abstract class SprintClient(val urlBase: String? = null) {
         return request
     }
 
-    fun get(endpoint: String, urlParameters: UrlParameters?, headers: Headers.Builder, listeners: SprintListener): RequestProcessor {
-
+    fun get(endpoint: String, urlParameters: UrlParameters? = null,
+            headers: Headers.Builder? = null, listener: SprintListener? = null, extraData: Any? = null): RequestProcessor {
+        return get(Request(url = buildEndpoint(urlBase, endpoint), requestType = RequestType.Get,
+                urlParams = urlParameters, headers = headers, extraData = extraData), listener)
     }
 
-    fun get(request: Request): RequestProcessor {
-        return RequestProcessor(configureRequest(request), client).executeRequest()
+    fun get(request: Request, listener: SprintListener?): RequestProcessor {
+        return RequestProcessor(configureRequest(request), client, listener).executeRequest()
     }
 
 
