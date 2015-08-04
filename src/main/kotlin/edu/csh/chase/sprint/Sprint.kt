@@ -17,14 +17,28 @@ public object Sprint {
         client
     }
 
+    public fun get(url: String, urlParameters: UrlBody?, headers: ArrayList<Header>?,
+                   requestFinished: ((Request, Response) -> Unit)): RequestProcessor {
+        return get(Request(url = url, requestType = RequestType.Get, urlParams = urlParameters, headers = headers),
+                object : SprintSuccess {
+                    override fun sprintSuccess(request: Request, response: Response) {
+                        requestFinished(request, response)
 
-    public fun get(url: String, urlParameters: UrlBody, headers: ArrayList<Header>?,
-                   requestFinished: ((Request, Response) -> Unit)?) {
+                    }
+                },
+                object : SprintFailure {
+                    override fun sprintFailure(request: Request, response: Response) {
+                        requestFinished(request, response)
 
+                    }
+
+                })
     }
 
-    public fun get(request: Request): RequestProcessor {
-
+    public fun get(request: Request, successListener: SprintSuccess?, failureListener: SprintFailure): RequestProcessor {
+        val processor = RequestProcessor(request, client, successListener, failureListener)
+        processor.executeRequest()
+        return processor
     }
 
 }
