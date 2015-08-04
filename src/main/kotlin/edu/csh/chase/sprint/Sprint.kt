@@ -2,6 +2,7 @@ package edu.csh.chase.sprint
 
 import com.squareup.okhttp.Headers
 import com.squareup.okhttp.OkHttpClient
+import com.squareup.okhttp.RequestBody
 import edu.csh.chase.sprint.parameters.UrlParameters
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
@@ -38,8 +39,23 @@ public object Sprint {
         return RequestProcessor(request, client, sprintListener).executeRequest()
     }
 
-    public fun post(request: Request, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
+    public fun post(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder ? = null,
+                    body: RequestBody? = null, extraData: Any ? = null, requestFinished: ((Request, Response) -> Unit )):
+            RequestProcessor {
+        return post(Request(url = url, requestType = RequestType.Post, urlParams = urlParameters, headers = headers,
+                body = body, extraData = extraData), requestFinished)
+    }
 
+    public fun post(request: Request, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
+        return post(request, object : SprintListener {
+            override fun sprintSuccess(request: Request, response: Response) {
+                requestFinished(request, response)
+            }
+
+            override fun sprintFailure(request: Request, response: Response) {
+                requestFinished(request, response)
+            }
+        })
     }
 
     public fun post(request: Request, sprintListener: SprintListener?): RequestProcessor {
