@@ -17,17 +17,16 @@ public object Sprint {
     }
 
     public fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
-                   requestFinished: ((Request, Response) -> Unit)): RequestProcessor {
+                   extraData: Any? = null, requestFinished: ((Request, Response) -> Unit )):
+            RequestProcessor {
         return get(Request(url = url, requestType = RequestType.Get, urlParams = urlParameters, headers = headers),
                 object : SprintListener {
                     override fun sprintSuccess(request: Request, response: Response) {
                         requestFinished(request, response)
-
                     }
 
                     override fun sprintFailure(request: Request, response: Response) {
                         requestFinished(request, response)
-
                     }
                 })
     }
