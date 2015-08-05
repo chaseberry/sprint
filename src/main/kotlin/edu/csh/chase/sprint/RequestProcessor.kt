@@ -12,10 +12,14 @@ class RequestProcessor(val request: Request, private val client: OkHttpClient, p
 
     var currentCall: Call? = null
 
-    private fun buildOkRequest(): OkRequest {
+    fun buildOkRequest(): OkRequest {
         val builder = OkRequest.Builder()
         //TODO make sure the URL is still valid if the urlParams is null
-        builder.url(request.url + request.urlParams?.toString())
+        builder.url(if (request.urlParams != null) {
+            request.url + request.urlParams.toString()
+        } else {
+            request.url
+        })
         when (request.requestType) {
             RequestType.Get -> builder.get()
             RequestType.Post -> builder.post(request.body)
