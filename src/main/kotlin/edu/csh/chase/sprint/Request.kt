@@ -13,6 +13,7 @@ fun GetRequest(url: String,
                urlParams: UrlParameters? = null,
                headers: Headers.Builder? = null,
                extraData: Any? = null): Request {
+    
     return Request(
             url = url,
             requestType = RequestType.Get,
@@ -27,6 +28,7 @@ fun PostRequest(url: String,
                 headers: Headers.Builder? = null,
                 body: RequestBody? = null,
                 extraData: Any? = null): Request {
+
     return Request(
             url = url,
             requestType = RequestType.Post,
@@ -42,6 +44,7 @@ fun PutRequest(url: String,
                headers: Headers.Builder? = null,
                body: RequestBody? = null,
                extraData: Any? = null): Request {
+
     return Request(
             url = url,
             requestType = RequestType.Put,
@@ -57,6 +60,7 @@ fun DeleteRequest(url: String,
                   headers: Headers.Builder? = null,
                   body: RequestBody? = null,
                   extraData: Any? = null): Request {
+
     return Request(
             url = url,
             requestType = RequestType.Delete,
