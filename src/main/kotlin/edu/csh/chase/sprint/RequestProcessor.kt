@@ -33,11 +33,13 @@ class RequestProcessor(val request: Request, private val client: OkHttpClient, p
         val okRequest = buildOkRequest()
         currentCall = client.newCall(okRequest)
         currentCall!!.enqueue(this)
+        listener?.sprintRequestQueued(request)
         return this
     }
 
     fun cancelRequest() {
         currentCall?.cancel()
+        listener?.sprintRequestCanceled(request)
         currentCall = null
     }
 

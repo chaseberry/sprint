@@ -10,4 +10,12 @@ interface SprintListener {
 
     }
 
+    fun sprintRequestQueued(request: Request) {
+
+    }
+
+    fun sprintRequestCanceled(request: Request) {
+
+    }
+
 }
