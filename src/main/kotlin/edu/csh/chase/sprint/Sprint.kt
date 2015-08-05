@@ -18,6 +18,7 @@ public object Sprint {
     }
 
     public fun executeRequest(request: Request, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
+
         return executeRequest(request, object : SprintListener {
             override fun sprintSuccess(request: Request, response: Response) {
                 requestFinished(request, response)
