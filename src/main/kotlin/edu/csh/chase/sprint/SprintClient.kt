@@ -18,8 +18,8 @@ abstract class SprintClient(val urlBase: String? = null) {
     abstract val defaultRequestSerializer: RequestSerializer
 
     //Maybe make this NOT have a return?
-    open fun configureRequest(request: Request): Request {
-        return request
+    open fun configureRequest(request: Request) {
+
     }
 
     private fun serializeBody(serializer: RequestSerializer?, body: Any?): RequestBody? {
@@ -31,7 +31,8 @@ abstract class SprintClient(val urlBase: String? = null) {
     }
 
     fun executeRequest(request: Request, listener: SprintListener?): RequestProcessor {
-        return RequestProcessor(configureRequest(request), client, listener).executeRequest()
+        configureRequest(request)
+        return RequestProcessor(request, client, listener).executeRequest()
     }
 
     fun executeRequest(request: Request, listener: ((Request, Response) -> Unit)?):
