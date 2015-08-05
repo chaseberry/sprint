@@ -9,5 +9,12 @@ fun headers(vararg headers: Pair<String, String>): Headers.Builder {
 }
 
 fun buildEndpoint(urlBase: String, endpoint: String): String {
-
+    var builtString = urlBase
+    if (urlBase.last() != '/') {
+        builtString += '/'
+    }
+    if (endpoint.first() == '/') {
+        builtString += endpoint.substring(1)
+    }
+    return builtString
 }
