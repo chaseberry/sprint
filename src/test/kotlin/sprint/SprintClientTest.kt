@@ -6,12 +6,11 @@ import edu.csh.chase.sprint.RequestSerializer
 import edu.csh.chase.sprint.SprintClient
 
 class SprintClientTest : SprintClient("Some url here") {
-    
+
     override fun configureClient(client: OkHttpClient) {
 
     }
 
     override val defaultRequestSerializer: RequestSerializer = JsonRequestSerializer()
-
-
+    
 }
