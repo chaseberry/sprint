@@ -33,6 +33,24 @@ abstract class SprintClient(val urlBase: String? = null) {
         return RequestProcessor(if (callConfigure) configureRequest(request) else request, client, listener).executeRequest()
     }
 
+    fun executeRequest(request: Request, callConfigure: Boolean = true, listener: (Request, Response) -> Unit):
+            RequestProcessor {
+
+        return executeRequest(
+                request = request,
+                callConfigure = callConfigure,
+                listener = object : SprintListener {
+                    override fun sprintSuccess(request: Request, response: Response) {
+                        listener(request, response)
+                    }
+
+                    override fun sprintFailure(request: Request, response: Response) {
+                        listener(request, response)
+                    }
+                }
+        )
+    }
+
     fun get(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
             extraData: Any? = null, listener: SprintListener? = null, callConfigure: Boolean = true): RequestProcessor {
 
