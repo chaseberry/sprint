@@ -30,7 +30,7 @@ class JsonRequestSerializer : RequestSerializer {
                     } else {
                         JsonBody(JsonObject(castedData))
                     }
-                } catch(except: ClassCastException) {
+                } catch(except: Exception) {
                     null
                 }
 
