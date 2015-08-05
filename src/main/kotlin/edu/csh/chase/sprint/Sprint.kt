@@ -39,6 +39,11 @@ public object Sprint {
                 requestFinished)
     }
 
+    public fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+                   extraData: Any? = null, requestFinished: SprintListener): RequestProcessor {
+        return executeRequest(Request(url = url, requestType = RequestType.Get, urlParams = urlParameters, headers = headers), requestFinished)
+    }
+
     public fun post(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder ? = null,
                     body: RequestBody? = null, extraData: Any ? = null, requestFinished: ((Request, Response) -> Unit )):
             RequestProcessor {
