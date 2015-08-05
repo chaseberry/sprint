@@ -15,6 +15,8 @@ data class Response(val statusCode: Int, val responseBody: ResponseBody?, val he
             return parseJsonString(String(responseBody.bytes()))
         }
 
+    val bodyAsString: String? = if (responseBody == null) null else String(responseBody.bytes())
+
     val successful: Boolean
         get() {
             return statusCode in 200..299
