@@ -11,12 +11,58 @@ data class Request(val url: String, val requestType: RequestType,
 
 fun GetRequest(url: String,
                urlParams: UrlParameters? = null,
-               headers: Headers.Builder? = null, extraData: Any? = null): Request {
+               headers: Headers.Builder? = null,
+               extraData: Any? = null): Request {
     return Request(
             url = url,
             requestType = RequestType.Get,
             urlParams = urlParams,
             headers = headers,
+            extraData = extraData
+    )
+}
+
+fun PostRequest(url: String,
+                urlParams: UrlParameters? = null,
+                headers: Headers.Builder? = null,
+                body: RequestBody? = null,
+                extraData: Any? = null): Request {
+    return Request(
+            url = url,
+            requestType = RequestType.Post,
+            urlParams = urlParams,
+            headers = headers,
+            body = body,
+            extraData = extraData
+    )
+}
+
+fun PutRequest(url: String,
+               urlParams: UrlParameters? = null,
+               headers: Headers.Builder? = null,
+               body: RequestBody? = null,
+               extraData: Any? = null): Request {
+    return Request(
+            url = url,
+            requestType = RequestType.Put,
+            urlParams = urlParams,
+            headers = headers,
+            body = body,
+            extraData = extraData
+    )
+}
+
+fun DeleteRequest(url: String,
+                  urlParams: UrlParameters? = null,
+                  headers: Headers.Builder? = null,
+                  body: RequestBody? = null,
+                  extraData: Any? = null): Request {
+    return Request(
+            url = url,
+            requestType = RequestType.Delete,
+            urlParams = urlParams,
+            headers = headers,
+            body = body,
             extraData = extraData
     )
 }
