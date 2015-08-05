@@ -15,7 +15,7 @@ abstract class SprintClient(val urlBase: String? = null) {
 
     abstract fun configureClient(client: OkHttpClient)
 
-    abstract fun defaultRequestSerializer(): RequestSerializer
+    abstract val defaultRequestSerializer: RequestSerializer
 
     open fun configureRequest(request: Request): Request {
         return request
@@ -25,7 +25,7 @@ abstract class SprintClient(val urlBase: String? = null) {
         return if (serializer != null && serializer.isValidType(body)) {
             serializer.serialize(body)
         } else {
-            defaultRequestSerializer().serialize(body)
+            defaultRequestSerializer.serialize(body)
         }
     }
 
