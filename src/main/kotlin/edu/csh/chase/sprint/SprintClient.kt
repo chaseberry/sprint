@@ -29,10 +29,14 @@ abstract class SprintClient(val urlBase: String? = null) {
         }
     }
 
+    fun executeRequest(request: Request, listener: SprintListener?): RequestProcessor {
+        return RequestProcessor(request, client, listener).executeRequest()
+    }
+
     fun get(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
             extraData: Any? = null, listener: SprintListener? = null): RequestProcessor {
 
-        return get(Request(
+        return executeRequest(Request(
                 url = buildEndpoint(urlBase ?: "", endpoint),
                 requestType = RequestType.Get,
                 urlParams = urlParameters,
@@ -41,15 +45,11 @@ abstract class SprintClient(val urlBase: String? = null) {
                 listener)
     }
 
-    fun get(request: Request, listener: SprintListener?): RequestProcessor {
-        return RequestProcessor(configureRequest(request), client, listener).executeRequest()
-    }
-
     fun post(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
              body: Any? = null, serializer: RequestSerializer? = null, extraData: Any? = null,
              listener: SprintListener? = null): RequestProcessor {
 
-        return post(Request(
+        return executeRequest(Request(
                 url = buildEndpoint(urlBase ?: "", endpoint),
                 urlParams = urlParameters,
                 headers = headers,
@@ -59,8 +59,19 @@ abstract class SprintClient(val urlBase: String? = null) {
                 listener)
     }
 
-    fun post(request: Request, listener: SprintListener?): RequestProcessor {
-        return RequestProcessor(request, client, listener).executeRequest()
+    fun put(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+            body: Any? = null, serializer: RequestSerializer? = null, extraData: Any? = null,
+            listener: SprintListener? = null): RequestProcessor {
+
+        return executeRequest(Request(
+                url = buildEndpoint(urlBase ?: "", endpoint),
+                urlParams = urlParameters,
+                headers = headers,
+                extraData = extraData,
+                requestType = RequestType.Put,
+                body = serializeBody(serializer, body)),
+                listener)
     }
+
 
 }
