@@ -73,5 +73,18 @@ abstract class SprintClient(val urlBase: String? = null) {
                 listener)
     }
 
+    fun delete(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+               body: Any? = null, serializer: RequestSerializer? = null, extraData: Any? = null,
+               listener: SprintListener? = null): RequestProcessor {
+
+        return executeRequest(Request(
+                url = buildEndpoint(urlBase ?: "", endpoint),
+                urlParams = urlParameters,
+                headers = headers,
+                extraData = extraData,
+                requestType = RequestType.Delete,
+                body = serializeBody(serializer, body)),
+                listener)
+    }
 
 }
