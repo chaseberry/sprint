@@ -20,6 +20,8 @@ class RequestProcessor(val request: Request, private val client: OkHttpClient, p
         when (request.requestType) {
             RequestType.Get -> builder.get()
             RequestType.Post -> builder.post(request.body)
+            RequestType.Put -> builder.put(request.body)
+            RequestType.Delete -> builder.delete(request.body)
         }
         if (request.headers != null) {
             builder.headers(request.headers.build())
