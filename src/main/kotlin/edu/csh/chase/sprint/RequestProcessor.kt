@@ -1,6 +1,5 @@
 package edu.csh.chase.sprint
 
-import com.squareup.okhttp
 import com.squareup.okhttp.Call
 import com.squareup.okhttp.Callback
 import com.squareup.okhttp.OkHttpClient
@@ -43,8 +42,9 @@ class RequestProcessor(val request: Request, private val client: OkHttpClient, p
         currentCall = null
     }
 
-    override fun onFailure(request: okhttp.Request?, e: IOException) {
+    override fun onFailure(request: OkRequest?, e: IOException) {
         e.printStackTrace()
+        //TODO create status codes for all potential IOExceptions
         listener?.sprintFailure(this.request, Response(-1, null, null))
     }
 
