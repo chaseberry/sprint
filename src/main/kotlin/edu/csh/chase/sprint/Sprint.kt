@@ -17,14 +17,8 @@ public object Sprint {
         client
     }
 
-    public fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
-                   extraData: Any? = null, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
-        return get(Request(url = url, requestType = RequestType.Get, urlParams = urlParameters, headers = headers),
-                requestFinished)
-    }
-
-    public fun get(request: Request, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
-        return get(request, object : SprintListener {
+    public fun executeRequest(request: Request, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
+        return executeRequest(request, object : SprintListener {
             override fun sprintSuccess(request: Request, response: Response) {
                 requestFinished(request, response)
             }
@@ -35,31 +29,20 @@ public object Sprint {
         })
     }
 
-    public fun get(request: Request, sprintListener: SprintListener?): RequestProcessor {
+    public fun executeRequest(request: Request, sprintListener: SprintListener?): RequestProcessor {
         return RequestProcessor(request, client, sprintListener).executeRequest()
+    }
+
+    public fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+                   extraData: Any? = null, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
+        return executeRequest(Request(url = url, requestType = RequestType.Get, urlParams = urlParameters, headers = headers),
+                requestFinished)
     }
 
     public fun post(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder ? = null,
                     body: RequestBody? = null, extraData: Any ? = null, requestFinished: ((Request, Response) -> Unit )):
             RequestProcessor {
-        return post(Request(url = url, requestType = RequestType.Post, urlParams = urlParameters, headers = headers,
+        return executeRequest(Request(url = url, requestType = RequestType.Post, urlParams = urlParameters, headers = headers,
                 body = body, extraData = extraData), requestFinished)
     }
-
-    public fun post(request: Request, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
-        return post(request, object : SprintListener {
-            override fun sprintSuccess(request: Request, response: Response) {
-                requestFinished(request, response)
-            }
-
-            override fun sprintFailure(request: Request, response: Response) {
-                requestFinished(request, response)
-            }
-        })
-    }
-
-    public fun post(request: Request, sprintListener: SprintListener?): RequestProcessor {
-        return RequestProcessor(request, client, sprintListener).executeRequest()
-    }
-
 }
