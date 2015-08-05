@@ -50,4 +50,12 @@ public object Sprint {
         return executeRequest(Request(url = url, requestType = RequestType.Post, urlParams = urlParameters, headers = headers,
                 body = body, extraData = extraData), requestFinished)
     }
+
+    public fun post(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder ? = null,
+                    body: RequestBody? = null, extraData: Any ? = null, requestFinished: SprintListener):
+            RequestProcessor {
+        return executeRequest(Request(url = url, requestType = RequestType.Post, urlParams = urlParameters, headers = headers,
+                body = body, extraData = extraData), requestFinished)
+    }
+
 }
