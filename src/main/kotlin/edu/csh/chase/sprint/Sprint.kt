@@ -72,4 +72,18 @@ public object Sprint {
                 body = body, extraData = extraData), requestFinished)
     }
 
+    public fun delete(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder ? = null,
+                      body: RequestBody? = null, extraData: Any ? = null, requestFinished: ((Request, Response) -> Unit )):
+            RequestProcessor {
+        return executeRequest(Request(url = url, requestType = RequestType.Delete, urlParams = urlParameters, headers = headers,
+                body = body, extraData = extraData), requestFinished)
+    }
+
+    public fun delete(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder ? = null,
+                      body: RequestBody? = null, extraData: Any ? = null, requestFinished: SprintListener):
+            RequestProcessor {
+        return executeRequest(Request(url = url, requestType = RequestType.Delete, urlParams = urlParameters, headers = headers,
+                body = body, extraData = extraData), requestFinished)
+    }
+
 }
