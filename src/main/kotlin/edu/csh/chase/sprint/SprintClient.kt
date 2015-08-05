@@ -30,10 +30,15 @@ abstract class SprintClient(val urlBase: String? = null) {
     }
 
     fun get(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
-            listener: SprintListener? = null, extraData: Any? = null): RequestProcessor {
+            extraData: Any? = null, listener: SprintListener? = null): RequestProcessor {
 
-        return get(Request(url = buildEndpoint(urlBase ?: "", endpoint), requestType = RequestType.Get,
-                urlParams = urlParameters, headers = headers, extraData = extraData), listener)
+        return get(Request(
+                url = buildEndpoint(urlBase ?: "", endpoint),
+                requestType = RequestType.Get,
+                urlParams = urlParameters,
+                headers = headers,
+                extraData = extraData),
+                listener)
     }
 
     fun get(request: Request, listener: SprintListener?): RequestProcessor {
@@ -41,11 +46,17 @@ abstract class SprintClient(val urlBase: String? = null) {
     }
 
     fun post(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
-             body: Any? = null, serializer: RequestSerializer? = null, listener: SprintListener? = null,
-             extraData: Any? = null): RequestProcessor {
-        return post(Request(url = buildEndpoint(urlBase ?: "", endpoint), urlParams = urlParameters,
-                headers = headers, extraData = extraData, requestType = RequestType.Post,
-                body = serializeBody(serializer, body)), listener)
+             body: Any? = null, serializer: RequestSerializer? = null, extraData: Any? = null,
+             listener: SprintListener? = null): RequestProcessor {
+
+        return post(Request(
+                url = buildEndpoint(urlBase ?: "", endpoint),
+                urlParams = urlParameters,
+                headers = headers,
+                extraData = extraData,
+                requestType = RequestType.Post,
+                body = serializeBody(serializer, body)),
+                listener)
     }
 
     fun post(request: Request, listener: SprintListener?): RequestProcessor {
