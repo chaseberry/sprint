@@ -1,5 +1,8 @@
+def $versionNumber = '0.0.3'
+
 group 'edu.csh.chase.sprint'
-version '0.0.2'
+version $versionNumber
+
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
@@ -47,7 +50,7 @@ bintray {
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/chaseberry/Sprint.git'
         version {
-            name = '0.0.1'
+            name = $versionNumber
             desc = 'Rest client for Kotlin'
             released = new Date()
         }
@@ -60,7 +63,7 @@ publishing {
             from components.java
             groupId 'edu.csh.chase.sprint'
             artifactId 'sprint'
-            version '0.0.2'
+            version $versionNumber
         }
     }
 }
