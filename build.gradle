@@ -1,5 +1,5 @@
 group 'edu.csh.chase.sprint'
-version '0.0.1'
+version '0.0.2'
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
@@ -60,7 +60,7 @@ publishing {
             from components.java
             groupId 'edu.csh.chase.sprint'
             artifactId 'sprint'
-            version '0.0.1'
+            version '0.0.2'
         }
     }
 }
