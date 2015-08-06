@@ -34,7 +34,7 @@ public object Sprint {
         return RequestProcessor(request, client, sprintListener).executeRequest()
     }
 
-    public fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+    public fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
                    extraData: Any? = null, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
 
         return executeRequest(Request(
@@ -45,7 +45,7 @@ public object Sprint {
                 requestFinished)
     }
 
-    public fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+    public fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
                    extraData: Any? = null, requestFinished: SprintListener): RequestProcessor {
 
         return executeRequest(Request(
@@ -56,7 +56,7 @@ public object Sprint {
                 requestFinished)
     }
 
-    public fun post(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder ? = null,
+    public fun post(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder = Headers.Builder(),
                     body: RequestBody? = null, extraData: Any ? = null, requestFinished: ((Request, Response) -> Unit )):
             RequestProcessor {
 
@@ -70,7 +70,7 @@ public object Sprint {
                 requestFinished)
     }
 
-    public fun post(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder ? = null,
+    public fun post(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder = Headers.Builder(),
                     body: RequestBody? = null, extraData: Any ? = null, requestFinished: SprintListener):
             RequestProcessor {
 
@@ -83,7 +83,7 @@ public object Sprint {
                 requestFinished)
     }
 
-    public fun put(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder ? = null,
+    public fun put(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder = Headers.Builder(),
                    body: RequestBody? = null, extraData: Any ? = null, requestFinished: ((Request, Response) -> Unit )):
             RequestProcessor {
 
@@ -97,7 +97,7 @@ public object Sprint {
                 requestFinished)
     }
 
-    public fun put(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder ? = null,
+    public fun put(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder = Headers.Builder(),
                    body: RequestBody? = null, extraData: Any ? = null, requestFinished: SprintListener):
             RequestProcessor {
 
@@ -111,7 +111,7 @@ public object Sprint {
                 requestFinished)
     }
 
-    public fun delete(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder ? = null,
+    public fun delete(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder = Headers.Builder(),
                       body: RequestBody? = null, extraData: Any ? = null, requestFinished: ((Request, Response) -> Unit )):
             RequestProcessor {
 
@@ -125,7 +125,7 @@ public object Sprint {
                 requestFinished)
     }
 
-    public fun delete(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder ? = null,
+    public fun delete(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder = Headers.Builder(),
                       body: RequestBody? = null, extraData: Any ? = null, requestFinished: SprintListener):
             RequestProcessor {
 

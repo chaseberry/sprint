@@ -52,7 +52,7 @@ abstract class SprintClient(val urlBase: String? = null) {
         )
     }
 
-    fun get(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+    fun get(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
             extraData: Any? = null, listener: SprintListener?): RequestProcessor {
 
         return executeRequest(GetRequest(
@@ -63,7 +63,7 @@ abstract class SprintClient(val urlBase: String? = null) {
                 listener)
     }
 
-    fun get(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+    fun get(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
             extraData: Any? = null, listener: ((Request, Response) -> Unit)?):
             RequestProcessor {
 
@@ -75,7 +75,7 @@ abstract class SprintClient(val urlBase: String? = null) {
                 listener = listener)
     }
 
-    fun post(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+    fun post(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
              body: Any? = null, serializer: RequestSerializer? = null, extraData: Any? = null,
              listener: SprintListener? = null): RequestProcessor {
 
@@ -88,7 +88,7 @@ abstract class SprintClient(val urlBase: String? = null) {
                 listener)
     }
 
-    fun post(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+    fun post(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
              serializer: RequestSerializer? = null, body: Any? = null, extraData: Any? = null,
              listener: ((Request, Response) -> Unit)? = null): RequestProcessor {
 
@@ -101,7 +101,7 @@ abstract class SprintClient(val urlBase: String? = null) {
                 listener = listener)
     }
 
-    fun put(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+    fun put(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
             body: Any? = null, serializer: RequestSerializer? = null, extraData: Any? = null,
             listener: SprintListener? = null): RequestProcessor {
 
@@ -114,7 +114,7 @@ abstract class SprintClient(val urlBase: String? = null) {
                 listener)
     }
 
-    fun put(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+    fun put(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
             serializer: RequestSerializer? = null, body: Any? = null, extraData: Any? = null,
             listener: ((Request, Response) -> Unit)? = null): RequestProcessor {
 
@@ -127,7 +127,7 @@ abstract class SprintClient(val urlBase: String? = null) {
                 listener = listener)
     }
 
-    fun delete(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+    fun delete(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
                body: Any? = null, serializer: RequestSerializer? = null, extraData: Any? = null,
                listener: SprintListener? = null): RequestProcessor {
 
@@ -140,7 +140,7 @@ abstract class SprintClient(val urlBase: String? = null) {
                 listener)
     }
 
-    fun delete(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder? = null,
+    fun delete(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
                serializer: RequestSerializer? = null, body: Any? = null, extraData: Any? = null,
                listener: ((Request, Response) -> Unit)? = null): RequestProcessor {
 
