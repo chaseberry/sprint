@@ -18,6 +18,8 @@ fun buildEndpoint(urlBase: String, endpoint: String): String {
     }
     if (endpoint.first() == '/') {
         builtString += endpoint.substring(1)
+    } else {
+        builtString += endpoint
     }
     return builtString
 }
