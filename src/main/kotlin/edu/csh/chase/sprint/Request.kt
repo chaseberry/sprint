@@ -10,7 +10,7 @@ data class Request(val url: String, val requestType: RequestType,
 
 fun GetRequest(url: String,
                urlParams: UrlParameters? = null,
-               headers: Headers.Builder? = null,
+               headers: Headers.Builder = Headers.Builder(),
                extraData: Any? = null): Request {
 
     return Request(
@@ -24,7 +24,7 @@ fun GetRequest(url: String,
 
 fun PostRequest(url: String,
                 urlParams: UrlParameters? = null,
-                headers: Headers.Builder? = null,
+                headers: Headers.Builder = Headers.Builder(),
                 body: RequestBody? = null,
                 extraData: Any? = null): Request {
 
@@ -40,7 +40,7 @@ fun PostRequest(url: String,
 
 fun PutRequest(url: String,
                urlParams: UrlParameters? = null,
-               headers: Headers.Builder? = null,
+               headers: Headers.Builder = Headers.Builder(),
                body: RequestBody? = null,
                extraData: Any? = null): Request {
 
@@ -56,7 +56,7 @@ fun PutRequest(url: String,
 
 fun DeleteRequest(url: String,
                   urlParams: UrlParameters? = null,
-                  headers: Headers.Builder? = null,
+                  headers: Headers.Builder = Headers.Builder(),
                   body: RequestBody? = null,
                   extraData: Any? = null): Request {
 
