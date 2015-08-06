@@ -1,5 +1,6 @@
 group 'edu.csh.chase.sprint'
 version '0.0.1'
+kotlin_version = '0.12.613'
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
@@ -11,7 +12,6 @@ repositories {
 }
 
 buildscript {
-    kotlin_version = '0.12.1230'
     repositories {
         mavenCentral()
     }
