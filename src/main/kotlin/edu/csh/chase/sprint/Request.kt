@@ -6,7 +6,7 @@ import edu.csh.chase.sprint.parameters.UrlParameters
 
 data class Request(val url: String, val requestType: RequestType,
                    var urlParams: UrlParameters? = null, var body: RequestBody? = null,
-                   val headers: Headers.Builder? = Headers.Builder(), var extraData: Any? = null)
+                   val headers: Headers.Builder = Headers.Builder(), var extraData: Any? = null)
 
 fun GetRequest(url: String,
                urlParams: UrlParameters? = null,
