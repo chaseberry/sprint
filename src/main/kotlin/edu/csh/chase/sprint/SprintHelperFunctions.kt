@@ -4,6 +4,7 @@ import com.squareup.okhttp.Headers
 import com.squareup.okhttp.RequestBody
 import edu.csh.chase.sprint.json.JsonBase
 import edu.csh.chase.sprint.parameters.JsonBody
+import java.net.URL
 
 fun headers(vararg headers: Pair<String, String>): Headers.Builder {
     val builder = Headers.Builder()
@@ -12,16 +13,7 @@ fun headers(vararg headers: Pair<String, String>): Headers.Builder {
 }
 
 fun buildEndpoint(urlBase: String, endpoint: String): String {
-    var builtString = urlBase
-    if (urlBase.last() != '/') {
-        builtString += '/'
-    }
-    if (endpoint.first() == '/') {
-        builtString += endpoint.substring(1)
-    } else {
-        builtString += endpoint
-    }
-    return builtString
+    return URL(URL(urlBase), endpoint).toString()
 }
 
 val JsonBase.toRequestBody: RequestBody
