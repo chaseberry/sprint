@@ -2,7 +2,8 @@
 
 A simple to use Rest Client written in, and for, Kotlin
 
-A get request is as easy as 
+A get request is as easy as
+
 ```Kotlin
 
 Sprint.get(url = "http://someUrl.com/api/users"){ request, response ->
@@ -14,6 +15,7 @@ Sprint.get(url = "http://someUrl.com/api/users"){ request, response ->
 ```
 
 If you need more power behind making requests you can subclass SprintClient
+It allows you to provide it a base url and used endpoints, as well as serializing a body for you.
 
 ```Kotlin
 
@@ -36,4 +38,4 @@ clas myClient(): SprintClient("https://mybase.com/api/"){
 
 ```
 
-In the current form, this library contains a seperate Json package. 
+In the current form, this library contains a separate Json package.
