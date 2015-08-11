@@ -1,4 +1,4 @@
-def $versionNumber = '0.0.5'
+def $versionNumber = '0.0.4'
 
 group 'edu.csh.chase.sprint'
 version $versionNumber
