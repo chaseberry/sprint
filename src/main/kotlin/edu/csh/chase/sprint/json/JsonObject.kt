@@ -26,14 +26,14 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
 
     constructor(tokener: JsonTokener) : this() {
         if (tokener.nextClean() != '{') {
-            throw tokener.syntaxError("A JSONObject text must begin with '{'")
+            throw tokener.syntaxError("A JsonObject text must begin with '{'")
         }
 
         var key: String
 
         while (true) {
             when (tokener.nextClean()) {
-                0.toChar() -> throw tokener.syntaxError("A JSONObject text must end with '}'")//EOF
+                0.toChar() -> throw tokener.syntaxError("A JsonObject text must end with '}'")//EOF
                 '}' -> return
                 else -> {
                     tokener.back()
