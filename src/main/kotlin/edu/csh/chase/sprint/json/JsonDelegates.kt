@@ -1,6 +1,5 @@
 package edu.csh.chase.sprint.json
 
-import kotlin.properties.Delegates
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 
@@ -26,19 +25,24 @@ public object JsonDelegates {
 
     }
 
-    public fun <T>notNullObjectVal(jsonObject: JsonObject, defaultValue: (String) -> Any = { key -> key }): JsonObjectValNotNull<T>
+    public fun <T>notNullObjectVal(jsonObject: JsonObject, defaultValue: T): JsonObjectValNotNull<T>
             = JsonObjectValNotNull(jsonObject, defaultValue)
 
-    private open class JsonObjectValNotNull<T : Any>(protected val jsonObject: JsonObject, val defaultValue: (String) -> Any) :
+    private open class JsonObjectValNotNull<T : Any>(protected val jsonObject: JsonObject, val defaultValue: T) :
             ReadOnlyProperty<Any, T> {
+        
         override fun get(thisRef: Any, desc: PropertyMetadata): T {
-            return jsonObject[desc.name, defaultValue(desc.name)] as T
+            return jsonObject[desc.name, defaultValue] as T
         }
 
     }
 
-    private class JsonObjectVarNotNull<T : Any>(jsonObject: JsonObject, defaultValue: (String) -> Any) :
+    public fun <T>notNullObjectVar(jsonObject: JsonObject, defaultValue: T): JsonObjectVarNotNull<T>
+            = JsonObjectVarNotNull(jsonObject, defaultValue)
+
+    private class JsonObjectVarNotNull<T : Any>(jsonObject: JsonObject, defaultValue: T) :
             JsonObjectValNotNull<T>(jsonObject, defaultValue), ReadWriteProperty<Any, T> {
+
         override fun set(thisRef: Any, desc: PropertyMetadata, value: T) {
             jsonObject[desc.name] = value
         }
