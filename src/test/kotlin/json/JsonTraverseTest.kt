@@ -8,8 +8,7 @@ import kotlin.test.assertEquals
 class JsonTraverseTest {
 
     Test fun traverseBaseObjectTest() {
-        val jsonObject = JsonObject()
-        val obj = jsonObject
+        val obj = JsonObject()
         obj["key"] = "value"
         obj["test"] = 15
 
@@ -30,6 +29,15 @@ class JsonTraverseTest {
         assertEquals(null, arr.traverse("invalid"))
         assertEquals("default", arr.traverse(compoundKey = "invalid", default = "default"))
         assertEquals("default", arr.traverse(compoundKey = "-1", default = "default"))
+    }
+
+    Test fun traverseJsonObjectTest() {
+        val obj = JsonObject().put("key", "value").put("test", 15)
+        val secondObj = JsonObject().put("secondKey", "secondValue")
+        obj["object"] = secondObj
+
+        assertEquals("secondValue", obj.traverse("object:secondKey"))
+        assertEquals("secondValue", obj.traverse(compoundKey = "object-secondKey", delim = "-"))
     }
 
 }
