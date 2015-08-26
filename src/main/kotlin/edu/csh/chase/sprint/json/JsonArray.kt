@@ -3,7 +3,7 @@ package edu.csh.chase.sprint.json
 import java.io.IOException
 import java.io.StringWriter
 import java.io.Writer
-import java.util.*
+import java.util.ArrayList
 
 class JsonArray() : JsonBase() {
 
@@ -54,7 +54,7 @@ class JsonArray() : JsonBase() {
         array.addAll(list.filter { it.isValidJsonType() })
     }
 
-    constructor(array: Array<Any?>) : this() {
+    constructor(vararg array: Any?) : this() {
         this.array.addAll(array.filter { it.isValidJsonType() })
     }
 
