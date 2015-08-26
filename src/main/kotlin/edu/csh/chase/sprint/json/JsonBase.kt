@@ -6,7 +6,11 @@ abstract class JsonBase : JsonSerializable {
 
     fun traverse(compoundKey: String, delim: String = ":"): Any? {
         val key = compoundKey.splitBy(delim).iterator()
-
+        return when (this) {
+            is JsonArray -> traverseArray(key, this)
+            is JsonObject -> traverseObject(key, this)
+            else -> null
+        }
     }
 
     fun traverse(compoundKey: String, default: Any, delim: String = ":"): Any {
@@ -15,18 +19,33 @@ abstract class JsonBase : JsonSerializable {
 
     private fun traverseArray(key: Iterator<String>, array: JsonArray): Any? {
         if (!key.hasNext()) {
-            return null
+            return array
         }
 
+        val index = try {
+            key.next().toInt()
+        } catch(e: NumberFormatException) {
+            return null
+        }
+        val value = array[index]
+        return when (value) {
+            is JsonArray -> traverseArray(key, value)
+            is JsonObject -> traverseObject(key, value)
+            else -> value
+        }
 
     }
 
     private fun traverseObject(key: Iterator<String>, `object`: JsonObject): Any? {
         if (!key.hasNext()) {
-            return null
+            return `object`
         }
         val value = `object`[key.next()]
-        return value
+        return when (value) {
+            is JsonObject -> traverseObject(key, value)
+            is JsonArray -> traverseArray(key, value)
+            else -> value
+        }
     }
 
 }
