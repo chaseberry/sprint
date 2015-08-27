@@ -5,8 +5,7 @@ import java.io.StringWriter
 import java.io.Writer
 import java.util.ArrayList
 
-class JsonArray() : JsonBase() {
-
+class JsonArray() : JsonBase(), Iterable<Any?> {
 
     private val array = ArrayList<Any?>()
 
@@ -169,6 +168,11 @@ class JsonArray() : JsonBase() {
     override fun jsonSerialize(): String {
         return this.toString()
     }
+
+    override fun iterator(): Iterator<Any?> {
+        return array.iterator()
+    }
+
 
     /**
      * Make a JSON text of this JSONArray. For compactness, no unnecessary
