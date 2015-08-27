@@ -4,6 +4,7 @@ import edu.csh.chase.sprint.json.JsonArray
 import edu.csh.chase.sprint.json.JsonObject
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class JsonTraverseTest {
 
@@ -39,6 +40,14 @@ class JsonTraverseTest {
         assertEquals("secondValue", obj.traverse("object:secondKey"))
         assertEquals("secondValue", obj.traverse(compoundKey = "object-secondKey", delim = "-"))
         assertEquals("secondValue", obj.traverse("object:secondKey:invalidKey"))
+    }
+
+    Test fun traverseJsonArrayTest() {
+        val arr = JsonArray("value", 15, JsonArray("secondValue", 16))
+
+        assertEquals("secondValue", arr.traverse("2:0"))
+        assertEquals("secondValue", arr.traverse("2:0:0"))
+        assertNull(arr.traverse("invalidKey"))
     }
 
 }

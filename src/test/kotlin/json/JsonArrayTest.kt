@@ -39,7 +39,7 @@ class JsonArrayTest() {
     }
 
     Test fun jsonArrayGetTest() {
-        val array = JsonArray(arrayOf<Any?>(0, "String", null, false, 15.687))
+        val array = JsonArray(*arrayOf<Any?>(0, "String", null, false, 15.687))
 
         assertEquals(5, array.size)
         assertTrue(3 in array)
@@ -69,7 +69,7 @@ class JsonArrayTest() {
     }
 
     Test fun jsonArrayGetBooleanTest() {
-        val array = JsonArray(arrayOf<Any?>(true, false, null, "Not a Boolean"))
+        val array = JsonArray(*arrayOf<Any?>(true, false, null, "Not a Boolean"))
         assertEquals(4, array.size)
 
         assertTrue(array.getBoolean(0)!!)
@@ -86,7 +86,7 @@ class JsonArrayTest() {
     }
 
     Test fun jsonArrayGetIntTest() {
-        val array = JsonArray(arrayOf<Any?>(15, 0, null, 15.9, "A String"))
+        val array = JsonArray(*arrayOf<Any?>(15, 0, null, 15.9, "A String"))
         assertEquals(5, array.size)
 
         assertEquals(15, array.getInt(0)!!)
