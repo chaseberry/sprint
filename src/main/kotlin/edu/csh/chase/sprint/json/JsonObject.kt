@@ -115,6 +115,15 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
     }
 
     //Putters
+    /**
+     * Puts a mapping of key to value in the given object
+     * This function is used to chain calls together for simplicity
+     *
+     * @param key A String key
+     * @param value A valid json value
+     *
+     * @return JsonObject the JsonObject the key,value pair was put into
+     */
     fun put(key: String, value: Any?): JsonObject {
         addKeyToValue(key, value)
         return this
