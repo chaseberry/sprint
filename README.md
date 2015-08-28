@@ -19,7 +19,7 @@ It allows you to provide it a base url and used endpoints, as well as serializin
 
 ```Kotlin
 
-clas myClient(): SprintClient("https://mybase.com/api/"){
+class myClient(): SprintClient("https://mybase.com/api/"){
   
     override fun configureClient(client:OkHttpClient){
         //Configure your http client, timeouts and such

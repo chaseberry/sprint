@@ -158,6 +158,14 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         return this
     }
 
+    /**
+     * Takes a Pair of <String, Any?> and only adds it to the given key if the value is not null
+     * This function can be used to chain calls together for simplicity
+     *
+     * @param keyValuePair A Pair<String,Any?> of a key to value
+     *
+     * @return JsonObect the JsonObject the pair was put into
+     */
     fun putNotNull(keyValuePair: Pair<String, Any?>): JsonObject {
         return putNotNull(keyValuePair.first, keyValuePair.second)
     }
