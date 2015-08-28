@@ -3,7 +3,7 @@ package edu.csh.chase.sprint.json
 import java.io.IOException
 import java.io.StringWriter
 import java.io.Writer
-import java.util.*
+import java.util.HashMap
 
 class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
 
@@ -129,6 +129,14 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         return this
     }
 
+    /**
+     * Puts a mapping of a key to value in the given object
+     * This function can be used to chain calls together for simplicity
+     *
+     * @param keyValuePair A Pair<String,Any?> of a key to value
+     *
+     * @return JsonObect the JsonObject the pair was put into
+     */
     fun put(keyValuePair: Pair<String, Any?>): JsonObject {
         return put(keyValuePair.first, keyValuePair.second)
     }
