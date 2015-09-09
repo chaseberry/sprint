@@ -177,3 +177,11 @@ fun parseJsonString(jsonString: String): JsonBase? {
     }
     return null
 }
+
+fun json(json: () -> List<Pair<String, Any?>>): JsonObject {
+    return JsonObject(json())
+}
+
+fun json(json: () -> List<Any?>): JsonArray {
+    return JsonArray(json())
+}
