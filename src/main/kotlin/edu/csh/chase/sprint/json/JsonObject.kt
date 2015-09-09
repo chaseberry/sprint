@@ -78,6 +78,12 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         }
     }
 
+    constructor(elementList: List<Pair<String, Any?>>) : this() {
+        elementList.forEach {
+            putOnce(it)
+        }
+    }
+
     private fun addKeyToValue(key: String, value: Any?) {
         if (!value.isValidJsonType()) {
             throw JsonException("$value is not a valid type for Json.")
