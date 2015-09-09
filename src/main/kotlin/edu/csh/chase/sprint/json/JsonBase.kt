@@ -3,8 +3,9 @@ package edu.csh.chase.sprint.json
 abstract class JsonBase : JsonSerializable {
 
     abstract val size: Int
+    var delim = ":"
 
-    fun traverse(compoundKey: String, delim: String = ":"): Any? {
+    fun traverse(compoundKey: String): Any? {
         val key = compoundKey.splitBy(delim).iterator()
         return when (this) {
             is JsonArray -> traverseArray(key, this)
@@ -13,19 +14,19 @@ abstract class JsonBase : JsonSerializable {
         }
     }
 
-    fun traverse(compoundKey: String, default: Any, delim: String = ":"): Any {
-        return traverse(compoundKey = compoundKey, delim = delim) ?: default
+    fun traverse(compoundKey: String, default: Any): Any {
+        return traverse(compoundKey = compoundKey) ?: default
     }
 
-    fun traverseMulti(delim: String = ":", vararg keys: String): Any? {
+    fun traverseMulti(vararg keys: String): Any? {
         for (key in keys) {
-            return traverse(compoundKey = key, delim = delim) ?: continue
+            return traverse(compoundKey = key) ?: continue
         }
         return null
     }
 
-    fun traverseMulti(default: Any, delim: String = ":", vararg keys: String): Any {
-        return traverseMulti(keys = *keys, delim = delim) ?: default
+    fun traverseMulti(default: Any, vararg keys: String): Any {
+        return traverseMulti(keys = *keys) ?: default
     }
 
     private fun traverseArray(key: Iterator<String>, array: JsonArray): Any? {
