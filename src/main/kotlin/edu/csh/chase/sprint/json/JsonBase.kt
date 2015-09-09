@@ -18,7 +18,9 @@ abstract class JsonBase : JsonSerializable {
     }
 
     fun traverseMulti(delim: String = ":", vararg keys: String): Any? {
-        keys.forEach { return traverse(compoundKey = it, delim = delim) ?: return@forEach }
+        for (key in keys) {
+            return traverse(compoundKey = key, delim = delim) ?: continue
+        }
         return null
     }
 
