@@ -11,12 +11,16 @@ class JsonMultiTraverseTest {
     val obj2 = JsonObject().put("a", "b").put("c", "d").put("e", "f").put("obj", obj1)
 
     Test fun traverseMultiBasic() {
-        assertEquals(obj1.traverseMulti("k", "ke", "key"), "value")
+        assertEquals("value", obj1.traverseMulti("k", "ke", "key"))
         assertNull(obj1.traverseMulti("k", "ke"))
-        assertEquals(obj2.traverseMulti("z", "y", "v:xz", "obj:key"), "value")
-        assertEquals(obj2.traverseMulti("obj:key", "v:xw"), "value")
-        assertEquals(obj2.traverseMulti("obj:k3", "v:wq"), "v3")
-        assertEquals(obj2.traverseMulti("v:wq", "y:t", "obj:k2"), "v2")
+        assertEquals("value", obj2.traverseMulti("z", "y", "v:xz", "obj:key"))
+        assertEquals("value", obj2.traverseMulti("obj:key", "v:xw"))
+        assertEquals("v3", obj2.traverseMulti("obj:k3", "v:wq"))
+        assertEquals("v3", obj2.traverseMulti("v:wq", "y:t", "obj:k2"))
+    }
+
+    Test fun traverseMultiDefault() {
+        assertEquals("def", obj1.traverseMultiWithDefault("def", "k", "k7"))
     }
 
 }

@@ -25,7 +25,7 @@ abstract class JsonBase : JsonSerializable {
         return null
     }
 
-    fun traverseMulti(default: Any, vararg keys: String): Any {
+    fun traverseMultiWithDefault(default: Any, vararg keys: String): Any {
         return traverseMulti(keys = *keys) ?: default
     }
 
