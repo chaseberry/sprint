@@ -38,7 +38,6 @@ class JsonTraverseTest {
         obj["object"] = secondObj
 
         assertEquals("secondValue", obj.traverse("object:secondKey"))
-        assertEquals("secondValue", obj.traverse(compoundKey = "object-secondKey", delim = "-"))
         assertEquals("secondValue", obj.traverse("object:secondKey:invalidKey"))
     }
 
