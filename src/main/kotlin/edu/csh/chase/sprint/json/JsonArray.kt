@@ -173,6 +173,9 @@ class JsonArray() : JsonBase(), Iterable<Any?> {
         return array.iterator()
     }
 
+    override fun equals(other: Any?):Boolean {
+        return other is JsonArray && array == other.array
+    }
 
     /**
      * Make a JSON text of this JSONArray. For compactness, no unnecessary
