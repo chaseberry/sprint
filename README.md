@@ -19,24 +19,28 @@ It allows you to provide it a base url and uses endpoints, as well as serializin
 
 ```Kotlin
 
-class myClient(): SprintClient("https://mybase.com/api/"){
-  
-    override fun configureClient(client:OkHttpClient){
+
+class myClient() : SprintClient("https://mybase.com/api/") {
+
+    override fun configureClient(client: OkHttpClient) {
         //Configure your http client, timeouts and such
     }
-    
+
     //A default serializer for the body of the request
     override val defaultRequestSerializer: RequestSerializer = JsonRequestSerializer()
-    
-    fun myRequest(param:String){
-      get(endpoint="users/",
-        urlParams = UrlParams{ arrayOf(
-            "key" to param
-            )}){ request, response ->
-        //Whatever you what to do once the request finishes
-      }
+
+    fun myRequest(param: String) {
+        get(
+                endpoint = "users",
+                urlParameters = urlParams {
+                    arrayOf(
+                            "key" to param
+                    )
+                }) { request: Request, response: Response ->
+            //Whatever you what to do once the request finishes
+        }
     }
-  
+
 }
 
 ```
