@@ -78,7 +78,7 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         }
     }
 
-    constructor(elementList: List<Pair<String, Any?>>) : this() {
+    constructor(vararg elementList: Pair<String, Any?>) : this() {
         elementList.forEach {
             putOnce(it)
         }
