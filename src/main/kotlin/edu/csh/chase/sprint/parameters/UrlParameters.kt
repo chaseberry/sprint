@@ -1,7 +1,5 @@
 package edu.csh.chase.sprint.parameters
 
-import java.util.*
-
 class UrlParameters(vararg val pairs: Pair<String, Any>) {
 
     override fun toString(): String {
@@ -11,4 +9,8 @@ class UrlParameters(vararg val pairs: Pair<String, Any>) {
         return urlQueryString
     }
 
+}
+
+fun urlParams(params: () -> Array<Pair<String, String>>): UrlParameters {
+    return UrlParameters(*params())
 }
