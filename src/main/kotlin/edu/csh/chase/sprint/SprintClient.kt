@@ -60,7 +60,7 @@ abstract class SprintClient(val urlBase: String? = null) {
                 urlParams = urlParameters,
                 headers = headers,
                 extraData = extraData),
-                listener)
+                listener = listener)
     }
 
     fun get(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
