@@ -7,7 +7,7 @@ A get request is as easy as
 ```Kotlin
 
 Sprint.get(url = "http://someUrl.com/api/users"){ request, response ->
-    if(response.statusCode == 200){
+    if(response.successful){
         //Do something
     }
 }
