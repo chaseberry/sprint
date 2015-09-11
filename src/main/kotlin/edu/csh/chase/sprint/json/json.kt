@@ -17,7 +17,7 @@ object json {
      * Constructs a JsonObject from a list of Pair<String, Any?>
      * Provided pairs with invalid json types will be ignored
      *
-     * @param json A list of key, value pairs
+     * @param elements A list of key, value pairs
      * @return A JsonObject with only valid pairs from the provided lambda
      */
     fun invoke(vararg elements: Pair<String, Any?>): JsonObject {
