@@ -109,6 +109,7 @@ private fun getJsonValue(value: Any?, shouldIndent: Boolean = false, depth: Int 
         is Collection<Any?> -> JsonArray(value.filter { it.isValidJsonType() }).toString(shouldIndent, depth)
         is Map<*, *> -> JsonObject(value.jsonMapFilter { it.value.isValidJsonType() }).toString(shouldIndent, depth)
         is String -> quote(value)
+        is JsonBase -> value.toString(shouldIndent, depth)
         is JsonSerializable -> value.jsonSerialize()
         else -> value.toString()
     }
