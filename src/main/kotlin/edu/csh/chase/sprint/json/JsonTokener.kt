@@ -69,10 +69,10 @@ class JsonTokener(private var reader: Reader) {
             return (char - '0').toChar()
         }
         if (char >= 'A' && char <= 'F') {
-            return (char - ('A' - 10.toChar())).toChar()
+            return (char - ('A' - 10.toChar()).toChar()).toChar()
         }
         if (char >= 'a' && char <= 'f') {
-            return (char - ('a' - 10.toChar())).toChar()
+            return (char - ('a' - 10.toChar()).toChar()).toChar()
         }
         return (-1).toChar()
     }
