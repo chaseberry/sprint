@@ -103,11 +103,11 @@ fun quote(string: String, w: Writer): Writer {
  */
 fun Writer.indent(indent: Int) = write("   " * indent)
 
-private fun getJsonValue(value: Any?): String {
+private fun getJsonValue(value: Any?, shouldIndent: Boolean = false, depth: Int = 1): String {
     return when (value) {
         null -> "null"
-        is Collection<Any?> -> JsonArray(value.filter { it.isValidJsonType() }).toString()
-        is Map<*, *> -> JsonObject(value.jsonMapFilter { it.value.isValidJsonType() }).toString()
+        is Collection<Any?> -> JsonArray(value.filter { it.isValidJsonType() }).toString(shouldIndent, depth)
+        is Map<*, *> -> JsonObject(value.jsonMapFilter { it.value.isValidJsonType() }).toString(shouldIndent, depth)
         is String -> quote(value)
         is JsonSerializable -> value.jsonSerialize()
         else -> value.toString()

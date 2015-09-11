@@ -166,7 +166,7 @@ class JsonArray() : JsonBase(), Iterable<Any?> {
     }
 
     override fun jsonSerialize(): String {
-        return this.toString()
+        return this.toString(false)
     }
 
     override fun iterator(): Iterator<Any?> {
@@ -177,37 +177,14 @@ class JsonArray() : JsonBase(), Iterable<Any?> {
         return other is JsonArray && array == other.array
     }
 
-    /**
-     * Make a JSON text of this JSONArray. For compactness, no unnecessary
-     * whitespace is added. If it is not possible to produce a syntactically
-     * correct JSON text then null will be returned instead. This could occur if
-     * the array contains an invalid number.
-     * <p>
-     * Warning: This method assumes that the data structure is acyclical.
-     *
-     * @return a printable, displayable, transmittable representation of the
-     *         array.
-     */
     override fun toString(): String {
         return toString(false)
     }
 
-    /**
-     * Make a prettyprinted JSON text of this JSONArray. Warning: This method
-     * assumes that the data structure is acyclical.
-     *
-     * @param indentFactor
-     *            The number of spaces to add to each level of indentation.
-     * @return a printable, displayable, transmittable representation of the
-     *         object, beginning with <code>[</code>&nbsp<small>(left
-     *         bracket)</small> and ending with <code>]</code>
-     *         &nbsp<small>(right bracket)</small>.
-     * @throws JSONException
-     */
-    fun toString(shouldIndent: Boolean): String {
+    fun toString(shouldIndent: Boolean, depth: Int = 1): String {
         val sw = StringWriter()
         synchronized (sw.getBuffer()) {
-            return this.write(sw, shouldIndent).toString()
+            return this.write(sw, shouldIndent, depth).toString()
         }
     }
 
@@ -253,7 +230,7 @@ class JsonArray() : JsonBase(), Iterable<Any?> {
                     writer.write("\n")
                     writer.indent(depth)
                 }
-                writer.write(getJsonValue(value))
+                writer.write(getJsonValue(value, shouldIndent, depth + 1))
                 addComa = true
             }
             writer.write("]")

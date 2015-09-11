@@ -411,12 +411,8 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         return other is JsonObject && other.map == map
     }
 
-    override fun toString(): String {
-        return toString(false)
-    }
-
     override fun jsonSerialize(): String {
-        return this.toString()
+        return this.toString(false)
     }
 
     /**
@@ -429,22 +425,14 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         return map.iterator()
     }
 
-    /**
-     * Make a prettyprinted JSON text of this JSONObject.
-     * <p>
-     * Warning: This method assumes that the data structure is acyclical.
-     *
-     * @param indentFactor
-     *            The number of spaces to add to each level of indentation.
-     * @return a printable, displayable, portable, transmittable representation
-     *         of the object, beginning with <code>{</code>&nbsp<small>(left
-     *         brace)</small> and ending with <code>}</code>&nbsp<small>(right
-     *         brace)</small>.
-     */
-    fun toString(shouldIndent: Boolean): String {
+    override fun toString(): String {
+        return toString(false)
+    }
+
+    fun toString(shouldIndent: Boolean, depth: Int = 1): String {
         val writer = StringWriter()
         synchronized (writer.getBuffer()) {
-            return this.write(writer, shouldIndent).toString()
+            return this.write(writer, shouldIndent, depth).toString()
         }
     }
 
@@ -488,7 +476,7 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
                 if (shouldIndent) {
                     writer.write(" ")
                 }
-                writer.write(getJsonValue(value))
+                writer.write(getJsonValue(value, shouldIndent, depth + 1))
                 addComa = true
             }
             if (shouldIndent) {
