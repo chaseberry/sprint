@@ -20,8 +20,8 @@ object json {
      * @param json A Function that returns an array of key, value pairs
      * @return A JsonObject with only valid pairs from the provided lambda
      */
-    fun invoke(json: () -> Array<Pair<String, Any?>>): JsonObject {
-        return JsonObject(*json())
+    fun invoke(vararg elements: Pair<String, Any?>): JsonObject {
+        return JsonObject(*elements)
     }
 
 }

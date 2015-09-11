@@ -10,17 +10,18 @@ class JsonCreationTest {
 
     Test fun testObjectCreationEmpty() {
         val obj = JsonObject()
-        assertEquals(obj, json { arrayOf() })
+        assertEquals(obj, json ())
     }
 
     Test fun testObjectCreation() {
         val obj = JsonObject("key" to "value")
-        assertEquals(obj, json {
-            arrayOf(
-                    "key" to "value"
-            )
-        })
+        assertEquals(obj,
+                json (
+                        "key" to "value"
+                )
+        )
     }
+
 
     Test fun testArrayCreationEmpty() {
         val arr = JsonArray()

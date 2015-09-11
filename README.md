@@ -45,4 +45,5 @@ class myClient() : SprintClient("https://mybase.com/api/") {
 
 ```
 
-In the current form, this library contains a separate Json package.
+In the current form, this library contains a built in Json library
+
