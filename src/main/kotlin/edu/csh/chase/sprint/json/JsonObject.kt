@@ -408,7 +408,6 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
     }
 
     override fun equals(other: Any?): Boolean {
-        //TODO check each key value pair?
         return other is JsonObject && other.map == map
     }
 
@@ -420,6 +419,12 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         return this.toString()
     }
 
+    /**
+     * Gets an iterator of key, Value pairs
+     * This can be used in a foreach loop to loop over all pairs in this JsonObject
+     *
+     * @return an iterator of key, Value pairs
+     */
     override fun iterator(): Iterator<Map.Entry<String, Any?>> {
         return map.iterator()
     }
