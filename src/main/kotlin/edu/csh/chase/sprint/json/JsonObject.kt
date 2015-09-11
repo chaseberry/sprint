@@ -9,16 +9,25 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
 
     private val map = HashMap<String, Any?>()
 
+    /**
+     * The number of key, value pairs this JsonObject currently holds
+     */
     override val size: Int
         get() {
             return map.size()
         }
 
+    /**
+     * An iterator over the set of keys this JsonObject currently holds
+     */
     val keys: Iterator<String>
         get() {
             return map.keySet().iterator()
         }
 
+    /**
+     * A set of the keys this JsonObject currently holds
+     */
     val keySet: Set<String>
         get() {
             return map.keySet()
@@ -127,6 +136,11 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         return this
     }
 
+    /**
+     * Adds the key and value to this JsonObject only if key is not already present
+     * @param keyValuePair A key, value pair to add to this JsonObject
+     * @return This JsonObject the pair was placed into
+     */
     fun putOnce(keyValuePair: Pair<String, Any?>): JsonObject {
         return putOnce(keyValuePair.first, keyValuePair.second)
     }
@@ -202,62 +216,152 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
     }
 
     //Getters
-
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @return The value corresponding to the given key, null if no value was found
+     */
     fun get(key: String): Any? {
         return map[key]
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @param default The default value to return if null is found
+     * @return The value corresponding to the given key, default if no value was found
+     */
     fun get(key: String, default: Any): Any {
-        if (key in map && map[key] != null) {
+        if (map[key] != null) {
             return map[key]!!
         }
         return default
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @return The value corresponding to the given key, null if no value was found
+     */
     fun getInt(key: String): Int? {
         return get(key) as? Int
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @param default The default value to return if null is found
+     * @return The value corresponding to the given key, default if no value was found
+     */
     fun getInt(key: String, default: Int): Int {
         return getInt(key) ?: return default
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @return The value corresponding to the given key, null if no value was found
+     */
     fun getBoolean(key: String): Boolean? {
         return get(key) as? Boolean
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @param default The default value to return if null is found
+     * @return The value corresponding to the given key, default if no value was found
+     */
     fun getBoolean(key: String, default: Boolean): Boolean {
         return getBoolean(key) ?: return default
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @return The value corresponding to the given key, null if no value was found
+     */
     fun getString(key: String): String? {
         return get(key) as? String
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @param default The default value to return if null is found
+     * @return The value corresponding to the given key, default if no value was found
+     */
     fun getString(key: String, default: String): String {
         return getString(key) ?: return default
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @return The value corresponding to the given key, null if no value was found
+     */
     fun getDouble(key: String): Double? {
         return get(key) as? Double
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @param default The default value to return if null is found
+     * @return The value corresponding to the given key, default if no value was found
+     */
     fun getDouble(key: String, default: Double): Double {
         return getDouble(key) ?: return default
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @return The value corresponding to the given key, null if no value was found
+     */
     fun getJsonObject(key: String): JsonObject? {
         return get(key) as? JsonObject
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @param default The default value to return if null is found
+     * @return The value corresponding to the given key, default if no value was found
+     */
     fun getJsonObject(key: String, default: JsonObject): JsonObject {
         return getJsonObject(key) ?: return default
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @return The value corresponding to the given key, null if no value was found
+     */
     fun getJsonArray(key: String): JsonArray? {
         return get(key) as? JsonArray
     }
 
+    /**
+     * Gets the value from a given key
+     *
+     * @param key The key to pull the value from
+     * @param default The default value to return if null is found
+     * @return The value corresponding to the given key, default if no value was found
+     */
     fun getJsonArray(key: String, default: JsonArray): JsonArray {
         return getJsonArray(key) ?: return default
     }
