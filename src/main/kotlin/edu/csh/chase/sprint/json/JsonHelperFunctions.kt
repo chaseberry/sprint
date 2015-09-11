@@ -103,7 +103,7 @@ fun quote(string: String, w: Writer): Writer {
  */
 fun Writer.indent(indent: Int) = write("   " * indent)
 
-fun getJsonValue(value: Any?): String {
+private fun getJsonValue(value: Any?): String {
     return when (value) {
         null -> "null"
         is Collection<Any?> -> JsonArray(value.filter { it.isValidJsonType() }).toString()
@@ -114,7 +114,14 @@ fun getJsonValue(value: Any?): String {
     }
 }
 
-fun Any?.isValidJsonType(): Boolean {
+/**
+ * Checks whether the calling object is a valid type for json serialization
+ * Valid types are Boolean?, Int?, Double?, String?, Collection<Any?>,
+ * Map<String, Any?>, JsonSerializable?
+ *
+ * @return true if the calling object is a valid type for json, false otherwise
+ */
+public fun Any?.isValidJsonType(): Boolean {
     return this is Boolean? || this is Int? || this is Double? || this is String? || this is Collection<Any?>
             || this is Map<*, *> || this is JsonSerializable?
 }
