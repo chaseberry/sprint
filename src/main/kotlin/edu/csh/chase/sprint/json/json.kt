@@ -6,7 +6,7 @@ object json {
         return JsonArray(*elements)
     }
 
-    fun invoke(json: () -> Array<Pair<String, Any?>>): JsonObject {
+    fun invoke(json: () -> Array<Pair<String,Any?>>): JsonObject {
         return JsonObject(*json())
     }
 
