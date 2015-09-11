@@ -14,10 +14,10 @@ object json {
     }
 
     /**
-     * Constructs a JsonObject from a Lambda that returns an array of Pair<String, Any?>
+     * Constructs a JsonObject from a list of Pair<String, Any?>
      * Provided pairs with invalid json types will be ignored
      *
-     * @param json A Function that returns an array of key, value pairs
+     * @param json A list of key, value pairs
      * @return A JsonObject with only valid pairs from the provided lambda
      */
     fun invoke(vararg elements: Pair<String, Any?>): JsonObject {
