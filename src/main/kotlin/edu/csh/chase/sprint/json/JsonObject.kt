@@ -95,9 +95,10 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
 
     /**
      * Constructs a JsonObject from a list of key, value Pairs
+     * Any key,value with a value that is not a valid json type will be ignored
      */
     constructor(vararg elementList: Pair<String, Any?>) : this() {
-        elementList.forEach {
+        elementList.filter { it.isValidJsonType() }.forEach {
             putOnce(it)
         }
     }
