@@ -16,7 +16,7 @@ class JsonMultiTraverseTest {
         assertEquals("value", obj2.traverseMulti("z", "y", "v:xz", "obj:key"))
         assertEquals("value", obj2.traverseMulti("obj:key", "v:xw"))
         assertEquals("v3", obj2.traverseMulti("obj:k3", "v:wq"))
-        assertEquals("v3", obj2.traverseMulti("v:wq", "y:t", "obj:k2"))
+        assertEquals("v2", obj2.traverseMulti("v:wq", "y:t", "obj:k2"))
     }
 
     Test fun traverseMultiDefault() {
