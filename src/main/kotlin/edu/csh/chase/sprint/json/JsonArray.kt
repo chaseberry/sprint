@@ -181,7 +181,7 @@ class JsonArray() : JsonBase(), Iterable<Any?> {
         return toString(false)
     }
 
-    fun toString(shouldIndent: Boolean, depth: Int = 1): String {
+    override fun toString(shouldIndent: Boolean, depth: Int): String {
         val sw = StringWriter()
         synchronized (sw.getBuffer()) {
             return this.write(sw, shouldIndent, depth).toString()
@@ -232,6 +232,10 @@ class JsonArray() : JsonBase(), Iterable<Any?> {
                 }
                 writer.write(getJsonValue(value, shouldIndent, depth + 1))
                 addComa = true
+            }
+            if(shouldIndent){
+                writer.write("\n")
+                writer.indent(depth - 1)
             }
             writer.write("]")
             return writer

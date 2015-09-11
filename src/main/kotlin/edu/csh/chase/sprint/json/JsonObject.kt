@@ -107,7 +107,7 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
      * Any key,value with a value that is not a valid json type will be ignored
      */
     constructor(vararg elementList: Pair<String, Any?>) : this() {
-        elementList.filter { it.isValidJsonType() }.forEach {
+        elementList.filter { it.second.isValidJsonType() }.forEach {
             putOnce(it)
         }
     }
@@ -429,7 +429,7 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         return toString(false)
     }
 
-    fun toString(shouldIndent: Boolean, depth: Int = 1): String {
+    override fun toString(shouldIndent: Boolean, depth: Int): String {
         val writer = StringWriter()
         synchronized (writer.getBuffer()) {
             return this.write(writer, shouldIndent, depth).toString()
@@ -481,6 +481,7 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
             }
             if (shouldIndent) {
                 writer.write("\n")
+                writer.indent(depth - 1)
             }
             writer.write("}")
             return writer
