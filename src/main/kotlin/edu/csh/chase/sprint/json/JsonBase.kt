@@ -9,6 +9,8 @@ abstract class JsonBase : JsonSerializable {
 
     var delim = ":"
 
+    abstract fun toString(shouldIndent: Boolean, depth: Int = 1): String
+
     /**
      * Attempts to walk down a chain of Objects and Arrays based on a compoundKey
      * Compound keys will be split by the delim(base of ":")
