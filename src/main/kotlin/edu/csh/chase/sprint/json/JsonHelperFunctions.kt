@@ -4,7 +4,7 @@ import java.io.StringWriter
 import java.io.Writer
 import java.util.HashMap
 
-internal fun String.times(count: Int): String {
+private fun String.times(count: Int): String {
     if (count < 0) {
         return this
     }
@@ -14,7 +14,7 @@ internal fun String.times(count: Int): String {
 
     var str = ""
 
-    for (z in 0..(count - 1)) {
+    for (z in 1..count) {
         str += this
     }
 
@@ -29,8 +29,7 @@ internal fun String.times(count: Int): String {
  * allowing JSON text to be delivered in HTML. In JSON text, a string cannot
  * contain a control character or an unescaped quote or backslash.
  *
- * @param string
- *            A String
+ * @param string A String to quote and escape
  * @return A String correctly formatted for insertion in a JSON text.
  */
 fun quote(string: String): String {
@@ -40,7 +39,16 @@ fun quote(string: String): String {
     }
 }
 
-
+/**
+ * Produce a string in double quotes with backslash sequences in all the
+ * right places. A backslash will be inserted within </, producing <\/,
+ * allowing JSON text to be delivered in HTML. In JSON text, a string cannot
+ * contain a control character or an unescaped quote or backslash.
+ *
+ * @param string A String to quote and escape
+ * @param w A Writer to write the String to
+ * @return A String correctly formatted for insertion in a JSON text.
+ */
 fun quote(string: String, w: Writer): Writer {
     if (string.length() == 0) {
         w.write("\"\"");
@@ -88,9 +96,12 @@ fun quote(string: String, w: Writer): Writer {
     return w;
 }
 
-fun indent(writer: Writer, indent: Int) {
-    writer.write("   " * indent)
-}
+/**
+ * Adds n tabs(Actually 3 * n spaces. Spaces > tabs) to the calling writer
+ *
+ * @param indent The number of tabs(3 spaces) to add
+ */
+fun Writer.indent(indent: Int) = write("   " * indent)
 
 fun getJsonValue(value: Any?): String {
     return when (value) {
@@ -98,31 +109,21 @@ fun getJsonValue(value: Any?): String {
         is Collection<Any?> -> JsonArray(value.filter { it.isValidJsonType() }).toString()
         is Map<*, *> -> JsonObject(value.jsonMapFilter { it.value.isValidJsonType() }).toString()
         is String -> quote(value)
-        is JsonSerializable -> value.jsonSerialize().toString()
+        is JsonSerializable -> value.jsonSerialize()
         else -> value.toString()
     }
 }
 
-internal fun Any?.isValidJsonType(): Boolean {
+fun Any?.isValidJsonType(): Boolean {
     return this is Boolean? || this is Int? || this is Double? || this is String? || this is Collection<Any?>
             || this is Map<*, *> || this is JsonSerializable?
 }
 
-internal fun Map<*, *>.jsonMapFilter(filterFun: (Map.Entry<Any?, Any?>) -> (Boolean)): Map<String, Any?> {
+private fun Map<*, *>.jsonMapFilter(filterFun: (Map.Entry<Any?, Any?>) -> (Boolean)): Map<String, Any?> {
     val map = HashMap<String, Any?>()
     this.forEach {
         if (filterFun(it) && it.key is String) {
             map.put(it.key as String, it.value)
-        }
-    }
-    return map
-}
-
-fun Map<Any?, Any?>.filter(filterFun: (Map.Entry<Any?, Any?>) -> (Boolean)): Map<Any?, Any?> {
-    val map = HashMap<Any?, Any?>()
-    this.forEach {
-        if (filterFun(it)) {
-            map.put(it.key, it.value)
         }
     }
     return map
@@ -148,22 +149,48 @@ fun Collection<Any?>.jsonSerialize(): String {
     return JsonArray(this).toString()
 }
 
+/**
+ * Makes this Int a valid Json representation
+ *
+ * @return The String version of the int or "null"
+ */
 fun Int?.jsonSerialize(): String {
     return this.toString()
 }
 
+/**
+ * Makes this String a valid Json representation
+ *
+ * @return The Quoted, escaped version or "null"
+ */
 fun String?.jsonSerialize(): String {
     return if (null == this) "null" else quote(this)
 }
 
+/**
+ * Makes this Double a valid Json representation
+ *
+ * @return The String version of this Double or "null"
+ */
 fun Double?.jsonSerialize(): String {
     return this.toString()
 }
 
+/**
+ * Makes this Boolean a valid Json representation
+ *
+ * @return The String version of this boolean or "null"
+ */
 fun Boolean?.jsonSerialize(): String {
     return this.toString()
 }
 
+/**
+ * A function that will attempt to create a JsonObject or JsonArray from a given String
+ *
+ * @param jsonString The String to attempt to be read as json
+ * @return A valid JsonObject, JsonArray or null if it failed to parse the Json
+ */
 fun parseJsonString(jsonString: String): JsonBase? {
     try {
         return JsonObject(jsonString)

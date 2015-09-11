@@ -173,7 +173,7 @@ class JsonArray() : JsonBase(), Iterable<Any?> {
         return array.iterator()
     }
 
-    override fun equals(other: Any?):Boolean {
+    override fun equals(other: Any?): Boolean {
         return other is JsonArray && array == other.array
     }
 
@@ -251,7 +251,7 @@ class JsonArray() : JsonBase(), Iterable<Any?> {
                 }
                 if (shouldIndent) {
                     writer.write("\n")
-                    indent(writer, depth)
+                    writer.indent(depth)
                 }
                 writer.write(getJsonValue(value))
                 addComa = true

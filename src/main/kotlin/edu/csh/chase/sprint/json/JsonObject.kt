@@ -24,6 +24,11 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
             return map.keySet()
         }
 
+    /**
+     * Creates an instance of a JsonObject with a JsonTokener
+     * Parses the tokens to create a JsonObject
+     * An invalid JsonTokener will cause a JsonException to be thrown
+     */
     constructor(tokener: JsonTokener) : this() {
         if (tokener.nextClean() != '{') {
             throw tokener.syntaxError("A JsonObject text must begin with '{'")
@@ -64,20 +69,33 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         }
     }
 
+    /**
+     * Constructs a JsonObject from a string
+     * An invalid JsonString will cause a JsonException to be thrown
+     */
     constructor(stringJson: String) : this(JsonTokener(stringJson))
 
+    /**
+     * Constructs a clone of the provided JsonObject with only the specified keys
+     */
     constructor(obj: JsonObject, vararg names: String) : this() {
         for (name in names) {
             putOnce(name, obj[name])
         }
     }
 
+    /**
+     * Constructs a JsonObject from a map of <String, Any?>
+     */
     constructor(map: Map<String, Any?>) : this() {
         for ((key, value) in map) {
             putOnce(key, value)
         }
     }
 
+    /**
+     * Constructs a JsonObject from a list of key, value Pairs
+     */
     constructor(vararg elementList: Pair<String, Any?>) : this() {
         elementList.forEach {
             putOnce(it)
@@ -94,6 +112,12 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         map[key] = value
     }
 
+    /**
+     * Adds the key and value to this JsonObject only if key is not already present
+     * @param key The key for the value
+     * @param value The value assigned to the specified key
+     * @return This JsonObject the key, value were placed into
+     */
     fun putOnce(key: String, value: Any?): JsonObject {
         if (key in map) {
             return this//Throw an error?
@@ -314,7 +338,6 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
         }
     }
 
-
     /**
      * Write the contents of the JSONObject as JSON text to a writer. For
      * compactness, no whitespace is added.
@@ -347,7 +370,7 @@ class JsonObject() : JsonBase(), Iterable<Map.Entry<String, Any?>> {
 
                 if (shouldIndent) {
                     writer.write("\n")
-                    indent(writer, depth)
+                    writer.indent(depth)
                 }
 
                 writer.write(quote(key))
