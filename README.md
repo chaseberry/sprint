@@ -45,5 +45,5 @@ class myClient() : SprintClient("https://mybase.com/api/") {
 
 ```
 
-In the current form, this library contains a built in Json library
-It will likely be removed in the near future into a separate library
+This library comes with KJson bundled in
+https://github.com/chaseberry/KJson
