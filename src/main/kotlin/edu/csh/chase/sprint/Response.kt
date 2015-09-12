@@ -1,8 +1,8 @@
 package edu.csh.chase.sprint
 
 import com.squareup.okhttp.Headers
-import edu.csh.chase.sprint.json.JsonBase
-import edu.csh.chase.sprint.json.parseJsonString
+import edu.csh.chase.kjson.JsonBase
+import edu.csh.chase.kjson.parseJsonString
 
 data class Response(val statusCode: Int, val body: ByteArray?, val headers: Headers?) {
 

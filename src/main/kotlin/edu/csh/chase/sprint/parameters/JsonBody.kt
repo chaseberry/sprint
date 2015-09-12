@@ -2,9 +2,9 @@ package edu.csh.chase.sprint.parameters
 
 import com.squareup.okhttp.MediaType
 import com.squareup.okhttp.RequestBody
-import edu.csh.chase.sprint.json.JsonArray
-import edu.csh.chase.sprint.json.JsonBase
-import edu.csh.chase.sprint.json.JsonObject
+import edu.csh.chase.kjson.JsonArray
+import edu.csh.chase.kjson.JsonBase
+import edu.csh.chase.kjson.JsonObject
 import okio.BufferedSink
 
 class JsonBody(private val jsonValue: JsonBase) : RequestBody() {

@@ -2,7 +2,7 @@ package edu.csh.chase.sprint
 
 import com.squareup.okhttp.Headers
 import com.squareup.okhttp.RequestBody
-import edu.csh.chase.sprint.json.JsonBase
+import edu.csh.chase.kjson.JsonBase
 import edu.csh.chase.sprint.parameters.JsonBody
 import java.net.URL
 
