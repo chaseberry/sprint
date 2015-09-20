@@ -12,7 +12,7 @@ apply plugin: 'maven-publish'
 sourceCompatibility = 1.5
 
 buildscript {
-    ext.kotlin_version = '0.12.1230'
+    ext.kotlin_version = '0.13.1513'
     repositories {
         mavenCentral()
         jcenter()
@@ -33,7 +33,7 @@ dependencies {
     testCompile 'junit:junit:4.11'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.squareup.okhttp:okhttp:2.4.0'
-    compile 'edu.csh.chase.kjson:kjson:0.0.1'
+    compile 'edu.csh.chase.kjson:kjson:0.0.2'
 }
 
 sourceSets {

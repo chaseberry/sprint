@@ -4,7 +4,7 @@ import org.junit.Test
 
 class SprintGetTest() {
 
-    Test fun testGet() {
+    @Test fun testGet() {
     }
 
 

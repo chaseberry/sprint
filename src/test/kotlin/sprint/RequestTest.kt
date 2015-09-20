@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 
 class RequestTest() {
 
-    Test fun buildUrlRequestTest() {
+    @Test fun buildUrlRequestTest() {
         val request = GetRequest(
                 url = "https://test.com",
                 urlParams = UrlParameters("key" to "value")
@@ -19,7 +19,7 @@ class RequestTest() {
         assertEquals("https://test.com/?key=value&", builtRequest.urlString())
     }
 
-    Test fun buildUrlNoParametersTest() {
+    @Test fun buildUrlNoParametersTest() {
         val request = GetRequest(
                 url = "https://test.com"
         )

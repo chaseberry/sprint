@@ -7,7 +7,7 @@ import kotlin.test.assertNotEquals
 
 class EndpointTest {
 
-    Test fun testBuildEndpoint() {
+    @Test fun testBuildEndpoint() {
         val base = "https://google.com/"
         val endpoint = "test"
         assertEquals("https://google.com/test", buildEndpoint(base, endpoint))
