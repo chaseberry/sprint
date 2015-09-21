@@ -9,7 +9,7 @@ import kotlin.properties.Delegates
 
 public object Sprint {
 
-    private val client: OkHttpClient by Delegates.lazy {
+    private val client: OkHttpClient by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         val client = OkHttpClient()
         client.setConnectTimeout(30, TimeUnit.SECONDS)
         client.setWriteTimeout(30, TimeUnit.SECONDS)
