@@ -16,7 +16,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
     }
 }
@@ -29,7 +29,7 @@ repositories {
 
 dependencies {
     testCompile 'junit:junit:4.11'
-    compile 'org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'edu.csh.chase.kjson:kjson:0.0.2'
 }
