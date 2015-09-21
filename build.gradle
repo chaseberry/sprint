@@ -3,7 +3,6 @@ def $versionNumber = '0.0.7'//Current version
 group 'edu.csh.chase.sprint'
 version $versionNumber
 
-
 apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'com.jfrog.bintray'
@@ -15,8 +14,9 @@ buildscript {
         mavenCentral()
         jcenter()
     }
+
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
     }
 }
@@ -24,12 +24,12 @@ buildscript {
 repositories {
     mavenCentral()
     jcenter()
-    maven { url "http://dl.bintray.com/chaseberry/maven" }
+    maven { url 'http://dl.bintray.com/chaseberry/maven' }
 }
 
 dependencies {
     testCompile 'junit:junit:4.11'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'edu.csh.chase.kjson:kjson:0.0.2'
 }
