@@ -1,8 +1,6 @@
 package edu.csh.chase.sprint
 
-import com.squareup.okhttp.Call
-import com.squareup.okhttp.Callback
-import com.squareup.okhttp.OkHttpClient
+import com.squareup.okhttp.*
 import java.io.IOException
 import com.squareup.okhttp.Request as OkRequest
 import com.squareup.okhttp.Response as OkResponse
@@ -22,8 +20,8 @@ class RequestProcessor(val request: Request, private val client: OkHttpClient, p
         })
         when (request.requestType) {
             RequestType.Get -> builder.get()
-            RequestType.Post -> builder.post(request.body)
-            RequestType.Put -> builder.put(request.body)
+            RequestType.Post -> builder.post(request.body ?: RequestBody.create(MediaType.parse("text/plain"), ""))
+            RequestType.Put -> builder.put(request.body ?: RequestBody.create(MediaType.parse("text/plain"), ""))
             RequestType.Delete -> builder.delete(request.body)
         }
         builder.headers(request.headers.build())
