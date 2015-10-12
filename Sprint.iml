@@ -27,7 +27,7 @@
     <orderEntry type="library" exported="" name="Gradle: com.squareup.okhttp:okhttp:2.4.0" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.squareup.okio:okio:1.4.0" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:0.14.449" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: edu.csh.chase.kjson:kjson:0.0.3" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.jetbrains.kotlin:kotlin-runtime:0.14.449" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: edu.csh.chase.kjson:kjson:0.0.8" level="project" />
   </component>
 </module>

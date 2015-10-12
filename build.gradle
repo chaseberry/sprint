@@ -31,7 +31,7 @@ dependencies {
     testCompile 'junit:junit:4.11'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.squareup.okhttp:okhttp:2.4.0'
-    compile 'edu.csh.chase.kjson:kjson:0.0.4'
+    compile 'edu.csh.chase.kjson:kjson:0.0.8'
 }
 
 sourceSets {
