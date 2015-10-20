@@ -5,10 +5,15 @@ import java.io.IOException
 import com.squareup.okhttp.Request as OkRequest
 import com.squareup.okhttp.Response as OkResponse
 
-class RequestProcessor(val request: Request, private val client: OkHttpClient, private val listener: SprintListener?) :
+class RequestProcessor(val request: Request, private val client: OkHttpClient, private val listener: SprintListener?,
+                       val retryLimit: Int = 0) :
         Callback {
 
-    var currentCall: Call? = null
+    private var attemptCount = 0
+
+    private var sleepTime = 1
+
+    private var currentCall: Call? = null
 
     fun buildOkRequest(): OkRequest {
         val builder = OkRequest.Builder()
@@ -33,7 +38,9 @@ class RequestProcessor(val request: Request, private val client: OkHttpClient, p
         val okRequest = buildOkRequest()
         currentCall = client.newCall(okRequest)
         currentCall!!.enqueue(this)
-        listener?.sprintRequestQueued(request)
+        if (attemptCount == 0) {
+            listener?.sprintRequestQueued(request)
+        }
         return this
     }
 
@@ -43,8 +50,17 @@ class RequestProcessor(val request: Request, private val client: OkHttpClient, p
         currentCall = null
     }
 
+    private fun retry() {
+        attemptCount++
+        Thread.sleep((sleepTime * 1000).toLong())
+        sleepTime *= 2
+    }
+
     override fun onFailure(request: OkRequest?, e: IOException) {
-        e.printStackTrace()
+        if (attemptCount < retryLimit) {
+            retry()
+            return
+        }
         //TODO create status codes for all potential IOExceptions
         listener?.sprintFailure(this.request, Response(-1, null, null))
     }

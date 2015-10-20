@@ -5,7 +5,6 @@ import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.RequestBody
 import edu.csh.chase.sprint.parameters.UrlParameters
 import java.util.concurrent.TimeUnit
-import kotlin.properties.Delegates
 
 public object Sprint {
 
