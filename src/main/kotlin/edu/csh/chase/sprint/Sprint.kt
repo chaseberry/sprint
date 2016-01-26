@@ -40,6 +40,7 @@ public object Sprint {
                 url = url,
                 requestType = RequestType.Get,
                 urlParams = urlParameters,
+                extraData = extraData,
                 headers = headers),
                 requestFinished)
     }
@@ -51,6 +52,7 @@ public object Sprint {
                 url = url,
                 requestType = RequestType.Get,
                 urlParams = urlParameters,
+                extraData = extraData,
                 headers = headers),
                 requestFinished)
     }
