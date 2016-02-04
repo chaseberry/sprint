@@ -5,7 +5,7 @@ import edu.csh.chase.sprint.GetRequest
 import edu.csh.chase.sprint.RequestProcessor
 import edu.csh.chase.sprint.parameters.UrlParameters
 import org.junit.Test
-import kotlin.test.assertEquals
+import org.junit.Assert.*
 
 class RequestTest() {
 

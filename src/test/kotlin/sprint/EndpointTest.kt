@@ -2,8 +2,8 @@ package sprint
 
 import edu.csh.chase.sprint.buildEndpoint
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
+import org.junit.Assert.*
+
 
 class EndpointTest {
 
