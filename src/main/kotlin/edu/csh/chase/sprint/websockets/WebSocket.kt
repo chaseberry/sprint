@@ -1,8 +1,9 @@
 package edu.csh.chase.sprint.websockets
 
 import edu.csh.chase.sprint.Request
+import edu.csh.chase.sprint.Response
 import okhttp3.RequestBody
-import okhttp3.Response
+import okhttp3.Response as OkResponse
 import okhttp3.ResponseBody
 import okhttp3.ws.WebSocket
 import okhttp3.ws.WebSocketListener
@@ -23,7 +24,7 @@ class WebSocket(protected val request: Request, private val webSocket: OkWebSock
         try {
             webSocket.sendMessage(RequestBody.create(OkWebSocket.TEXT, text))
         } catch(e: IOException) {
-            webSocket.close()
+            webSocket.close(WebSocketDisconnect.protocolError, e.message)
         } catch(e: IllegalArgumentException) {
 
         }
@@ -37,26 +38,26 @@ class WebSocket(protected val request: Request, private val webSocket: OkWebSock
 
     }
 
-    override fun onOpen(webSocket: WebSocket?, response: Response?) {
+    override fun onOpen(webSocket: WebSocket?, response: OkResponse) {
         listeners.forEach {
-            it.onConnect()
+            it.onConnect(Response(response))
         }
     }
 
     override fun onPong(payload: Buffer?) {
-        listeners.forEach { it.onPong() }
+        listeners.forEach { it.onPong(payload) }
     }
 
     override fun onClose(code: Int, reason: String?) {
-        listeners.forEach { it.onDisconnect() }
+        listeners.forEach { it.onDisconnect(code, reason) }
     }
 
-    override fun onFailure(e: IOException?, response: Response?) {
-        listeners.forEach { it.onError() }
+    override fun onFailure(exception: IOException, response: OkResponse?) {
+        listeners.forEach { it.onError(exception, response?.let { Response(it) }) }
     }
 
     override fun onMessage(message: ResponseBody?) {
+        listeners.forEach { it.onMessage(Response(200, message?.bytes(), null)) }
     }
-
 
 }
