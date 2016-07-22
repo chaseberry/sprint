@@ -1,6 +1,6 @@
 package edu.csh.chase.sprint
 
-import com.squareup.okhttp.RequestBody
+import okhttp3.RequestBody
 
 interface RequestSerializer {
 

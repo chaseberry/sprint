@@ -1,10 +1,10 @@
 package edu.csh.chase.sprint
 
-import com.squareup.okhttp.RequestBody
 import edu.csh.chase.kjson.JsonArray
 import edu.csh.chase.kjson.JsonBase
 import edu.csh.chase.kjson.JsonObject
 import edu.csh.chase.sprint.parameters.JsonBody
+import okhttp3.RequestBody
 
 class JsonRequestSerializer : RequestSerializer {
 

@@ -1,19 +1,15 @@
 package edu.csh.chase.sprint
 
-import com.squareup.okhttp.Headers
-import com.squareup.okhttp.OkHttpClient
-import com.squareup.okhttp.RequestBody
 import edu.csh.chase.sprint.parameters.UrlParameters
+import okhttp3.Headers
+import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 
 abstract class SprintClient(val urlBase: String? = null) {
 
-    private val client = OkHttpClient()
+    private val client = OkHttpClient.Builder().let { configureClient(it); it.build() }
 
-    init {
-        configureClient(client)
-    }
-
-    abstract fun configureClient(client: OkHttpClient)
+    abstract fun configureClient(client: OkHttpClient.Builder)
 
     abstract val defaultRequestSerializer: RequestSerializer
 

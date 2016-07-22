@@ -1,7 +1,7 @@
 package edu.csh.chase.sprint.parameters
 
-import com.squareup.okhttp.MediaType
-import com.squareup.okhttp.RequestBody
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import okio.BufferedSink
 
 class RawBody(val rawBody: Any, val contentType: String) : RequestBody() {

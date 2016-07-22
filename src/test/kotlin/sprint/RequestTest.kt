@@ -1,9 +1,9 @@
 package sprint
 
-import com.squareup.okhttp.OkHttpClient
 import edu.csh.chase.sprint.GetRequest
 import edu.csh.chase.sprint.RequestProcessor
 import edu.csh.chase.sprint.parameters.UrlParameters
+import okhttp3.OkHttpClient
 import org.junit.Test
 import org.junit.Assert.*
 
@@ -16,7 +16,7 @@ class RequestTest() {
         )
         val proccessor = RequestProcessor(request, OkHttpClient(), null)
         val builtRequest = proccessor.buildOkRequest()
-        assertEquals("https://test.com/?key=value&", builtRequest.urlString())
+        assertEquals("https://test.com/?key=value&", builtRequest.url().toString())
     }
 
     @Test fun buildUrlNoParametersTest() {
@@ -25,7 +25,7 @@ class RequestTest() {
         )
         val proccessor = RequestProcessor(request, OkHttpClient(), null)
         val builtRequest = proccessor.buildOkRequest()
-        assertEquals("https://test.com/", builtRequest.urlString())
+        assertEquals("https://test.com/", builtRequest.url().toString())
     }
 
 }

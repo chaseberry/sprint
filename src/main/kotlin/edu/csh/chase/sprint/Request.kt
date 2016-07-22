@@ -1,8 +1,8 @@
 package edu.csh.chase.sprint
 
-import com.squareup.okhttp.Headers
-import com.squareup.okhttp.RequestBody
 import edu.csh.chase.sprint.parameters.UrlParameters
+import okhttp3.Headers
+import okhttp3.RequestBody
 
 data class Request(val url: String, val requestType: RequestType,
                    var urlParams: UrlParameters? = null, var body: RequestBody? = null,

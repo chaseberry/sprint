@@ -1,10 +1,10 @@
 package edu.csh.chase.sprint.parameters
 
-import com.squareup.okhttp.MediaType
-import com.squareup.okhttp.RequestBody
 import edu.csh.chase.kjson.JsonArray
 import edu.csh.chase.kjson.JsonBase
 import edu.csh.chase.kjson.JsonObject
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import okio.BufferedSink
 
 class JsonBody(private val jsonValue: JsonBase) : RequestBody() {
