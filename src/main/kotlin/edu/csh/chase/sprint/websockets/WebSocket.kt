@@ -5,7 +5,6 @@ import edu.csh.chase.sprint.Response
 import okhttp3.RequestBody
 import okhttp3.Response as OkResponse
 import okhttp3.ResponseBody
-import okhttp3.ws.WebSocket
 import okhttp3.ws.WebSocketListener
 import okio.Buffer
 import java.io.IOException
