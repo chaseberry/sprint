@@ -1,15 +1,16 @@
 package edu.csh.chase.sprint
 
+import edu.csh.chase.sprint.internal.Processor
 import okhttp3.*
 import okhttp3.OkHttpClient
 import java.io.IOException
 import okhttp3.Request as OkRequest
 import okhttp3.Response as OkResponse
 
-class RequestProcessor(val request: Request,
+class RequestProcessor(request: Request,
                        private val client: OkHttpClient,
                        private val listener: SprintListener?,
-                       val retryLimit: Int = 0) :
+                       val retryLimit: Int = 0) : Processor(request),
         Callback {
 
     private var attemptCount = 0
@@ -17,25 +18,6 @@ class RequestProcessor(val request: Request,
     private var sleepTime = 1
 
     private var currentCall: Call? = null
-
-    fun buildOkRequest(): OkRequest {
-        val builder = OkRequest.Builder()
-        //TODO make sure the URL is still valid if the urlParams is null
-        builder.url(if (request.urlParams != null) {
-            request.url + request.urlParams.toString()
-        } else {
-            request.url
-        })
-        when (request.requestType) {
-            RequestType.Get -> builder.get()
-            RequestType.Post -> builder.post(request.body ?: RequestBody.create(MediaType.parse("text/plain"), ""))
-            RequestType.Put -> builder.put(request.body ?: RequestBody.create(MediaType.parse("text/plain"), ""))
-            RequestType.Delete -> builder.delete(request.body)
-        }
-        builder.headers(request.headers.build())
-
-        return builder.build()
-    }
 
     fun executeRequest(): RequestProcessor {
         val okRequest = buildOkRequest()
