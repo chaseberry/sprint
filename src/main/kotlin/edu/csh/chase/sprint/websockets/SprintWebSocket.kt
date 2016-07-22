@@ -9,20 +9,36 @@ import okhttp3.OkHttpClient
 
 class SprintWebSocket {
 
-    fun connect(url: String,
-                urlParameters: UrlParameters? = null,
-                headers: Headers.Builder = Headers.Builder(),
-                client: OkHttpClient = OkHttpClient(),
-                extraData: Any? = null): RequestProcessor {
+    fun create(url: String,
+               urlParameters: UrlParameters? = null,
+               headers: Headers.Builder = Headers.Builder(),
+               client: OkHttpClient = OkHttpClient(),
+               retryCount: Int = 4,
+               extraData: Any? = null,
+               listener: (WebSocketEvent, Any?) -> Unit) {
+    }
 
-        val request = Request(
-                url = url,
-                requestType = RequestType.Get,
-                urlParams = urlParameters,
-                extraData = extraData,
-                headers = headers)
+    fun create(url: String,
+               urlParameters: UrlParameters? = null,
+               headers: Headers.Builder = Headers.Builder(),
+               client: OkHttpClient = OkHttpClient(),
+               retryCount: Int = 4,
+               extraData: Any? = null,
+               onConnect: () -> Unit,
+               onDisconnect: () -> Unit,
+               onError: () -> Unit,
+               onMessage: () -> Unit,
+               onPong: (() -> Unit)?) {
 
-        okhttp3.ws.WebSocketCall.create(OkHttpClient(), )
+    }
+
+    fun create(url: String,
+               urlParameters: UrlParameters? = null,
+               headers: Headers.Builder = Headers.Builder(),
+               client: OkHttpClient = OkHttpClient(),
+               retryCount: Int = 4,
+               extraData: Any? = null,
+               callbacks: WebSocketCallbacks) {
 
     }
 
