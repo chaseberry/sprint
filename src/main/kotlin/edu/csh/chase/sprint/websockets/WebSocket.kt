@@ -51,6 +51,7 @@ class WebSocket(protected val request: Request, callback: WebSocketCallbacks?, v
 
     override fun onOpen(webSocket: OkWebSocket, response: OkResponse) {
         socket = webSocket
+        currentRetry = retryCount //Reset the retry count as a new connection was established
         listeners.forEach {
             it.onConnect(Response(response))
         }
@@ -80,7 +81,6 @@ class WebSocket(protected val request: Request, callback: WebSocketCallbacks?, v
         if (retryCount == noRetry || currentRetry == 0) {
             return
         }
-
 
 
     }

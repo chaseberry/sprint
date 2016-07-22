@@ -10,7 +10,7 @@ import okhttp3.OkHttpClient
 import okio.Buffer
 import java.io.IOException
 
-class SprintWebSocket {
+object SprintWebSocket {
 
     fun create(url: String,
                urlParameters: UrlParameters? = null,
