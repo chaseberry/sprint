@@ -12,9 +12,12 @@ import java.io.IOException
 import java.util.*
 import okhttp3.ws.WebSocket as OkWebSocket
 
-class WebSocket(protected val request: Request, private val webSocket: OkWebSocket, callback: WebSocketCallbacks?) : WebSocketListener {
+class WebSocket(protected val request: Request, callback: WebSocketCallbacks?, val retryCount: Int, val retryOnServerClose: Boolean) : WebSocketListener {
 
-    private val listeners = ArrayList<WebSocketCallbacks>()
+    private val listeners: ArrayList<WebSocketCallbacks> = ArrayList<WebSocketCallbacks>()
+    private var socket: OkWebSocket? = null
+
+    private var currentRetry: Int = retryCount
 
     init {
         callback?.let { listeners.add(it) }
@@ -22,9 +25,9 @@ class WebSocket(protected val request: Request, private val webSocket: OkWebSock
 
     fun sendText(text: String) {
         try {
-            webSocket.sendMessage(RequestBody.create(OkWebSocket.TEXT, text))
+            socket?.sendMessage(RequestBody.create(OkWebSocket.TEXT, text))
         } catch(e: IOException) {
-            webSocket.close(WebSocketDisconnect.protocolError, e.message)
+            socket?.close(WebSocketDisconnect.protocolError, e.message)
         } catch(e: IllegalArgumentException) {
 
         }
@@ -38,7 +41,8 @@ class WebSocket(protected val request: Request, private val webSocket: OkWebSock
 
     }
 
-    override fun onOpen(webSocket: WebSocket?, response: OkResponse) {
+    override fun onOpen(webSocket: OkWebSocket, response: OkResponse) {
+        socket = webSocket
         listeners.forEach {
             it.onConnect(Response(response))
         }
@@ -54,10 +58,22 @@ class WebSocket(protected val request: Request, private val webSocket: OkWebSock
 
     override fun onFailure(exception: IOException, response: OkResponse?) {
         listeners.forEach { it.onError(exception, response?.let { Response(it) }) }
+        doRetry()
     }
 
     override fun onMessage(message: ResponseBody?) {
         listeners.forEach { it.onMessage(Response(200, message?.bytes(), null)) }
+    }
+
+    private fun doRetry() {
+
+    }
+
+    companion object {
+
+        val infinteRetry = -1
+        val noRetry = 0
+
     }
 
 }
