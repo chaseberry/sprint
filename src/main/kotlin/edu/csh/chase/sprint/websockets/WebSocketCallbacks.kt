@@ -1,18 +1,24 @@
 package edu.csh.chase.sprint.websockets
 
+import edu.csh.chase.sprint.Response
+import okio.Buffer
+import java.io.IOException
+
 /**
  *
- * The underlying OkHttp Websocket will automagically respond to Pings
+ * The underlying OkHttp WebSocket will automagically respond to Pings
  *
  */
 interface WebSocketCallbacks {
 
-    fun onConnect()
+    fun onConnect(response: Response)
 
-    fun onDisconnect()
+    fun onDisconnect(disconnectCode: Int, reason: String?)
 
-    fun onError()
+    fun onError(exception: IOException, response: Response?)
 
-    fun onPong()
+    fun onPong(payload: Buffer)
+
+    fun onMessage(response: Response)
 
 }
