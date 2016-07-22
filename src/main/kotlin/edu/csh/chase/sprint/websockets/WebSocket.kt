@@ -16,14 +16,19 @@ class WebSocket(protected val request: Request, callback: WebSocketCallbacks?, v
 
     private val listeners: ArrayList<WebSocketCallbacks> = ArrayList<WebSocketCallbacks>()
     private var socket: OkWebSocket? = null
-
     private var currentRetry: Int = retryCount
+    var closed: Boolean = false
+        private set
 
     init {
         callback?.let { listeners.add(it) }
     }
 
     fun sendText(text: String) {
+        if (closed) {
+            return
+        }
+
         try {
             socket?.sendMessage(RequestBody.create(OkWebSocket.TEXT, text))
         } catch(e: IOException) {
@@ -34,11 +39,14 @@ class WebSocket(protected val request: Request, callback: WebSocketCallbacks?, v
     }
 
     fun sendPing(payload: Buffer?) {
-
+        if (closed) {
+            return
+        }
     }
 
     fun close(code: Int, reason: String?) {
-
+        socket?.close(code, reason)
+        closed = true
     }
 
     override fun onOpen(webSocket: OkWebSocket, response: OkResponse) {
@@ -66,6 +74,14 @@ class WebSocket(protected val request: Request, callback: WebSocketCallbacks?, v
     }
 
     private fun doRetry() {
+        if (closed) {
+            return
+        }
+        if (retryCount == noRetry || currentRetry == 0) {
+            return
+        }
+
+
 
     }
 
