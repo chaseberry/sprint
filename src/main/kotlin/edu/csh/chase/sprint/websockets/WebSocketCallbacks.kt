@@ -17,7 +17,8 @@ interface WebSocketCallbacks {
 
     fun onError(exception: IOException, response: Response?)
 
-    fun onPong(payload: Buffer)
+    fun onPong(payload: Buffer?) {
+    }
 
     fun onMessage(response: Response)
 
