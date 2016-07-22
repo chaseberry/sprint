@@ -22,7 +22,7 @@ It allows you to provide it a base url and uses endpoints, as well as serializin
 
 class myClient() : SprintClient("https://mybase.com/api/") {
 
-    override fun configureClient(client: OkHttpClient) {
+    override fun configureClient(client: OkHttpClient.Builder) {
         //Configure your http client, timeouts and such
     }
 
