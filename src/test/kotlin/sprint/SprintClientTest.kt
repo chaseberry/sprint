@@ -7,7 +7,7 @@ import okhttp3.OkHttpClient
 
 class SprintClientTest : SprintClient("Some url here") {
 
-    override fun configureClient(client: OkHttpClient) {
+    override fun configureClient(client: OkHttpClient.Builder) {
 
     }
 

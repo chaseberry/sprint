@@ -1,9 +1,9 @@
 package edu.csh.chase.sprint
 
-import com.squareup.okhttp.Headers
-import com.squareup.okhttp.RequestBody
 import edu.csh.chase.kjson.JsonBase
 import edu.csh.chase.sprint.parameters.JsonBody
+import okhttp3.Headers
+import okhttp3.RequestBody
 import java.net.URL
 
 fun headers(vararg headers: Pair<String, String>): Headers.Builder {
