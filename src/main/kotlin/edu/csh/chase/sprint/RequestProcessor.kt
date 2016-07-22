@@ -8,9 +8,9 @@ import okhttp3.Request as OkRequest
 import okhttp3.Response as OkResponse
 
 class RequestProcessor(request: Request,
-                       private val client: OkHttpClient,
+                       client: OkHttpClient,
                        private val listener: SprintListener?,
-                       val retryLimit: Int = 0) : Processor(request),
+                       val retryLimit: Int = 0) : Processor(request, client),
         Callback {
 
     private var attemptCount = 0
