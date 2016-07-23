@@ -20,7 +20,7 @@ class RequestProcessor(request: Request,
     private var currentCall: Call? = null
 
     fun executeRequest(): RequestProcessor {
-        val okRequest = buildOkRequest()
+        val okRequest = request.okHttpRequest
         currentCall = client.newCall(okRequest)
         currentCall!!.enqueue(this)
         if (attemptCount == 0) {
