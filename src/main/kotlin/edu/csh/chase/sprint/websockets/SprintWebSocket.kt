@@ -45,6 +45,38 @@ object SprintWebSocket {
                onMessage: (response: Response) -> Unit,
                onPong: ((Buffer?) -> Unit)?): WebSocket {
 
+        return create(
+                url = url,
+                urlParameters = urlParameters,
+                headers = headers,
+                client = client,
+                retryCount = retryCount,
+                extraData = extraData,
+                callbacks = object : WebSocketCallbacks {
+
+                    override fun onConnect(response: Response) {
+                        onConnect(response)
+                    }
+
+                    override fun onDisconnect(disconnectCode: Int, reason: String?) {
+                        onDisconnect(disconnectCode, reason)
+                    }
+
+                    override fun onError(exception: IOException, response: Response?) {
+                        onError(exception, response)
+                    }
+
+                    override fun onMessage(response: Response) {
+                        onMessage(response)
+                    }
+
+                    override fun onPong(payload: Buffer?) {
+                        onPong?.invoke(payload)
+                    }
+
+                }
+        )
+
     }
 
     fun create(url: String,
