@@ -1,9 +1,15 @@
 package edu.csh.chase.sprint
 
 import edu.csh.chase.sprint.parameters.UrlParameters
+import edu.csh.chase.sprint.websockets.BasicWebSocket
+import edu.csh.chase.sprint.websockets.WebSocket
+import edu.csh.chase.sprint.websockets.WebSocketCallbacks
+import edu.csh.chase.sprint.websockets.WebSocketEvent
 import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
+import okio.Buffer
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 object Sprint {
@@ -138,5 +144,83 @@ object Sprint {
                 extraData = extraData),
                 requestFinished)
     }
+
+
+    fun createWebsocket(url: String,
+               urlParameters: UrlParameters? = null,
+               headers: Headers.Builder = Headers.Builder(),
+               client: OkHttpClient = OkHttpClient(),
+               retryCount: Int = 4,
+               extraData: Any? = null,
+               listener: (WebSocketEvent, Any?, Any?) -> Unit): WebSocket {
+
+        return createWebsocket(url = url,
+                urlParameters = urlParameters,
+                headers = headers,
+                client = client,
+                retryCount = retryCount,
+                extraData = extraData,
+                onConnect = { response -> listener(WebSocketEvent.Connect, response, null) },
+                onDisconnect = { code, reason -> listener(WebSocketEvent.Disconnect, code, reason) },
+                onError = { exception, response -> listener(WebSocketEvent.Error, exception, response) },
+                onMessage = { response -> listener(WebSocketEvent.Message, response, null) },
+                onPong = { payload -> listener(WebSocketEvent.Pong, payload, null) })
+    }
+
+    fun createWebsocket(url: String,
+               urlParameters: UrlParameters? = null,
+               headers: Headers.Builder = Headers.Builder(),
+               client: OkHttpClient = OkHttpClient(),
+               retryCount: Int = 4,
+               extraData: Any? = null,
+               onConnect: (Response) -> Unit,
+               onDisconnect: (Int, String?) -> Unit,
+               onError: (IOException, Response?) -> Unit,
+               onMessage: (response: Response) -> Unit,
+               onPong: ((Buffer?) -> Unit)?): WebSocket {
+
+        return createWebsocket(
+                url = url,
+                urlParameters = urlParameters,
+                headers = headers,
+                client = client,
+                retryCount = retryCount,
+                extraData = extraData,
+                callbacks = object : WebSocketCallbacks {
+
+                    override fun onConnect(response: Response) {
+                        onConnect(response)
+                    }
+
+                    override fun onDisconnect(disconnectCode: Int, reason: String?) {
+                        onDisconnect(disconnectCode, reason)
+                    }
+
+                    override fun onError(exception: IOException, response: Response?) {
+                        onError(exception, response)
+                    }
+
+                    override fun messageReceived(response: Response) {
+                        onMessage(response)
+                    }
+
+                    override fun pongReceived(payload: Buffer?) {
+                        onPong?.invoke(payload)
+                    }
+                }
+        )
+
+    }
+
+    fun createWebsocket(url: String,
+               urlParameters: UrlParameters? = null,
+               headers: Headers.Builder = Headers.Builder(),
+               client: OkHttpClient = OkHttpClient(),
+               retryCount: Int = 4,
+               extraData: Any? = null,
+               callbacks: WebSocketCallbacks): WebSocket {
+        return BasicWebSocket(GetRequest(url, urlParameters, headers, extraData), callbacks, client, retryCount)
+    }
+
 
 }
