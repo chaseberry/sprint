@@ -1,7 +1,10 @@
 package edu.csh.chase.sprint.websockets
 
+import edu.csh.chase.sprint.GetRequest
 import edu.csh.chase.sprint.Request
 import edu.csh.chase.sprint.Response
+import edu.csh.chase.sprint.parameters.UrlParameters
+import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.Response as OkResponse
@@ -12,9 +15,10 @@ import okhttp3.ws.WebSocketListener
 import okio.Buffer
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 abstract class WebSocket(protected val request: Request,
-                         private val client: OkHttpClient,
+                         client: OkHttpClient,
                          val retryCount: Int = 4,
                          val retryOnServerClose: Boolean = false,
                          val autoConnect: Boolean = true) : WebSocketListener, WebSocketCallbacks {
@@ -23,12 +27,29 @@ abstract class WebSocket(protected val request: Request,
     private var socket: OkWebSocket? = null
     private var currentRetry: Int = retryCount
     private var call: WebSocketCall? = null
+    private val client: OkHttpClient
 
     val closed: Boolean
         get() = socket == null
 
+    constructor(url: String,
+                client: OkHttpClient,
+                urlParameters: UrlParameters? = null,
+                headers: Headers.Builder = Headers.Builder(),
+                extraData: Any? = null,
+                retryCount: Int = 4,
+                retryOnServerClose: Boolean = false,
+                autoConnect: Boolean = true) : this(GetRequest(url, urlParameters, headers, extraData),
+            client, retryCount, retryOnServerClose, autoConnect)
+
     init {
         listeners.add(this)
+
+        if (client.readTimeoutMillis() == 0) {
+            this.client = client
+        } else {
+            this.client = client.newBuilder().readTimeout(0L, TimeUnit.MILLISECONDS).build()
+        }
 
         if (autoConnect) {
             connect()
@@ -64,7 +85,6 @@ abstract class WebSocket(protected val request: Request,
 
         call = WebSocketCall.create(client, request.okHttpRequest)
         call!!.enqueue(this)
-
     }
 
     fun disconnect(code: Int, reason: String?) {
@@ -72,6 +92,7 @@ abstract class WebSocket(protected val request: Request,
             //Already closed
             return
         }
+
         socket!!.close(code, reason)
         socket = null
     }
@@ -90,10 +111,12 @@ abstract class WebSocket(protected val request: Request,
 
     final override fun onClose(code: Int, reason: String?) {
         listeners.forEach { it.onDisconnect(code, reason) }
-        socket = null
-        if (retryOnServerClose) {
+        //If the server closes the connection, closed will still be false here.
+        //If the client disconnects closed will be true
+        if (retryOnServerClose && !closed) {
             doRetry()
         }
+        socket = null
     }
 
     final override fun onFailure(exception: IOException, response: OkResponse?) {
@@ -128,6 +151,10 @@ abstract class WebSocket(protected val request: Request,
     }
 
     fun removeCallback(cb: WebSocketCallbacks) {
+        if (cb == this) {
+            //Can't remove yourself from webSocket callbacks
+            return
+        }
         listeners.remove(cb)
     }
 
