@@ -16,9 +16,9 @@ object Sprint {
 
     private val client: OkHttpClient by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS).build()
+                .connectTimeout(30L, TimeUnit.SECONDS)
+                .writeTimeout(30L, TimeUnit.SECONDS)
+                .readTimeout(30L, TimeUnit.SECONDS).build()
     }
 
     fun executeRequest(request: Request, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
@@ -146,15 +146,15 @@ object Sprint {
     }
 
 
-    fun createWebsocket(url: String,
-               urlParameters: UrlParameters? = null,
-               headers: Headers.Builder = Headers.Builder(),
-               client: OkHttpClient = OkHttpClient(),
-               retryCount: Int = 4,
-               extraData: Any? = null,
-               listener: (WebSocketEvent, Any?, Any?) -> Unit): WebSocket {
+    fun createWebSocket(url: String,
+                        urlParameters: UrlParameters? = null,
+                        headers: Headers.Builder = Headers.Builder(),
+                        client: OkHttpClient = OkHttpClient.Builder().readTimeout(0L, TimeUnit.MILLISECONDS).build(),
+                        retryCount: Int = 4,
+                        extraData: Any? = null,
+                        listener: (WebSocketEvent, Any?, Any?) -> Unit): WebSocket {
 
-        return createWebsocket(url = url,
+        return createWebSocket(url = url,
                 urlParameters = urlParameters,
                 headers = headers,
                 client = client,
@@ -167,19 +167,19 @@ object Sprint {
                 onPong = { payload -> listener(WebSocketEvent.Pong, payload, null) })
     }
 
-    fun createWebsocket(url: String,
-               urlParameters: UrlParameters? = null,
-               headers: Headers.Builder = Headers.Builder(),
-               client: OkHttpClient = OkHttpClient(),
-               retryCount: Int = 4,
-               extraData: Any? = null,
-               onConnect: (Response) -> Unit,
-               onDisconnect: (Int, String?) -> Unit,
-               onError: (IOException, Response?) -> Unit,
-               onMessage: (response: Response) -> Unit,
-               onPong: ((Buffer?) -> Unit)?): WebSocket {
+    fun createWebSocket(url: String,
+                        urlParameters: UrlParameters? = null,
+                        headers: Headers.Builder = Headers.Builder(),
+                        client: OkHttpClient = OkHttpClient.Builder().readTimeout(0L, TimeUnit.MILLISECONDS).build(),
+                        retryCount: Int = 4,
+                        extraData: Any? = null,
+                        onConnect: (Response) -> Unit,
+                        onDisconnect: (Int, String?) -> Unit,
+                        onError: (IOException, Response?) -> Unit,
+                        onMessage: (response: Response) -> Unit,
+                        onPong: ((Buffer?) -> Unit)?): WebSocket {
 
-        return createWebsocket(
+        return createWebSocket(
                 url = url,
                 urlParameters = urlParameters,
                 headers = headers,
@@ -212,13 +212,13 @@ object Sprint {
 
     }
 
-    fun createWebsocket(url: String,
-               urlParameters: UrlParameters? = null,
-               headers: Headers.Builder = Headers.Builder(),
-               client: OkHttpClient = OkHttpClient(),
-               retryCount: Int = 4,
-               extraData: Any? = null,
-               callbacks: WebSocketCallbacks): WebSocket {
+    fun createWebSocket(url: String,
+                        urlParameters: UrlParameters? = null,
+                        headers: Headers.Builder = Headers.Builder(),
+                        client: OkHttpClient = OkHttpClient.Builder().readTimeout(0L, TimeUnit.MILLISECONDS).build(),
+                        retryCount: Int = 4,
+                        extraData: Any? = null,
+                        callbacks: WebSocketCallbacks): WebSocket {
         return BasicWebSocket(GetRequest(url, urlParameters, headers, extraData), callbacks, client, retryCount)
     }
 
