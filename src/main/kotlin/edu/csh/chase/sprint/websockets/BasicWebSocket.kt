@@ -14,7 +14,7 @@ class BasicWebSocket(request: Request,
                      client: OkHttpClient,
                      retryCount: Int = 4,
                      retryOnServerClose: Boolean = false,
-                     autoConnect: Boolean = true) : WebSocket(request, client, retryCount, retryOnServerClose, autoConnect) {
+                     autoConnect: Boolean = false) : WebSocket(request, client, retryCount, retryOnServerClose, autoConnect) {
 
     constructor(url: String,
                 client: OkHttpClient,
