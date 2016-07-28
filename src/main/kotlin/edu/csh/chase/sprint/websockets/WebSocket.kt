@@ -21,7 +21,7 @@ abstract class WebSocket(protected val request: Request,
                          client: OkHttpClient,
                          val retryCount: Int = 4,
                          val retryOnServerClose: Boolean = false,
-                         val autoConnect: Boolean = false) : WebSocketListener, WebSocketCallbacks {
+                         val autoConnect: Boolean = false) : WebSocketCallbacks {
 
     private val listeners: ArrayList<WebSocketCallbacks> = ArrayList()
     private var socket: OkWebSocket? = null
@@ -29,8 +29,40 @@ abstract class WebSocket(protected val request: Request,
     private var call: WebSocketCall? = null
     private val client: OkHttpClient
 
-    val closed: Boolean
-        get() = socket == null
+    private val listenerCallBacks = object : WebSocketListener {
+        override fun onOpen(webSocket: OkWebSocket, response: OkResponse?) {
+            this.onOpen(webSocket, response)
+        }
+
+        override fun onPong(payload: Buffer?) {
+            this.onPong(payload)
+        }
+
+        override fun onClose(code: Int, reason: String?) {
+            this.onClose(code, reason)
+        }
+
+        override fun onFailure(e: IOException, response: OkResponse?) {
+            this.onFailure(e, response)
+        }
+
+        override fun onMessage(message: ResponseBody?) {
+            this.onMessage(message)
+        }
+
+    }
+
+    var state: State = State.Disconnected
+        private set
+
+    enum class State {
+        Connecting,
+        Connected,
+        Disconnecting,
+        Disconnected,
+        Errored//Functions the same as Disconnected, just notes that an error has occurred
+    }
+
 
     constructor(url: String,
                 client: OkHttpClient,
@@ -57,7 +89,7 @@ abstract class WebSocket(protected val request: Request,
     }
 
     fun sendText(text: String) {
-        if (closed) {
+        if (state != State.Connected) {
             return
         }
 
@@ -71,63 +103,73 @@ abstract class WebSocket(protected val request: Request,
     }
 
     fun ping(payload: Buffer? = null) {
-        if (closed) {
+        if (state != State.Connected) {
             return
         }
         socket!!.sendPing(payload)
     }
 
+    //TODO consider returning a boolean success/failure
+    //Success for will attempt to connect
+    //Failure for already connected/already attempting to connect
     fun connect() {
-        if (!closed) {
-            //Already connected
+        if (state == State.Connected || state == State.Connecting) {
+            //Already connected or attempting to connect
             return
         }
-
+        state = State.Connecting
         call = WebSocketCall.create(client, request.okHttpRequest)
-        call!!.enqueue(this)
+        call!!.enqueue(listenerCallBacks)
     }
 
     fun disconnect(code: Int, reason: String?) {
-        if (closed) {
+        if (state == State.Disconnected || state == State.Disconnecting || state == State.Errored) {
             //Already closed
             return
         }
-
+        state = State.Disconnecting
         socket!!.close(code, reason)
         socket = null
     }
 
-    final override fun onOpen(webSocket: OkWebSocket, response: OkResponse) {
+    private fun onOpen(webSocket: OkWebSocket, response: OkResponse) {
+        state = State.Connected
         socket = webSocket
         currentRetry = retryCount //Reset the retry count as a new connection was established
+
         listeners.forEach {
             it.onConnect(Response(response))
         }
     }
 
-    final override fun onPong(payload: Buffer?) {
+    private fun onPong(payload: Buffer?) {
         listeners.forEach { it.pongReceived(payload) }
     }
 
-    final override fun onClose(code: Int, reason: String?) {
+    private fun onClose(code: Int, reason: String?) {
         listeners.forEach { it.onDisconnect(code, reason) }
-        //If the server closes the connection, closed will still be false here.
+
+        //If the server closes the connection, State will be Connected here
         //If the client disconnects closed will be true
-        if (retryOnServerClose && !closed) {
+        if (retryOnServerClose && state == State.Connected) {
+            state = State.Disconnected//We are not disconnected
             doRetry()
         }
+
+        state = State.Disconnected
         socket = null
     }
 
-    final override fun onFailure(exception: IOException, response: OkResponse?) {
+    private fun onFailure(exception: IOException, response: OkResponse?) {
         val res = response?.let { Response(it) }
         listeners.forEach { it.onError(exception, res) }
+        state = State.Errored
         socket = null
 
         doRetry()
     }
 
-    final override fun onMessage(message: ResponseBody?) {
+    private fun onMessage(message: ResponseBody?) {
         val response = Response(200, message?.bytes(), null)
         listeners.forEach { it.messageReceived(response) }
     }
