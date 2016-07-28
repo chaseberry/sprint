@@ -21,7 +21,7 @@ abstract class WebSocket(protected val request: Request,
                          client: OkHttpClient,
                          val retryCount: Int = 4,
                          val retryOnServerClose: Boolean = false,
-                         val autoConnect: Boolean = true) : WebSocketListener, WebSocketCallbacks {
+                         val autoConnect: Boolean = false) : WebSocketListener, WebSocketCallbacks {
 
     private val listeners: ArrayList<WebSocketCallbacks> = ArrayList()
     private var socket: OkWebSocket? = null
