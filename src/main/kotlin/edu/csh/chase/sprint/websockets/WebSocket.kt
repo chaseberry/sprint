@@ -30,24 +30,25 @@ abstract class WebSocket(protected val request: Request,
     private val client: OkHttpClient
 
     private val listenerCallBacks = object : WebSocketListener {
-        override fun onOpen(webSocket: OkWebSocket, response: OkResponse?) {
-            this.onOpen(webSocket, response)
+
+        override fun onOpen(webSocket: OkWebSocket, response: OkResponse) {
+            this@WebSocket.onOpen(webSocket, response)
         }
 
         override fun onPong(payload: Buffer?) {
-            this.onPong(payload)
+            this@WebSocket.onPong(payload)
         }
 
         override fun onClose(code: Int, reason: String?) {
-            this.onClose(code, reason)
+            this@WebSocket.onClose(code, reason)
         }
 
         override fun onFailure(e: IOException, response: OkResponse?) {
-            this.onFailure(e, response)
+            this@WebSocket.onFailure(e, response)
         }
 
         override fun onMessage(message: ResponseBody?) {
-            this.onMessage(message)
+            this@WebSocket.onMessage(message)
         }
 
     }
