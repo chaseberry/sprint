@@ -1,8 +1,6 @@
 package edu.csh.chase.sprint.websockets
 
-import edu.csh.chase.sprint.GetRequest
-import edu.csh.chase.sprint.Request
-import edu.csh.chase.sprint.Response
+import edu.csh.chase.sprint.*
 import edu.csh.chase.sprint.parameters.UrlParameters
 import okhttp3.Headers
 import okhttp3.OkHttpClient
@@ -18,7 +16,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 abstract class WebSocket(protected val request: Request,
-                         client: OkHttpClient,
+                         client: OkHttpClient = Sprint.webSocketClient,
                          val retryCount: Int = 4,
                          val retryOnServerClose: Boolean = false,
                          val autoConnect: Boolean = false) : WebSocketCallbacks {
@@ -66,13 +64,13 @@ abstract class WebSocket(protected val request: Request,
 
 
     constructor(url: String,
-                client: OkHttpClient,
+                client: OkHttpClient = Sprint.webSocketClient,
                 urlParameters: UrlParameters? = null,
                 headers: Headers.Builder = Headers.Builder(),
                 extraData: Any? = null,
                 retryCount: Int = 4,
                 retryOnServerClose: Boolean = false,
-                autoConnect: Boolean = true) : this(GetRequest(url, urlParameters, headers, extraData),
+                autoConnect: Boolean = false) : this(GetRequest(url, urlParameters, headers, extraData),
             client, retryCount, retryOnServerClose, autoConnect)
 
     init {
@@ -118,6 +116,15 @@ abstract class WebSocket(protected val request: Request,
             //Already connected or attempting to connect
             return
         }
+
+        if (request.requestType != RequestType.Get) {
+            throw IllegalArgumentException("WebSocket requests must have a HTTP Method of GET, got ${request.requestType}.")
+        }
+
+        if (!request.url.startsWith("ws://") && !request.url.startsWith("wss://")) {
+            throw IllegalArgumentException("WebSocket requests must have the URL Schema of ws:// or wss://.")
+        }
+
         state = State.Connecting
         call = WebSocketCall.create(client, request.okHttpRequest)
         call!!.enqueue(listenerCallBacks)

@@ -3,6 +3,7 @@ package edu.csh.chase.sprint.websockets
 import edu.csh.chase.sprint.GetRequest
 import edu.csh.chase.sprint.Request
 import edu.csh.chase.sprint.Response
+import edu.csh.chase.sprint.Sprint
 import edu.csh.chase.sprint.parameters.UrlParameters
 import okhttp3.Headers
 import okhttp3.OkHttpClient
@@ -17,14 +18,14 @@ class BasicWebSocket(request: Request,
                      autoConnect: Boolean = false) : WebSocket(request, client, retryCount, retryOnServerClose, autoConnect) {
 
     constructor(url: String,
-                client: OkHttpClient,
+                client: OkHttpClient = Sprint.webSocketClient,
                 callbacks: WebSocketCallbacks,
                 urlParameters: UrlParameters? = null,
                 headers: Headers.Builder = Headers.Builder(),
                 extraData: Any? = null,
                 retryCount: Int = 4,
                 retryOnServerClose: Boolean = false,
-                autoConnect: Boolean = true) : this(GetRequest(url, urlParameters, headers, extraData), callbacks,
+                autoConnect: Boolean = false) : this(GetRequest(url, urlParameters, headers, extraData), callbacks,
             client, retryCount, retryOnServerClose, autoConnect)
 
     override fun onConnect(response: Response) {
