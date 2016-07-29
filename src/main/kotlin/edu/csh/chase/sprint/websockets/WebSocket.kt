@@ -208,6 +208,12 @@ abstract class WebSocket(protected val request: Request,
         listeners.remove(cb)
     }
 
+    fun addCallBack(cb: (WebSocketEvent) -> Unit): WebSocketCallbacks {
+        val _cb = cb.toWebSocketCallback()
+        listeners.add(_cb)
+        return _cb
+    }
+
     companion object {
 
         val infinteRetry = -1
