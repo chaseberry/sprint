@@ -18,6 +18,13 @@ object Sprint {
                 .readTimeout(30L, TimeUnit.SECONDS).build()
     }
 
+    val webSocketClient: OkHttpClient by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        OkHttpClient.Builder()
+                .connectTimeout(30L, TimeUnit.SECONDS)
+                .writeTimeout(30L, TimeUnit.SECONDS)
+                .readTimeout(0L, TimeUnit.MILLISECONDS).build()
+    }
+
     fun executeRequest(request: Request, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
 
         return executeRequest(request, object : SprintListener {
@@ -146,7 +153,7 @@ object Sprint {
     fun createWebSocket(url: String,
                         urlParameters: UrlParameters? = null,
                         headers: Headers.Builder = Headers.Builder(),
-                        client: OkHttpClient = OkHttpClient.Builder().readTimeout(0L, TimeUnit.MILLISECONDS).build(),
+                        client: OkHttpClient = webSocketClient,
                         retryCount: Int = 4,
                         extraData: Any? = null,
                         listener: (WebSocketEvent) -> Unit): WebSocket {
@@ -167,7 +174,7 @@ object Sprint {
     fun createWebSocket(url: String,
                         urlParameters: UrlParameters? = null,
                         headers: Headers.Builder = Headers.Builder(),
-                        client: OkHttpClient = OkHttpClient.Builder().readTimeout(0L, TimeUnit.MILLISECONDS).build(),
+                        client: OkHttpClient = webSocketClient,
                         retryCount: Int = 4,
                         extraData: Any? = null,
                         onConnect: ((Response) -> Unit)? = null,
@@ -212,7 +219,7 @@ object Sprint {
     fun createWebSocket(url: String,
                         urlParameters: UrlParameters? = null,
                         headers: Headers.Builder = Headers.Builder(),
-                        client: OkHttpClient = OkHttpClient.Builder().readTimeout(0L, TimeUnit.MILLISECONDS).build(),
+                        client: OkHttpClient = webSocketClient,
                         retryCount: Int = 4,
                         extraData: Any? = null,
                         callbacks: WebSocketCallbacks): WebSocket {
