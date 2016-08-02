@@ -14,3 +14,5 @@ class UrlParameters(vararg val pairs: Pair<String, Any>) {
 fun urlParams(params: () -> Array<Pair<String, String>>): UrlParameters {
     return UrlParameters(*params())
 }
+
+fun urlParams(vararg pairs: Pair<String, Any>): UrlParameters = UrlParameters(*pairs)
