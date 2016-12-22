@@ -131,7 +131,7 @@ abstract class WebSocket(protected val request: Request,
     }
 
     fun disconnect(code: Int, reason: String?) {
-        if (state == State.Disconnected || state == State.Disconnecting || state == State.Errored) {
+        if (state != State.Connected) {
             //Already closed
             return
         }
