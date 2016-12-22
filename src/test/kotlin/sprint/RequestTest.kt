@@ -15,8 +15,8 @@ class RequestTest() {
                 urlParams = UrlParameters("key" to "value")
         )
         val proccessor = RequestProcessor(request, OkHttpClient(), null)
-        val builtRequest = proccessor.buildOkRequest()
-        assertEquals("https://test.com/?key=value&", builtRequest.url().toString())
+        val builtRequest = proccessor.request.okHttpRequest
+        assertEquals("https://test.com/?key=value", builtRequest.url().toString())
     }
 
     @Test fun buildUrlNoParametersTest() {
@@ -24,7 +24,7 @@ class RequestTest() {
                 url = "https://test.com"
         )
         val proccessor = RequestProcessor(request, OkHttpClient(), null)
-        val builtRequest = proccessor.buildOkRequest()
+        val builtRequest = proccessor.request.okHttpRequest
         assertEquals("https://test.com/", builtRequest.url().toString())
     }
 
