@@ -1,9 +1,12 @@
 package edu.csh.chase.sprint
 
+import com.sun.javafx.fxml.builder.URLBuilder
 import edu.csh.chase.sprint.parameters.UrlParameters
 import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import java.net.URI
+import java.net.URL
 import okhttp3.Request as OkRequest
 
 data class Request(val url: String, val requestType: RequestType,
