@@ -9,7 +9,7 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
 buildscript {
-    ext.kotlin_version = '1.0.0'
+    ext.kotlin_version = '1.1.0'
     repositories {
         mavenCentral()
         jcenter()
@@ -31,7 +31,7 @@ dependencies {
     testCompile 'junit:junit:4.11'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'edu.csh.chase.kjson:kjson:0.0.17'
+    compile 'edu.csh.chase.kjson:kjson:0.0.19'
     compile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
 }
 
