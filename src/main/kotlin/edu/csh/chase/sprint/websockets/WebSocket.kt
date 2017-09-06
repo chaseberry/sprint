@@ -216,7 +216,7 @@ abstract class WebSocket(protected val request: Request,
 
     companion object {
 
-        val infinteRetry = -1
+        val infiniteRetry = -1
         val noRetry = 0
 
     }
