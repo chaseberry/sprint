@@ -14,7 +14,6 @@ class BasicWebSocket(request: Request,
                      private val callbacks: WebSocketCallbacks,
                      client: OkHttpClient,
                      retryCount: Int = 4,
-                     retryOnServerClose: Boolean = false,
                      autoConnect: Boolean = false) : WebSocket(request, client, retryCount, autoConnect) {
 
     constructor(url: String,

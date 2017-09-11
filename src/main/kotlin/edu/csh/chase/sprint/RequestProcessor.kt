@@ -52,7 +52,7 @@ class RequestProcessor(request: Request,
 
     override fun onResponse(request: Call, response: OkResponse) {
         val statusCode = response.code()
-        val body = response.body().bytes()
+        val body = response.body()?.bytes()
         val headers = response.headers()
         if (statusCode in 200..299) {
             listener?.sprintSuccess(this.request, Response(statusCode, body, headers))

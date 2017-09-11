@@ -11,7 +11,7 @@ class RawBody(val rawBody: Any, val contentType: String) : RequestBody() {
     }
 
     override fun contentType(): MediaType {
-        return MediaType.parse(contentType)
+        return MediaType.parse(contentType) ?: throw IllegalArgumentException("$contentType is not a valid content type")
     }
 
 }
