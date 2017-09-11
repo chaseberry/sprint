@@ -4,9 +4,7 @@ import edu.csh.chase.sprint.*
 import edu.csh.chase.sprint.parameters.UrlParameters
 import okhttp3.Headers
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import okhttp3.WebSocketListener
-import okhttp3.internal.ws.RealWebSocket
 import okio.Buffer
 import okio.ByteString
 import java.io.IOException
@@ -18,7 +16,6 @@ import okhttp3.WebSocket as OkWebSocket
 abstract class WebSocket(protected val request: Request,
                          client: OkHttpClient = Sprint.webSocketClient,
                          val retryCount: Int = 4,
-                         val retryOnServerClose: Boolean = false,
                          val autoConnect: Boolean = false) : WebSocketCallbacks {
 
     private val listeners: ArrayList<WebSocketCallbacks> = ArrayList()
@@ -68,9 +65,8 @@ abstract class WebSocket(protected val request: Request,
                 headers: Headers.Builder = Headers.Builder(),
                 extraData: Any? = null,
                 retryCount: Int = 4,
-                retryOnServerClose: Boolean = false,
                 autoConnect: Boolean = false) : this(GetRequest(url, urlParameters, headers, extraData),
-        client, retryCount, retryOnServerClose, autoConnect)
+        client, retryCount, autoConnect)
 
     init {
         listeners.add(this)
@@ -150,7 +146,7 @@ abstract class WebSocket(protected val request: Request,
 
         //If the server closes the connection, State will be Connected here
         //If the client disconnects closed will be true
-        if (retryOnServerClose && state == State.Connected) {
+        if (shouldRetry(code, reason) && state == State.Connected) {
             state = State.Disconnected//We are not disconnected
             doRetry()
         }
@@ -185,6 +181,10 @@ abstract class WebSocket(protected val request: Request,
         currentRetry--
 
         connect()
+    }
+
+    open fun shouldRetry(code: Int, reason: String?): Boolean {
+        return code !in listOf(1000, 1004, 1010)
     }
 
     fun addCallback(cb: WebSocketCallbacks) {

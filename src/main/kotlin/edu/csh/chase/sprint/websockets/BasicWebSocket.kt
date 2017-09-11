@@ -15,7 +15,7 @@ class BasicWebSocket(request: Request,
                      client: OkHttpClient,
                      retryCount: Int = 4,
                      retryOnServerClose: Boolean = false,
-                     autoConnect: Boolean = false) : WebSocket(request, client, retryCount, retryOnServerClose, autoConnect) {
+                     autoConnect: Boolean = false) : WebSocket(request, client, retryCount, autoConnect) {
 
     constructor(url: String,
                 client: OkHttpClient = Sprint.webSocketClient,
@@ -24,9 +24,8 @@ class BasicWebSocket(request: Request,
                 headers: Headers.Builder = Headers.Builder(),
                 extraData: Any? = null,
                 retryCount: Int = 4,
-                retryOnServerClose: Boolean = false,
                 autoConnect: Boolean = false) : this(GetRequest(url, urlParameters, headers, extraData), callbacks,
-            client, retryCount, retryOnServerClose, autoConnect)
+        client, retryCount, autoConnect)
 
     override fun onConnect(response: Response) {
         callbacks.onConnect(response)
