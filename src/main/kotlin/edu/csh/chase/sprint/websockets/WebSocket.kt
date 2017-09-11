@@ -4,16 +4,16 @@ import edu.csh.chase.sprint.*
 import edu.csh.chase.sprint.parameters.UrlParameters
 import okhttp3.Headers
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
-import okhttp3.Response as OkResponse
-import okhttp3.ws.WebSocket as OkWebSocket
 import okhttp3.ResponseBody
-import okhttp3.ws.WebSocketCall
-import okhttp3.ws.WebSocketListener
+import okhttp3.WebSocketListener
+import okhttp3.internal.ws.RealWebSocket
 import okio.Buffer
+import okio.ByteString
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import okhttp3.Response as OkResponse
+import okhttp3.WebSocket as OkWebSocket
 
 abstract class WebSocket(protected val request: Request,
                          client: OkHttpClient = Sprint.webSocketClient,
@@ -24,31 +24,31 @@ abstract class WebSocket(protected val request: Request,
     private val listeners: ArrayList<WebSocketCallbacks> = ArrayList()
     private var socket: OkWebSocket? = null
     private var currentRetry: Int = retryCount
-    private var call: WebSocketCall? = null
     private val client: OkHttpClient
 
-    private val listenerCallBacks = object : WebSocketListener {
+    private val listenerCallBacks = object : WebSocketListener() {
 
         override fun onOpen(webSocket: OkWebSocket, response: OkResponse) {
             this@WebSocket.onOpen(webSocket, response)
         }
 
-        override fun onPong(payload: Buffer?) {
-            this@WebSocket.onPong(payload)
+        override fun onMessage(webSocket: okhttp3.WebSocket, text: String) {
+            this@WebSocket.onMessage(text)
         }
 
-        override fun onClose(code: Int, reason: String?) {
+        override fun onMessage(webSocket: okhttp3.WebSocket, bytes: ByteString) {
+        }
+
+        override fun onClosing(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
+        }
+
+        override fun onClosed(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
             this@WebSocket.onClose(code, reason)
         }
 
-        override fun onFailure(e: IOException, response: OkResponse?) {
-            this@WebSocket.onFailure(e, response)
+        override fun onFailure(webSocket: okhttp3.WebSocket?, t: Throwable?, response: okhttp3.Response?) {
+            this@WebSocket.onFailure(IOException(t), response!!)
         }
-
-        override fun onMessage(message: ResponseBody?) {
-            this@WebSocket.onMessage(message)
-        }
-
     }
 
     var state: State = State.Disconnected
@@ -62,7 +62,6 @@ abstract class WebSocket(protected val request: Request,
         Errored//Functions the same as Disconnected, just notes that an error has occurred
     }
 
-
     constructor(url: String,
                 client: OkHttpClient = Sprint.webSocketClient,
                 urlParameters: UrlParameters? = null,
@@ -71,7 +70,7 @@ abstract class WebSocket(protected val request: Request,
                 retryCount: Int = 4,
                 retryOnServerClose: Boolean = false,
                 autoConnect: Boolean = false) : this(GetRequest(url, urlParameters, headers, extraData),
-            client, retryCount, retryOnServerClose, autoConnect)
+        client, retryCount, retryOnServerClose, autoConnect)
 
     init {
         listeners.add(this)
@@ -93,19 +92,12 @@ abstract class WebSocket(protected val request: Request,
         }
 
         try {
-            socket!!.sendMessage(RequestBody.create(OkWebSocket.TEXT, text))
+            socket!!.send(text)
         } catch(e: IOException) {
             socket!!.close(WebSocketDisconnect.protocolError, e.message)
         } catch(e: IllegalArgumentException) {
 
         }
-    }
-
-    fun ping(payload: Buffer? = null) {
-        if (state != State.Connected) {
-            return
-        }
-        socket!!.sendPing(payload)
     }
 
     //TODO consider returning a boolean success/failure
@@ -126,8 +118,7 @@ abstract class WebSocket(protected val request: Request,
         }
 
         state = State.Connecting
-        call = WebSocketCall.create(client, request.okHttpRequest)
-        call!!.enqueue(listenerCallBacks)
+        socket = client.newWebSocket(request.okHttpRequest, listenerCallBacks)
     }
 
     fun disconnect(code: Int, reason: String?) {
@@ -177,13 +168,13 @@ abstract class WebSocket(protected val request: Request,
         doRetry()
     }
 
-    private fun onMessage(message: ResponseBody?) {
-        val response = Response(200, message?.bytes(), null)
+    private fun onMessage(message: String?) {
+        val response = Response(200, message?.toByteArray(), null)
         listeners.forEach { it.messageReceived(response) }
     }
 
     private fun doRetry() {
-        if (retryCount == noRetry || currentRetry == 0) {
+        if (retryCount == WebSocket.noRetry || currentRetry == 0) {
             return
         }
 

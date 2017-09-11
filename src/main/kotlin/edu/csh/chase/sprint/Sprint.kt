@@ -13,19 +13,21 @@ object Sprint {
 
     private val client: OkHttpClient by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         OkHttpClient.Builder()
-                .connectTimeout(30L, TimeUnit.SECONDS)
-                .writeTimeout(30L, TimeUnit.SECONDS)
-                .readTimeout(30L, TimeUnit.SECONDS).build()
+            .connectTimeout(30L, TimeUnit.SECONDS)
+            .writeTimeout(30L, TimeUnit.SECONDS)
+            .readTimeout(30L, TimeUnit.SECONDS)
+            .pingInterval(10, TimeUnit.SECONDS).build()
     }
 
     val webSocketClient: OkHttpClient by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         OkHttpClient.Builder()
-                .connectTimeout(30L, TimeUnit.SECONDS)
-                .writeTimeout(30L, TimeUnit.SECONDS)
-                .readTimeout(0L, TimeUnit.MILLISECONDS).build()
+            .connectTimeout(30L, TimeUnit.SECONDS)
+            .writeTimeout(30L, TimeUnit.SECONDS)
+            .readTimeout(0L, TimeUnit.MILLISECONDS)
+            .pingInterval(10, TimeUnit.SECONDS).build()
     }
 
-    fun executeRequest(request: Request, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
+    fun executeRequest(request: Request, requestFinished: ((Request, Response) -> Unit)): RequestProcessor {
 
         return executeRequest(request, object : SprintListener {
             override fun sprintSuccess(request: Request, response: Response) {
@@ -43,110 +45,110 @@ object Sprint {
     }
 
     fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-            extraData: Any? = null, requestFinished: ((Request, Response) -> Unit )): RequestProcessor {
+            extraData: Any? = null, requestFinished: ((Request, Response) -> Unit)): RequestProcessor {
 
         return executeRequest(Request(
-                url = url,
-                requestType = RequestType.Get,
-                urlParams = urlParameters,
-                extraData = extraData,
-                headers = headers),
-                requestFinished)
+            url = url,
+            requestType = RequestType.Get,
+            urlParams = urlParameters,
+            extraData = extraData,
+            headers = headers),
+            requestFinished)
     }
 
     fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
             extraData: Any? = null, requestFinished: SprintListener): RequestProcessor {
 
         return executeRequest(Request(
-                url = url,
-                requestType = RequestType.Get,
-                urlParams = urlParameters,
-                extraData = extraData,
-                headers = headers),
-                requestFinished)
+            url = url,
+            requestType = RequestType.Get,
+            urlParams = urlParameters,
+            extraData = extraData,
+            headers = headers),
+            requestFinished)
     }
 
-    fun post(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder = Headers.Builder(),
-             body: RequestBody? = null, extraData: Any ? = null, requestFinished: ((Request, Response) -> Unit )):
-            RequestProcessor {
+    fun post(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+             body: RequestBody? = null, extraData: Any? = null, requestFinished: ((Request, Response) -> Unit)):
+        RequestProcessor {
 
         return executeRequest(Request(
-                url = url,
-                requestType = RequestType.Post,
-                urlParams = urlParameters,
-                headers = headers,
-                body = body,
-                extraData = extraData),
-                requestFinished)
+            url = url,
+            requestType = RequestType.Post,
+            urlParams = urlParameters,
+            headers = headers,
+            body = body,
+            extraData = extraData),
+            requestFinished)
     }
 
-    fun post(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder = Headers.Builder(),
-             body: RequestBody? = null, extraData: Any ? = null, requestFinished: SprintListener):
-            RequestProcessor {
+    fun post(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+             body: RequestBody? = null, extraData: Any? = null, requestFinished: SprintListener):
+        RequestProcessor {
 
         return executeRequest(Request(
-                url = url, requestType = RequestType.Post,
-                urlParams = urlParameters,
-                headers = headers,
-                body = body,
-                extraData = extraData),
-                requestFinished)
+            url = url, requestType = RequestType.Post,
+            urlParams = urlParameters,
+            headers = headers,
+            body = body,
+            extraData = extraData),
+            requestFinished)
     }
 
-    fun put(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder = Headers.Builder(),
-            body: RequestBody? = null, extraData: Any ? = null, requestFinished: ((Request, Response) -> Unit )):
-            RequestProcessor {
+    fun put(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+            body: RequestBody? = null, extraData: Any? = null, requestFinished: ((Request, Response) -> Unit)):
+        RequestProcessor {
 
         return executeRequest(Request(
-                url = url,
-                requestType = RequestType.Put,
-                urlParams = urlParameters,
-                headers = headers,
-                body = body,
-                extraData = extraData),
-                requestFinished)
+            url = url,
+            requestType = RequestType.Put,
+            urlParams = urlParameters,
+            headers = headers,
+            body = body,
+            extraData = extraData),
+            requestFinished)
     }
 
-    fun put(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder = Headers.Builder(),
-            body: RequestBody? = null, extraData: Any ? = null, requestFinished: SprintListener):
-            RequestProcessor {
+    fun put(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+            body: RequestBody? = null, extraData: Any? = null, requestFinished: SprintListener):
+        RequestProcessor {
 
         return executeRequest(Request(
-                url = url,
-                requestType = RequestType.Put,
-                urlParams = urlParameters,
-                headers = headers,
-                body = body,
-                extraData = extraData),
-                requestFinished)
+            url = url,
+            requestType = RequestType.Put,
+            urlParams = urlParameters,
+            headers = headers,
+            body = body,
+            extraData = extraData),
+            requestFinished)
     }
 
-    fun delete(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder = Headers.Builder(),
-               body: RequestBody? = null, extraData: Any ? = null, requestFinished: ((Request, Response) -> Unit )):
-            RequestProcessor {
+    fun delete(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+               body: RequestBody? = null, extraData: Any? = null, requestFinished: ((Request, Response) -> Unit)):
+        RequestProcessor {
 
         return executeRequest(Request(
-                url = url,
-                requestType = RequestType.Delete,
-                urlParams = urlParameters,
-                headers = headers,
-                body = body,
-                extraData = extraData),
-                requestFinished)
+            url = url,
+            requestType = RequestType.Delete,
+            urlParams = urlParameters,
+            headers = headers,
+            body = body,
+            extraData = extraData),
+            requestFinished)
     }
 
-    fun delete(url: String, urlParameters: UrlParameters ? = null, headers: Headers.Builder = Headers.Builder(),
-               body: RequestBody? = null, extraData: Any ? = null, requestFinished: SprintListener):
-            RequestProcessor {
+    fun delete(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+               body: RequestBody? = null, extraData: Any? = null, requestFinished: SprintListener):
+        RequestProcessor {
 
         return executeRequest(Request(
-                url = url,
-                requestType = RequestType.Delete,
-                urlParams = urlParameters,
-                headers = headers,
-                body = body,
-                extraData = extraData),
-                requestFinished)
+            url = url,
+            requestType = RequestType.Delete,
+            urlParams = urlParameters,
+            headers = headers,
+            body = body,
+            extraData = extraData),
+            requestFinished)
     }
 
 
@@ -159,16 +161,16 @@ object Sprint {
                         listener: (WebSocketEvent) -> Unit): WebSocket {
 
         return createWebSocket(url = url,
-                urlParameters = urlParameters,
-                headers = headers,
-                client = client,
-                retryCount = retryCount,
-                extraData = extraData,
-                onConnect = { response -> listener(ConnectEvent(response)) },
-                onDisconnect = { code, reason -> listener(DisconnectEvent(code, reason)) },
-                onError = { exception, response -> listener(ErrorEvent(exception, response)) },
-                onPong = { payload -> listener(PongEvent(payload)) },
-                onMessage = { response -> listener(MessageEvent(response)) })
+            urlParameters = urlParameters,
+            headers = headers,
+            client = client,
+            retryCount = retryCount,
+            extraData = extraData,
+            onConnect = { response -> listener(ConnectEvent(response)) },
+            onDisconnect = { code, reason -> listener(DisconnectEvent(code, reason)) },
+            onError = { exception, response -> listener(ErrorEvent(exception, response)) },
+            onPong = { payload -> listener(PongEvent(payload)) },
+            onMessage = { response -> listener(MessageEvent(response)) })
     }
 
     fun createWebSocket(url: String,
@@ -184,34 +186,34 @@ object Sprint {
                         onMessage: ((response: Response) -> Unit)? = null): WebSocket {
 
         return createWebSocket(
-                url = url,
-                urlParameters = urlParameters,
-                headers = headers,
-                client = client,
-                retryCount = retryCount,
-                extraData = extraData,
-                callbacks = object : WebSocketCallbacks {
+            url = url,
+            urlParameters = urlParameters,
+            headers = headers,
+            client = client,
+            retryCount = retryCount,
+            extraData = extraData,
+            callbacks = object : WebSocketCallbacks {
 
-                    override fun onConnect(response: Response) {
-                        onConnect?.invoke(response)
-                    }
-
-                    override fun onDisconnect(disconnectCode: Int, reason: String?) {
-                        onDisconnect?.invoke(disconnectCode, reason)
-                    }
-
-                    override fun onError(exception: IOException, response: Response?) {
-                        onError?.invoke(exception, response)
-                    }
-
-                    override fun messageReceived(response: Response) {
-                        onMessage?.invoke(response)
-                    }
-
-                    override fun pongReceived(payload: Buffer?) {
-                        onPong?.invoke(payload)
-                    }
+                override fun onConnect(response: Response) {
+                    onConnect?.invoke(response)
                 }
+
+                override fun onDisconnect(disconnectCode: Int, reason: String?) {
+                    onDisconnect?.invoke(disconnectCode, reason)
+                }
+
+                override fun onError(exception: IOException, response: Response?) {
+                    onError?.invoke(exception, response)
+                }
+
+                override fun messageReceived(response: Response) {
+                    onMessage?.invoke(response)
+                }
+
+                override fun pongReceived(payload: Buffer?) {
+                    onPong?.invoke(payload)
+                }
+            }
         )
 
     }
