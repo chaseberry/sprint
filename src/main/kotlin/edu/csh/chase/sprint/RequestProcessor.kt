@@ -52,16 +52,15 @@ class RequestProcessor(request: Request,
     }
 
     override fun onResponse(request: Call, response: OkResponse) {
-        response.use {
-            val statusCode = response.code()
-            val body = response.body()?.bytes()
-            val headers = response.headers()
-            if (statusCode in 200..299) {
-                listener?.sprintSuccess(this.request, Response(statusCode, body, headers))
-            } else {
-                listener?.sprintFailure(this.request, Response(statusCode, body, headers))
-            }
+        val statusCode = response.code()
+        val body = response.body()?.use { it.bytes() }
+        val headers = response.headers()
+        if (statusCode in 200..299) {
+            listener?.sprintSuccess(this.request, Response(statusCode, body, headers))
+        } else {
+            listener?.sprintFailure(this.request, Response(statusCode, body, headers))
         }
+
 
     }
 
