@@ -1,7 +1,8 @@
 package edu.csh.chase.sprint
 
 import edu.csh.chase.sprint.internal.Processor
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.OkHttpClient
 import java.io.IOException
 import okhttp3.Request as OkRequest
@@ -11,7 +12,7 @@ class RequestProcessor(request: Request,
                        client: OkHttpClient,
                        private val listener: SprintListener?,
                        val retryLimit: Int = 0) : Processor(request, client),
-        Callback {
+    Callback {
 
     private var attemptCount = 0
 
@@ -51,14 +52,17 @@ class RequestProcessor(request: Request,
     }
 
     override fun onResponse(request: Call, response: OkResponse) {
-        val statusCode = response.code()
-        val body = response.body()?.bytes()
-        val headers = response.headers()
-        if (statusCode in 200..299) {
-            listener?.sprintSuccess(this.request, Response(statusCode, body, headers))
-        } else {
-            listener?.sprintFailure(this.request, Response(statusCode, body, headers))
+        response.use {
+            val statusCode = response.code()
+            val body = response.body()?.bytes()
+            val headers = response.headers()
+            if (statusCode in 200..299) {
+                listener?.sprintSuccess(this.request, Response(statusCode, body, headers))
+            } else {
+                listener?.sprintFailure(this.request, Response(statusCode, body, headers))
+            }
         }
+
     }
 
 }
