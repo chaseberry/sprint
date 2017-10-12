@@ -44,7 +44,7 @@ abstract class WebSocket(protected val request: Request,
         }
 
         override fun onFailure(webSocket: okhttp3.WebSocket?, t: Throwable?, response: okhttp3.Response?) {
-            this@WebSocket.onFailure(IOException(t), response!!)
+            this@WebSocket.onFailure(IOException(t), response)
         }
     }
 
