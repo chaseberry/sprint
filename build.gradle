@@ -1,4 +1,4 @@
-def $versionNumber = '0.0.17'//Current working version
+def $versionNumber = '0.0.18'//Current working version
 
 group 'edu.csh.chase.sprint'
 version $versionNumber
@@ -31,7 +31,7 @@ dependencies {
     testCompile 'junit:junit:4.11'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
-    compile 'edu.csh.chase.kjson:kjson:0.0.19'
+    compile 'edu.csh.chase.kjson:kjson:0.0.20'
 }
 
 sourceSets {
