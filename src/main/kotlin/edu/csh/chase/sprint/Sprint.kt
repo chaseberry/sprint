@@ -1,7 +1,10 @@
 package edu.csh.chase.sprint
 
 import edu.csh.chase.sprint.parameters.UrlParameters
-import edu.csh.chase.sprint.websockets.*
+import edu.csh.chase.sprint.websockets.BasicWebSocket
+import edu.csh.chase.sprint.websockets.WebSocket
+import edu.csh.chase.sprint.websockets.WebSocketCallbacks
+import edu.csh.chase.sprint.websockets.WebSocketEvent
 import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
@@ -166,11 +169,11 @@ object Sprint {
             client = client,
             retryCount = retryCount,
             extraData = extraData,
-            onConnect = { response -> listener(ConnectEvent(response)) },
-            onDisconnect = { code, reason -> listener(DisconnectEvent(code, reason)) },
-            onError = { exception, response -> listener(ErrorEvent(exception, response)) },
-            onPong = { payload -> listener(PongEvent(payload)) },
-            onMessage = { response -> listener(MessageEvent(response)) })
+            onConnect = { response -> listener(WebSocketEvent.Connect(response)) },
+            onDisconnect = { code, reason -> listener(WebSocketEvent.Disconnect(code, reason)) },
+            onError = { exception, response -> listener(WebSocketEvent.Error(exception, response)) },
+            onPong = { payload -> listener(WebSocketEvent.Pong(payload)) },
+            onMessage = { response -> listener(WebSocketEvent.Message(response)) })
     }
 
     fun createWebSocket(url: String,
