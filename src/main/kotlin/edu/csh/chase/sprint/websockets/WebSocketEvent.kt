@@ -4,24 +4,17 @@ import edu.csh.chase.sprint.Response
 import okio.Buffer
 import java.io.IOException
 
-abstract class WebSocketEvent(val type: Type) {
+sealed class WebSocketEvent {
 
-    enum class Type {
-        Connect,
-        Disconnect,
-        Error,
-        Pong,
-        Message
-    }
+    class Connect(val response: Response) : WebSocketEvent()
+
+    class Disconnect(val code: Int, val reason: String?) : WebSocketEvent()
+
+    class Error(val exception: IOException, response: Response?) : WebSocketEvent()
+
+    class Pong(val payload: Buffer?) : WebSocketEvent()
+
+    class Message(val message: String) : WebSocketEvent()
 
 }
 
-class ConnectEvent(val response: Response) : WebSocketEvent(Type.Connect)
-
-class DisconnectEvent(val code: Int, val reason: String?) : WebSocketEvent(Type.Disconnect)
-
-class ErrorEvent(val exception: IOException, response: Response?) : WebSocketEvent(Type.Error)
-
-class PongEvent(val payload: Buffer?) : WebSocketEvent(Type.Pong)
-
-class MessageEvent(val message: String) : WebSocketEvent(Type.Message)

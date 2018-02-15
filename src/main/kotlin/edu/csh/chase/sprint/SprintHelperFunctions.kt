@@ -2,7 +2,8 @@ package edu.csh.chase.sprint
 
 import edu.csh.chase.kjson.JsonBase
 import edu.csh.chase.sprint.parameters.JsonBody
-import edu.csh.chase.sprint.websockets.*
+import edu.csh.chase.sprint.websockets.WebSocketCallbacks
+import edu.csh.chase.sprint.websockets.WebSocketEvent
 import okhttp3.Headers
 import okhttp3.RequestBody
 import okio.Buffer
@@ -27,23 +28,23 @@ val JsonBase.toRequestBody: RequestBody
 fun ((WebSocketEvent) -> Unit).toWebSocketCallback(): WebSocketCallbacks {
     return object : WebSocketCallbacks {
         override fun onConnect(response: Response) {
-            this@toWebSocketCallback(ConnectEvent(response))
+            this@toWebSocketCallback(WebSocketEvent.Connect(response))
         }
 
         override fun onDisconnect(disconnectCode: Int, reason: String?) {
-            this@toWebSocketCallback(DisconnectEvent(disconnectCode, reason))
+            this@toWebSocketCallback(WebSocketEvent.Disconnect(disconnectCode, reason))
         }
 
         override fun onError(exception: IOException, response: Response?) {
-            this@toWebSocketCallback(ErrorEvent(exception, response))
+            this@toWebSocketCallback(WebSocketEvent.Error(exception, response))
         }
 
         override fun messageReceived(message: String) {
-            this@toWebSocketCallback(MessageEvent(message))
+            this@toWebSocketCallback(WebSocketEvent.Message(message))
         }
 
         override fun pongReceived(payload: Buffer?) {
-            this@toWebSocketCallback(PongEvent(payload))
+            this@toWebSocketCallback(WebSocketEvent.Pong(payload))
         }
     }
 }
