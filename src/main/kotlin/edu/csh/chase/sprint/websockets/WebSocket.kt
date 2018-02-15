@@ -146,9 +146,9 @@ abstract class WebSocket(protected val request: Request,
     private fun onClose(code: Int, reason: String?) {
         safeListeners.forEach { it.onDisconnect(code, reason) }
 
-        //If the server closes the connection, State will be Connected here
+        //If the server closes the connection, state will be Connected here
         //If the client disconnects closed will be true
-        if (shouldRetry(code, reason) && state == State.Connected) {
+        if (shouldRetry(code, reason, State.Disconnected) && state == State.Connected) {
             state = State.Disconnected//We are not disconnected
             doRetry()
         }
@@ -163,7 +163,9 @@ abstract class WebSocket(protected val request: Request,
         state = State.Errored
         socket = null
 
-        doRetry()
+        if (shouldRetry(-1, "WS-Error", state)) {
+            doRetry()
+        }
     }
 
     private fun onMessage(message: String?) {
@@ -172,7 +174,7 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun doRetry() {
-        if (retryCount == WebSocket.noRetry || currentRetry == 0) {
+        if (currentRetry == 0) {
             return
         }
 
@@ -185,8 +187,8 @@ abstract class WebSocket(protected val request: Request,
         connect()
     }
 
-    open fun shouldRetry(code: Int, reason: String?): Boolean {
-        return code !in listOf(1000, 1004, 1010)
+    open fun shouldRetry(code: Int, reason: String?, state: State): Boolean {
+        return (state == State.Errored || code !in listOf(1000, 1004, 1010)) && retryCount == WebSocket.noRetry
     }
 
     fun addCallback(cb: WebSocketCallbacks) {
