@@ -1,6 +1,5 @@
 package edu.csh.chase.sprint
 
-import edu.csh.chase.sprint.internal.Processor
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -8,11 +7,10 @@ import java.io.IOException
 import okhttp3.Request as OkRequest
 import okhttp3.Response as OkResponse
 
-class RequestProcessor(request: Request,
-                       client: OkHttpClient,
+class RequestProcessor(val request: Request,
+                       val client: OkHttpClient,
                        private val listener: SprintListener?,
-                       val retryLimit: Int = 0) : Processor(request, client),
-    Callback {
+                       val retryLimit: Int = 0) : Callback {
 
     private var attemptCount = 0
 
