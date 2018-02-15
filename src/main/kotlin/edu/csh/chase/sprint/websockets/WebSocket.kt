@@ -23,6 +23,8 @@ abstract class WebSocket(protected val request: Request,
     private var currentRetry: Int = retryCount
     private val client: OkHttpClient
 
+    private val safeListeners = synchronized(listeners) { listeners.toList() }
+
     private val listenerCallBacks = object : WebSocketListener() {
 
         override fun onOpen(webSocket: OkWebSocket, response: OkResponse) {
@@ -138,11 +140,11 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onPong(payload: Buffer?) {
-        listeners.forEach { it.pongReceived(payload) }
+        safeListeners.forEach { it.pongReceived(payload) }
     }
 
     private fun onClose(code: Int, reason: String?) {
-        listeners.forEach { it.onDisconnect(code, reason) }
+        safeListeners.forEach { it.onDisconnect(code, reason) }
 
         //If the server closes the connection, State will be Connected here
         //If the client disconnects closed will be true
@@ -157,7 +159,7 @@ abstract class WebSocket(protected val request: Request,
 
     private fun onFailure(exception: IOException, response: OkResponse?) {
         val res = response?.let { Response(it) }
-        listeners.forEach { it.onError(exception, res) }
+        safeListeners.forEach { it.onError(exception, res) }
         state = State.Errored
         socket = null
 
@@ -166,7 +168,7 @@ abstract class WebSocket(protected val request: Request,
 
     private fun onMessage(message: String?) {
         val response = Response(200, message?.toByteArray(), null)
-        listeners.forEach { it.messageReceived(response) }
+        safeListeners.forEach { it.messageReceived(response) }
     }
 
     private fun doRetry() {
@@ -188,7 +190,9 @@ abstract class WebSocket(protected val request: Request,
     }
 
     fun addCallback(cb: WebSocketCallbacks) {
-        listeners.add(cb)
+        synchronized(listeners) {
+            listeners.add(cb)
+        }
     }
 
     fun removeCallback(cb: WebSocketCallbacks) {
@@ -196,12 +200,18 @@ abstract class WebSocket(protected val request: Request,
             //Can't remove yourself from webSocket callbacks
             return
         }
-        listeners.remove(cb)
+        synchronized(listeners) {
+            listeners.remove(cb)
+        }
     }
 
     fun addCallBack(cb: (WebSocketEvent) -> Unit): WebSocketCallbacks {
         val _cb = cb.toWebSocketCallback()
-        listeners.add(_cb)
+
+        synchronized(listeners) {
+            listeners.add(_cb)
+        }
+
         return _cb
     }
 
