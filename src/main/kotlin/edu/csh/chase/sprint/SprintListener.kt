@@ -2,11 +2,11 @@ package edu.csh.chase.sprint
 
 interface SprintListener {
 
-    fun sprintSuccess(request: Request, response: Response) {
+    fun sprintSuccess(response: Response.Success) {
 
     }
 
-    fun sprintFailure(request: Request, response: Response) {
+    fun sprintFailure(response: Response.Failure) {
 
     }
 

@@ -129,13 +129,15 @@ abstract class WebSocket(protected val request: Request,
         socket = null
     }
 
-    private fun onOpen(webSocket: OkWebSocket, response: OkResponse) {
+    private fun onOpen(webSocket: OkWebSocket, okResponse: OkResponse) {
         state = State.Connected
         socket = webSocket
         currentRetry = retryCount //Reset the retry count as a new connection was established
 
-        listeners.forEach {
-            it.onConnect(Response(response))
+        val response = Response.Success(this.request, okResponse)
+
+        safeListeners.forEach {
+            it.onConnect(response)
         }
     }
 
@@ -158,7 +160,7 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onFailure(exception: IOException, response: OkResponse?) {
-        val res = response?.let { Response(it) }
+        val res = Response.Failure(this.request, exception)
         safeListeners.forEach { it.onError(exception, res) }
         state = State.Errored
         socket = null
@@ -169,8 +171,10 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onMessage(message: String?) {
-        val response = Response(200, message?.toByteArray(), null)
-        safeListeners.forEach { it.messageReceived(response) }
+        message?.let { msg ->
+            safeListeners.forEach { it.messageReceived(msg) }
+        }
+
     }
 
     private fun doRetry() {

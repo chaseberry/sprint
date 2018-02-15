@@ -27,15 +27,15 @@ object Sprint {
             .pingInterval(10, TimeUnit.SECONDS).build()
     }
 
-    fun executeRequest(request: Request, requestFinished: ((Request, Response) -> Unit)): RequestProcessor {
+    fun executeRequest(request: Request, requestFinished: RequestFinished): RequestProcessor {
 
         return executeRequest(request, object : SprintListener {
-            override fun sprintSuccess(request: Request, response: Response) {
-                requestFinished(request, response)
+            override fun sprintSuccess(response: Response.Success) {
+                requestFinished(response)
             }
 
-            override fun sprintFailure(request: Request, response: Response) {
-                requestFinished(request, response)
+            override fun sprintFailure(response: Response.Failure) {
+                requestFinished(response)
             }
         })
     }
@@ -45,7 +45,7 @@ object Sprint {
     }
 
     fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-            extraData: Any? = null, requestFinished: ((Request, Response) -> Unit)): RequestProcessor {
+            extraData: Any? = null, requestFinished: RequestFinished): RequestProcessor {
 
         return executeRequest(Request(
             url = url,
@@ -69,7 +69,7 @@ object Sprint {
     }
 
     fun post(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-             body: RequestBody? = null, extraData: Any? = null, requestFinished: ((Request, Response) -> Unit)):
+             body: RequestBody? = null, extraData: Any? = null, requestFinished: RequestFinished):
         RequestProcessor {
 
         return executeRequest(Request(
@@ -96,7 +96,7 @@ object Sprint {
     }
 
     fun put(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-            body: RequestBody? = null, extraData: Any? = null, requestFinished: ((Request, Response) -> Unit)):
+            body: RequestBody? = null, extraData: Any? = null, requestFinished: RequestFinished):
         RequestProcessor {
 
         return executeRequest(Request(
@@ -124,7 +124,7 @@ object Sprint {
     }
 
     fun delete(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-               body: RequestBody? = null, extraData: Any? = null, requestFinished: ((Request, Response) -> Unit)):
+               body: RequestBody? = null, extraData: Any? = null, requestFinished: RequestFinished):
         RequestProcessor {
 
         return executeRequest(Request(
@@ -183,7 +183,7 @@ object Sprint {
                         onDisconnect: ((Int, String?) -> Unit)? = null,
                         onError: ((IOException, Response?) -> Unit)? = null,
                         onPong: ((Buffer?) -> Unit)? = null,
-                        onMessage: ((response: Response) -> Unit)? = null): WebSocket {
+                        onMessage: ((String) -> Unit)? = null): WebSocket {
 
         return createWebSocket(
             url = url,
@@ -206,8 +206,8 @@ object Sprint {
                     onError?.invoke(exception, response)
                 }
 
-                override fun messageReceived(response: Response) {
-                    onMessage?.invoke(response)
+                override fun messageReceived(message: String) {
+                    onMessage?.invoke(message)
                 }
 
                 override fun pongReceived(payload: Buffer?) {

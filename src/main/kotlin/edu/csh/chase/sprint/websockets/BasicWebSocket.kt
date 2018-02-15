@@ -38,8 +38,8 @@ class BasicWebSocket(request: Request,
         callbacks.onError(exception, response)
     }
 
-    override fun messageReceived(response: Response) {
-        callbacks.messageReceived(response)
+    override fun messageReceived(message: String) {
+        callbacks.messageReceived(message)
     }
 
     override fun pongReceived(payload: Buffer?) {

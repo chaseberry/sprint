@@ -45,20 +45,16 @@ class RequestProcessor(val request: Request,
             retry()
             return
         }
-        //TODO create status codes for all potential IOExceptions
-        listener?.sprintFailure(this.request, Response(-1, null, null))
+
+        listener?.sprintFailure(Response.Failure(this.request, e))
     }
 
     override fun onResponse(request: Call, response: OkResponse) {
         val statusCode = response.code()
         val body = response.body()?.use { it.bytes() }
         val headers = response.headers()
-        if (statusCode in 200..299) {
-            listener?.sprintSuccess(this.request, Response(statusCode, body, headers))
-        } else {
-            listener?.sprintFailure(this.request, Response(statusCode, body, headers))
-        }
 
+        listener?.sprintSuccess(Response.Success(this.request, statusCode, body, headers))
 
     }
 

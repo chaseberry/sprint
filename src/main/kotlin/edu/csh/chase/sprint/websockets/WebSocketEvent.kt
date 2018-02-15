@@ -24,4 +24,4 @@ class ErrorEvent(val exception: IOException, response: Response?) : WebSocketEve
 
 class PongEvent(val payload: Buffer?) : WebSocketEvent(Type.Pong)
 
-class MessageEvent(val response: Response) : WebSocketEvent(Type.Message)
+class MessageEvent(val message: String) : WebSocketEvent(Type.Message)

@@ -20,6 +20,6 @@ interface WebSocketCallbacks {
     fun pongReceived(payload: Buffer?) {
     }
 
-    fun messageReceived(response: Response)
+    fun messageReceived(message: String)
 
 }

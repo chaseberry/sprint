@@ -38,8 +38,8 @@ fun ((WebSocketEvent) -> Unit).toWebSocketCallback(): WebSocketCallbacks {
             this@toWebSocketCallback(ErrorEvent(exception, response))
         }
 
-        override fun messageReceived(response: Response) {
-            this@toWebSocketCallback(MessageEvent(response))
+        override fun messageReceived(message: String) {
+            this@toWebSocketCallback(MessageEvent(message))
         }
 
         override fun pongReceived(payload: Buffer?) {
@@ -47,3 +47,5 @@ fun ((WebSocketEvent) -> Unit).toWebSocketCallback(): WebSocketCallbacks {
         }
     }
 }
+
+typealias RequestFinished = (Response) -> Unit
