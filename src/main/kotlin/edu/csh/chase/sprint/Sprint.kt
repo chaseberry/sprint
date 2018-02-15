@@ -41,7 +41,7 @@ object Sprint {
     }
 
     fun executeRequest(request: Request, sprintListener: SprintListener?): RequestProcessor {
-        return RequestProcessor(request, client, sprintListener).executeRequest()
+        return RequestProcessor(request, client, sprintListener).asyncExecute()
     }
 
     fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),

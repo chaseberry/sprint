@@ -27,7 +27,7 @@ abstract class SprintClient(val urlBase: String) {
 
     fun executeRequest(request: Request, listener: SprintListener?): RequestProcessor {
         configureRequest(request)
-        return RequestProcessor(request, client, listener).executeRequest()
+        return RequestProcessor(request, client, listener).asyncExecute()
     }
 
     fun executeRequest(request: Request, listener: RequestFinished?):

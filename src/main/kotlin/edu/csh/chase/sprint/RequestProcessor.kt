@@ -18,14 +18,45 @@ class RequestProcessor(val request: Request,
 
     private var currentCall: Call? = null
 
+    private var executed = false
+
+    @Deprecated("use asyncExecute", ReplaceWith("asyncExecute()"))
     fun executeRequest(): RequestProcessor {
-        val okRequest = request.okHttpRequest
-        currentCall = client.newCall(okRequest)
+        return asyncExecute()
+    }
+
+    fun asyncExecute(): RequestProcessor {
+        if (executed) {
+            return this
+        }
+
+        executed = true
+
+        currentCall = client.newCall(request.okHttpRequest)
+
         currentCall!!.enqueue(this)
         if (attemptCount == 0) {
             listener?.sprintRequestQueued(request)
         }
         return this
+    }
+
+    fun syncExecute(): Response {
+        if (executed) {
+            return Response.Failure(request, IOException("Request has already been executed"))
+        }
+
+        executed = true
+
+        currentCall = client.newCall(request.okHttpRequest)
+
+        return try {
+            val r = currentCall!!.execute()
+
+            Response.Success(request, r.code(), r.body()?.use { it.bytes() }, r.headers())
+        } catch (e: IOException) {
+            Response.Failure(request, e)
+        }
     }
 
     fun cancelRequest() {
