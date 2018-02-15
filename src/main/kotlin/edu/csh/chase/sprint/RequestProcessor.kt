@@ -81,11 +81,14 @@ class RequestProcessor(val request: Request,
     }
 
     override fun onResponse(request: Call, response: OkResponse) {
-        val statusCode = response.code()
-        val body = response.body()?.use { it.bytes() }
-        val headers = response.headers()
-
-        listener?.sprintSuccess(Response.Success(this.request, statusCode, body, headers))
+        with(response) {
+            listener?.sprintSuccess(Response.Success(
+                request = this@RequestProcessor.request,
+                statusCode = code(),
+                body = body()?.use { it.bytes() },
+                headers = headers())
+            )
+        }
 
     }
 
