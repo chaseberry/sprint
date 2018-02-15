@@ -6,7 +6,7 @@ A get request is as easy as
 
 ```Kotlin
 
-Sprint.get(url = "http://someUrl.com/api/users"){ request, response ->
+Sprint.get(url = "http://someUrl.com/api/users"){
     if(response.successful){
         //Do something
     }
@@ -32,11 +32,10 @@ class myClient() : SprintClient("https://mybase.com/api/") {
     fun myRequest(param: String) {
         get(
                 endpoint = "users",
-                urlParameters = urlParams {
-                    arrayOf(
-                            "key" to param
-                    )
-                }) { request: Request, response: Response ->
+                urlParameters = urlParams(
+                    "key" to param
+                )
+            ) {
             //Whatever you what to do once the request finishes
         }
     }
