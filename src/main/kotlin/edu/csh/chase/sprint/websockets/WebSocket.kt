@@ -23,7 +23,8 @@ abstract class WebSocket(protected val request: Request,
     private var currentRetry: Int = retryCount
     private val client: OkHttpClient
 
-    private val safeListeners = synchronized(listeners) { listeners.toList() }
+    private val safeListeners: List<WebSocketCallbacks>
+        get() = synchronized(listeners) { listeners.toList() }
 
     private val listenerCallBacks = object : WebSocketListener() {
 
