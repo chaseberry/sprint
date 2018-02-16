@@ -22,7 +22,7 @@ sealed class Response(val request: Request) {
                 return Json.parse(String(body))
             }
 
-        val bodyAsString: String? = if (body == null) null else String(body)
+        val bodyAsString: String? = body?.let { String(it) }
 
         override val successful: Boolean
             get() {
@@ -31,7 +31,7 @@ sealed class Response(val request: Request) {
 
     }
 
-    class Failure(request: Request, val error: IOException) : Response(request) {
+    class Error(request: Request, val error: IOException) : Response(request) {
 
         override val successful: Boolean = false
 

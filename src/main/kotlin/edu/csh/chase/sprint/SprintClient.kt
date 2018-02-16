@@ -40,7 +40,7 @@ abstract class SprintClient(val urlBase: String) {
                     listener?.invoke(response)
                 }
 
-                override fun sprintFailure(response: Response.Failure) {
+                override fun sprintFailure(response: Response.Error) {
                     listener?.invoke(response)
                 }
             }

@@ -27,7 +27,7 @@ class SprintClientTest : SprintClient("https://reqres.in/api/") {
 
                     it.bodyAsJson ?: error("Body was not Json")
                 }
-                is Response.Failure -> {
+                is Response.Error -> {
 
                 }
             }
@@ -46,7 +46,7 @@ class SprintClientTest : SprintClient("https://reqres.in/api/") {
                     assert(404 == it.statusCode) { "StatusCode was not 200" }
 
                 }
-                is Response.Failure -> {
+                is Response.Error -> {
 
                 }
             }

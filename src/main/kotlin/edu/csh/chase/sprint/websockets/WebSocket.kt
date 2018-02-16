@@ -100,7 +100,7 @@ abstract class WebSocket(protected val request: Request,
 
     //TODO consider returning a boolean success/failure
     //Success for will attempt to connect
-    //Failure for already connected/already attempting to connect
+    //Error for already connected/already attempting to connect
     fun connect() {
         if (state == State.Connected || state == State.Connecting) {
             //Already connected or attempting to connect
@@ -160,7 +160,7 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onFailure(exception: IOException, response: OkResponse?) {
-        val res = Response.Failure(this.request, exception)
+        val res = Response.Error(this.request, exception)
         safeListeners.forEach { it.onError(exception, res) }
         state = State.Errored
         socket = null

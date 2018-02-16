@@ -43,7 +43,7 @@ class RequestProcessor(val request: Request,
 
     fun syncExecute(): Response {
         if (executed) {
-            return Response.Failure(request, IOException("Request has already been executed"))
+            return Response.Error(request, IOException("Request has already been executed"))
         }
 
         executed = true
@@ -55,7 +55,7 @@ class RequestProcessor(val request: Request,
 
             Response.Success(request, r.code(), r.body()?.use { it.bytes() }, r.headers())
         } catch (e: IOException) {
-            Response.Failure(request, e)
+            Response.Error(request, e)
         }
     }
 
@@ -77,7 +77,7 @@ class RequestProcessor(val request: Request,
             return
         }
 
-        listener?.sprintFailure(Response.Failure(this.request, e))
+        listener?.sprintFailure(Response.Error(this.request, e))
     }
 
     override fun onResponse(request: Call, response: OkResponse) {

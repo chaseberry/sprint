@@ -37,7 +37,7 @@ object Sprint {
                 requestFinished(response)
             }
 
-            override fun sprintFailure(response: Response.Failure) {
+            override fun sprintFailure(response: Response.Error) {
                 requestFinished(response)
             }
         })

@@ -6,7 +6,7 @@ interface SprintListener {
 
     }
 
-    fun sprintFailure(response: Response.Failure) {
+    fun sprintFailure(response: Response.Error) {
 
     }
 
