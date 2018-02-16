@@ -10,6 +10,8 @@ sealed class Response(val request: Request) {
 
     abstract val successful: Boolean
 
+    abstract override fun toString(): String
+
     class Success(request: Request, val statusCode: Int, val body: ByteArray?, val headers: Headers?) : Response(request) {
 
         constructor(request: Request, response: OkResponse) : this(request, response.code(), response.body()?.bytes(), response.headers())
@@ -25,12 +27,16 @@ sealed class Response(val request: Request) {
                 return statusCode in 200..299
             }
 
+        override fun toString(): String = bodyAsString ?: "null"
+
     }
 
     class Error(request: Request, val error: IOException) : Response(request) {
 
         override val successful: Boolean = false
 
+
+        override fun toString(): String = error.message ?: "null"
     }
 
 }
