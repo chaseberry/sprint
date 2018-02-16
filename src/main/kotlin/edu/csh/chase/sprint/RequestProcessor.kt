@@ -43,7 +43,7 @@ class RequestProcessor(val request: Request,
 
     fun syncExecute(): Response {
         if (executed) {
-            return Response.Error(request, IOException("Request has already been executed"))
+            return Response.ConnectionError(request, IOException("Request has already been executed"))
         }
 
         executed = true
@@ -55,7 +55,7 @@ class RequestProcessor(val request: Request,
 
             Response.Success(request, r.code(), r.body()?.use { it.bytes() }, r.headers())
         } catch (e: IOException) {
-            Response.Error(request, e)
+            Response.ConnectionError(request, e)
         }
     }
 
@@ -77,16 +77,28 @@ class RequestProcessor(val request: Request,
             return
         }
 
-        listener?.springRequestError(Response.Error(this.request, e))
+        listener?.springRequestError(Response.ConnectionError(this.request, e))
     }
 
     override fun onResponse(request: Call, response: OkResponse) {
         with(response) {
-            listener?.springResponseReceived(Response.Success(
-                request = this@RequestProcessor.request,
-                statusCode = code(),
-                body = body()?.use { it.bytes() },
-                headers = headers())
+            val code = response.code()
+            listener?.springResponseReceived(
+                if (code in 200..299) {
+                    Response.Success(
+                        request = this@RequestProcessor.request,
+                        statusCode = code,
+                        body = body()?.use { it.bytes() },
+                        headers = headers()
+                    )
+                } else {
+                    Response.Failure(
+                        request = this@RequestProcessor.request,
+                        statusCode = code,
+                        body = body()?.use { it.bytes() },
+                        headers = headers()
+                    )
+                }
             )
         }
 

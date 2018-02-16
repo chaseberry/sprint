@@ -36,11 +36,11 @@ abstract class SprintClient(val urlBase: String) {
         return executeRequest(
             request = request,
             listener = object : SprintListener {
-                override fun springResponseReceived(response: Response.Success) {
+                override fun springResponseReceived(response: Response.ServerResponse) {
                     listener?.invoke(response)
                 }
 
-                override fun springRequestError(response: Response.Error) {
+                override fun springRequestError(response: Response.ConnectionError) {
                     listener?.invoke(response)
                 }
             }

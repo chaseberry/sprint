@@ -121,7 +121,7 @@ abstract class WebSocket(protected val request: Request,
     }
 
     fun disconnect(code: Int, reason: String?) {
-        if (state != State.Connected || state != State.Connecting) {
+        if (state != State.Connected && state != State.Connecting) {
             //Already closed
             return
         }
@@ -161,7 +161,7 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onFailure(exception: IOException, response: OkResponse?) {
-        val res = Response.Error(this.request, exception)
+        val res = Response.ConnectionError(this.request, exception)
         safeListeners.forEach { it.onError(exception, res) }
         state = State.Errored
         socket = null

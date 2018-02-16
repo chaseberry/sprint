@@ -2,11 +2,11 @@ package edu.csh.chase.sprint
 
 interface SprintListener {
 
-    fun springResponseReceived(response: Response.Success) {
+    fun springResponseReceived(response: Response.ServerResponse) {
 
     }
 
-    fun springRequestError(response: Response.Error) {
+    fun springRequestError(response: Response.ConnectionError) {
 
     }
 
