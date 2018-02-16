@@ -15,14 +15,10 @@ sealed class Response(val request: Request) {
         constructor(request: Request, response: OkResponse) : this(request, response.code(), response.body()?.bytes(), response.headers())
 
         val bodyAsJson: JsonBase?
-            get() {
-                if (body == null) {
-                    return null
-                }
-                return Json.parse(String(body))
-            }
+            get() = bodyAsString?.let { Json.parse(it) }
 
-        val bodyAsString: String? = body?.let { String(it) }
+        val bodyAsString: String?
+            get() = body?.let { String(it) }
 
         override val successful: Boolean
             get() {
