@@ -5,6 +5,7 @@ import edu.csh.chase.sprint.RequestSerializer
 import edu.csh.chase.sprint.Response
 import edu.csh.chase.sprint.SprintClient
 import okhttp3.OkHttpClient
+import org.junit.Assert.*
 import org.junit.Test
 
 class SprintClientTest : SprintClient("https://reqres.in/api/") {
@@ -19,15 +20,15 @@ class SprintClientTest : SprintClient("https://reqres.in/api/") {
         get(
             "users/1"
         ) {
-            assert(it is Response.Success) { "Request should be a Success" }
+            assertTrue("Request should be a ServerResponse", it is Response.ServerResponse)
 
             when (it) {
-                is Response.Success -> {
-                    assert(200 == it.statusCode) { "StatusCode was not 200" }
+                is Response.ServerResponse -> {
+                    assertEquals("StatusCode was not 200", 200, it.statusCode)
 
-                    it.bodyAsJson ?: error("Body was not Json")
+                    it.bodyAsJson ?: fail("Body was not Json")
                 }
-                is Response.Error -> {
+                is Response.ConnectionError -> {
 
                 }
             }
@@ -39,14 +40,14 @@ class SprintClientTest : SprintClient("https://reqres.in/api/") {
         get(
             "unknown/23"
         ) {
-            assert(it is Response.Success) { "Request should be a Success" }
+            assertTrue("Request should be a ServerResponse", it is Response.ServerResponse)
 
             when (it) {
-                is Response.Success -> {
-                    assert(404 == it.statusCode) { "StatusCode was not 200" }
+                is Response.ServerResponse -> {
+                    assertEquals("StatusCode was not 404", 404, it.statusCode)
 
                 }
-                is Response.Error -> {
+                is Response.ConnectionError -> {
 
                 }
             }
