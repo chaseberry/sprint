@@ -170,11 +170,8 @@ abstract class WebSocket(protected val request: Request,
         }
     }
 
-    private fun onMessage(message: String?) {
-        message?.let { msg ->
-            safeListeners.forEach { it.messageReceived(msg) }
-        }
-
+    private fun onMessage(message: String) {
+        safeListeners.forEach { it.messageReceived(message) }
     }
 
     private fun doRetry() {
