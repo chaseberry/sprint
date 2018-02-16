@@ -33,11 +33,11 @@ object Sprint {
     fun executeRequest(request: Request, requestFinished: RequestFinished): RequestProcessor {
 
         return executeRequest(request, object : SprintListener {
-            override fun sprintSuccess(response: Response.Success) {
+            override fun springResponseReceived(response: Response.Success) {
                 requestFinished(response)
             }
 
-            override fun sprintFailure(response: Response.Error) {
+            override fun springRequestError(response: Response.Error) {
                 requestFinished(response)
             }
         })

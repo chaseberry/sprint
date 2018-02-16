@@ -77,12 +77,12 @@ class RequestProcessor(val request: Request,
             return
         }
 
-        listener?.sprintFailure(Response.Error(this.request, e))
+        listener?.springRequestError(Response.Error(this.request, e))
     }
 
     override fun onResponse(request: Call, response: OkResponse) {
         with(response) {
-            listener?.sprintSuccess(Response.Success(
+            listener?.springResponseReceived(Response.Success(
                 request = this@RequestProcessor.request,
                 statusCode = code(),
                 body = body()?.use { it.bytes() },
