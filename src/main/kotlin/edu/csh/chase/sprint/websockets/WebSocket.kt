@@ -59,6 +59,7 @@ abstract class WebSocket(protected val request: Request,
         Connected,
         Disconnecting,
         Disconnected,
+        Resetting,
         Errored//Functions the same as Disconnected, just notes that an error has occurred
     }
 
@@ -130,6 +131,12 @@ abstract class WebSocket(protected val request: Request,
         socket = null
     }
 
+    fun resetConnection() {
+        disconnect(WebSocketDisconnect.normalClosure, null)
+        state = State.Resetting
+        connect()
+    }
+
     private fun onOpen(webSocket: OkWebSocket, okResponse: OkResponse) {
         state = State.Connected
         socket = webSocket
@@ -147,6 +154,10 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onClose(code: Int, reason: String?) {
+        if (state == State.Resetting) {
+            return
+        }
+
         safeListeners.forEach { it.onDisconnect(code, reason) }
 
         //If the server closes the connection, state will be Connected here
@@ -161,6 +172,10 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onFailure(exception: IOException, response: OkResponse?) {
+        if (state == State.Resetting) {
+            return
+        }
+
         val res = Response.ConnectionError(this.request, exception)
         safeListeners.forEach { it.onError(exception, res) }
         state = State.Errored
