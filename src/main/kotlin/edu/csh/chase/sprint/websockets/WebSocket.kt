@@ -172,10 +172,6 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onFailure(exception: IOException, response: OkResponse?) {
-        if (state == State.Resetting) {
-            return
-        }
-
         val res = Response.ConnectionError(this.request, exception)
         safeListeners.forEach { it.onError(exception, res) }
         state = State.Errored
