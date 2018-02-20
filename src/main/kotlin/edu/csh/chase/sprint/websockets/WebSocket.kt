@@ -162,9 +162,9 @@ abstract class WebSocket(protected val request: Request,
 
         //If the server closes the connection, state will be Connected here
         //If the client disconnects closed will be true
-        if (shouldRetry(code, reason, State.Disconnected) && state == State.Connected) {
+        if (shouldRetry(RetryReason.Disconnect(code, reason)) && state == State.Connected) {
             state = State.Disconnected//We are not disconnected
-            doRetry()
+            doRetry(RetryReason.Disconnect(code, reason))
         }
 
         state = State.Disconnected
@@ -177,8 +177,8 @@ abstract class WebSocket(protected val request: Request,
         state = State.Errored
         socket = null
 
-        if (shouldRetry(-1, "WS-Error", state)) {
-            doRetry()
+        if (shouldRetry(RetryReason.Error(exception))) {
+            doRetry(RetryReason.Error(exception))
         }
     }
 
@@ -186,7 +186,7 @@ abstract class WebSocket(protected val request: Request,
         safeListeners.forEach { it.messageReceived(message) }
     }
 
-    private fun doRetry() {
+    private fun doRetry(reason: RetryReason) {
         if (currentRetry == 0) {
             return
         }
@@ -195,13 +195,19 @@ abstract class WebSocket(protected val request: Request,
         //Backs off 2^(#ofAttempts) seconds
         Thread.sleep(Math.pow(2.0, (retryCount - currentRetry).toDouble()).toLong() * 1000L)
 
-        currentRetry--
 
-        connect()
+        if (shouldRetry(reason)) {
+            currentRetry -= 1
+
+            connect()
+        }
     }
 
-    open fun shouldRetry(code: Int, reason: String?, state: State): Boolean {
-        return (state == State.Errored || code !in listOf(1000, 1004, 1010)) && retryCount == WebSocket.noRetry
+    open fun shouldRetry(reason: RetryReason): Boolean {
+        return when (reason) {
+            is RetryReason.Error -> true
+            is RetryReason.Disconnect -> reason.code !in listOf(1000, 1004, 1010)
+        } && retryCount == WebSocket.noRetry
     }
 
     fun addCallback(cb: WebSocketCallbacks) {
