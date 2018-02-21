@@ -36,7 +36,7 @@ abstract class SprintClient(val urlBase: String) {
         return executeRequest(
             request = request,
             listener = object : SprintListener {
-                override fun springResponseReceived(response: Response.ServerResponse) {
+                override fun sprintResponseReceived(response: Response.ServerResponse) {
                     listener?.invoke(response)
                 }
 

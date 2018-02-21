@@ -33,7 +33,7 @@ object Sprint {
     fun executeRequest(request: Request, requestFinished: RequestFinished): RequestProcessor {
 
         return executeRequest(request, object : SprintListener {
-            override fun springResponseReceived(response: Response.ServerResponse) {
+            override fun sprintResponseReceived(response: Response.ServerResponse) {
                 requestFinished(response)
             }
 

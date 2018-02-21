@@ -83,7 +83,7 @@ class RequestProcessor(val request: Request,
     override fun onResponse(request: Call, response: OkResponse) {
         with(response) {
             val code = response.code()
-            listener?.springResponseReceived(
+            listener?.sprintResponseReceived(
                 if (code in 200..299) {
                     Response.Success(
                         request = this@RequestProcessor.request,

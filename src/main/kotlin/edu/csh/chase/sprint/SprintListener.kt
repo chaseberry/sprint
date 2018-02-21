@@ -2,7 +2,7 @@ package edu.csh.chase.sprint
 
 interface SprintListener {
 
-    fun springResponseReceived(response: Response.ServerResponse) {
+    fun sprintResponseReceived(response: Response.ServerResponse) {
 
     }
 
