@@ -10,11 +10,9 @@ import okhttp3.Response as OkResponse
 class RequestProcessor(val request: Request,
                        val client: OkHttpClient,
                        private val listener: SprintListener?,
-                       val retryLimit: Int = 0) : Callback {
+                       val retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L, 6)) : Callback {
 
     private var attemptCount = 0
-
-    private var sleepTime = 1
 
     private var currentCall: Call? = null
 
@@ -66,13 +64,13 @@ class RequestProcessor(val request: Request,
     }
 
     private fun retry() {
-        attemptCount++
-        Thread.sleep((sleepTime * 1000).toLong())
-        sleepTime *= 2
+        attemptCount += 1
+
+        Thread.sleep(retries.getNextDelay(attemptCount - 1))
     }
 
     override fun onFailure(request: Call?, e: IOException) {
-        if (attemptCount < retryLimit) {
+        if (retries.shouldRetry(attemptCount)) {
             retry()
             return
         }

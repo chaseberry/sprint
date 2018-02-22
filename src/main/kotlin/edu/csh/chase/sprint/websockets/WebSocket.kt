@@ -15,12 +15,12 @@ import okhttp3.WebSocket as OkWebSocket
 
 abstract class WebSocket(protected val request: Request,
                          client: OkHttpClient = Sprint.webSocketClient,
-                         val retryCount: Int = 4,
+                         val retries: BackoffTimeout = BackoffTimeout.Exponential(500L, 2, 300000L, 5),
                          val autoConnect: Boolean = false) : WebSocketCallbacks {
 
     private val listeners: ArrayList<WebSocketCallbacks> = ArrayList()
     private var socket: OkWebSocket? = null
-    private var currentRetry: Int = retryCount
+    private var attemptCount: Int = 0
     private val client: OkHttpClient
 
     private val safeListeners: List<WebSocketCallbacks>
@@ -68,9 +68,9 @@ abstract class WebSocket(protected val request: Request,
                 urlParameters: UrlParameters? = null,
                 headers: Headers.Builder = Headers.Builder(),
                 extraData: Any? = null,
-                retryCount: Int = 4,
+                retries: BackoffTimeout = BackoffTimeout.Exponential(500L, 2, 300000L, 5),
                 autoConnect: Boolean = false) : this(GetRequest(url, urlParameters, headers, extraData),
-        client, retryCount, autoConnect)
+        client, retries, autoConnect)
 
     init {
         listeners.add(this)
@@ -140,7 +140,7 @@ abstract class WebSocket(protected val request: Request,
     private fun onOpen(webSocket: OkWebSocket, okResponse: OkResponse) {
         state = State.Connected
         socket = webSocket
-        currentRetry = retryCount //Reset the retry count as a new connection was established
+        attemptCount = 0 //Reset the retry count as a new connection was established
 
         val response = Response.Success(this.request, okResponse)
 
@@ -187,17 +187,14 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun doRetry(reason: RetryReason) {
-        if (currentRetry == 0) {
+        if (!retries.shouldRetry(attemptCount)) {
             return
         }
 
-        //Backoff using Thread.sleep
-        //Backs off 2^(#ofAttempts) seconds
-        Thread.sleep(Math.pow(2.0, (retryCount - currentRetry).toDouble()).toLong() * 1000L)
-
+        attemptCount += 1
+        Thread.sleep(retries.getNextDelay(attemptCount - 1))
 
         if (shouldRetry(reason)) {
-            currentRetry -= 1
 
             connect()
         }
@@ -207,7 +204,7 @@ abstract class WebSocket(protected val request: Request,
         return when (reason) {
             is RetryReason.Error -> true
             is RetryReason.Disconnect -> reason.code !in listOf(1000, 1004, 1010)
-        } && retryCount == WebSocket.noRetry
+        }
     }
 
     fun addCallback(cb: WebSocketCallbacks) {
@@ -234,13 +231,6 @@ abstract class WebSocket(protected val request: Request,
         }
 
         return _cb
-    }
-
-    companion object {
-
-        val infiniteRetry = -1
-        val noRetry = 0
-
     }
 
 }

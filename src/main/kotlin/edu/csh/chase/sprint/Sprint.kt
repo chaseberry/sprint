@@ -159,7 +159,7 @@ object Sprint {
                         urlParameters: UrlParameters? = null,
                         headers: Headers.Builder = Headers.Builder(),
                         client: OkHttpClient = webSocketClient,
-                        retryCount: Int = 4,
+                        retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L, 5),
                         extraData: Any? = null,
                         listener: (WebSocketEvent) -> Unit): WebSocket {
 
@@ -167,7 +167,7 @@ object Sprint {
             urlParameters = urlParameters,
             headers = headers,
             client = client,
-            retryCount = retryCount,
+            retries = retries,
             extraData = extraData,
             onConnect = { response -> listener(WebSocketEvent.Connect(response)) },
             onDisconnect = { code, reason -> listener(WebSocketEvent.Disconnect(code, reason)) },
@@ -180,7 +180,7 @@ object Sprint {
                         urlParameters: UrlParameters? = null,
                         headers: Headers.Builder = Headers.Builder(),
                         client: OkHttpClient = webSocketClient,
-                        retryCount: Int = 4,
+                        retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L,5),
                         extraData: Any? = null,
                         onConnect: ((Response) -> Unit)? = null,
                         onDisconnect: ((Int, String?) -> Unit)? = null,
@@ -193,7 +193,7 @@ object Sprint {
             urlParameters = urlParameters,
             headers = headers,
             client = client,
-            retryCount = retryCount,
+            retries = retries,
             extraData = extraData,
             callbacks = object : WebSocketCallbacks {
 
@@ -225,10 +225,10 @@ object Sprint {
                         urlParameters: UrlParameters? = null,
                         headers: Headers.Builder = Headers.Builder(),
                         client: OkHttpClient = webSocketClient,
-                        retryCount: Int = 4,
+                        retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L,5),
                         extraData: Any? = null,
                         callbacks: WebSocketCallbacks): WebSocket {
-        return BasicWebSocket(GetRequest(url, urlParameters, headers, extraData), callbacks, client, retryCount)
+        return BasicWebSocket(GetRequest(url, urlParameters, headers, extraData), callbacks, client, retries)
     }
 
 
