@@ -12,8 +12,6 @@ class RequestProcessor(val request: Request,
                        private val listener: SprintListener?,
                        val retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L, 6)) : Callback {
 
-    private var attemptCount = 0
-
     private var currentCall: Call? = null
 
     private var executed = false
@@ -30,13 +28,17 @@ class RequestProcessor(val request: Request,
 
         executed = true
 
+        listener?.sprintRequestQueued(request)
+
+        internalAsyncExecute()
+
+        return this
+    }
+
+    private fun internalAsyncExecute() {
         currentCall = client.newCall(request.okHttpRequest)
 
         currentCall!!.enqueue(this)
-        if (attemptCount == 0) {
-            listener?.sprintRequestQueued(request)
-        }
-        return this
     }
 
     fun syncExecute(): Response {
@@ -46,13 +48,23 @@ class RequestProcessor(val request: Request,
 
         executed = true
 
+        return internSyncExecute()
+    }
+
+    private fun internSyncExecute(): Response {
         currentCall = client.newCall(request.okHttpRequest)
 
         return try {
-            val r = currentCall!!.execute()
-
-            Response.Success(request, r.code(), r.body()?.use { it.bytes() }, r.headers())
+            currentCall!!.execute().let {
+                Response.Success(request, it.code(), it.body()?.use { it.bytes() }, it.headers())
+            }
         } catch (e: IOException) {
+
+            while (retries.shouldRetry()) {
+                Thread.sleep(retries.getNextDelay())
+                return internSyncExecute()
+            }
+
             Response.ConnectionError(request, e)
         }
     }
@@ -63,15 +75,10 @@ class RequestProcessor(val request: Request,
         currentCall = null
     }
 
-    private fun retry() {
-        attemptCount += 1
-
-        Thread.sleep(retries.getNextDelay(attemptCount - 1))
-    }
-
     override fun onFailure(request: Call?, e: IOException) {
-        if (retries.shouldRetry(attemptCount)) {
-            retry()
+        if (retries.shouldRetry()) {
+            Thread.sleep(retries.getNextDelay())
+            internalAsyncExecute()
             return
         }
 

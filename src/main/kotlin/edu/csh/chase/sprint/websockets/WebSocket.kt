@@ -20,7 +20,6 @@ abstract class WebSocket(protected val request: Request,
 
     private val listeners: ArrayList<WebSocketCallbacks> = ArrayList()
     private var socket: OkWebSocket? = null
-    private var attemptCount: Int = 0
     private val client: OkHttpClient
 
     private val safeListeners: List<WebSocketCallbacks>
@@ -140,7 +139,7 @@ abstract class WebSocket(protected val request: Request,
     private fun onOpen(webSocket: OkWebSocket, okResponse: OkResponse) {
         state = State.Connected
         socket = webSocket
-        attemptCount = 0 //Reset the retry count as a new connection was established
+        retries.reset() //Reset the retry count as a new connection was established
 
         val response = Response.Success(this.request, okResponse)
 
@@ -187,12 +186,11 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun doRetry(reason: RetryReason) {
-        if (!retries.shouldRetry(attemptCount)) {
+        if (!retries.shouldRetry()) {
             return
         }
 
-        attemptCount += 1
-        Thread.sleep(retries.getNextDelay(attemptCount - 1))
+        Thread.sleep(retries.getNextDelay())
 
         if (shouldRetry(reason)) {
 

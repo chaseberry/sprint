@@ -9,6 +9,9 @@ import java.util.concurrent.TimeUnit
  */
 abstract class BackoffTimeout(val maxAttempts: Int?) {
 
+    var currentAttempt = 0
+        private set
+
     init {
         if (maxAttempts ?: 0 < 0) {
             throw IllegalArgumentException("Cannot have negative maxAttempts")
@@ -57,16 +60,22 @@ abstract class BackoffTimeout(val maxAttempts: Int?) {
 
     protected abstract fun getDelay(attempt: Int): Long
 
-    fun getNextDelay(attempt: Int): Long {
+    fun getNextDelay(): Long {
         maxAttempts?.let {
-            if (attempt >= it) {
-                throw IllegalArgumentException("Getting delay for attempt:$attempt with maxAttempts:$maxAttempts")
+            if (currentAttempt >= it) {
+                throw IllegalArgumentException("Getting delay for attempt:$currentAttempt with maxAttempts:$maxAttempts")
             }
         }
 
-        return getDelay(attempt)
+        currentAttempt += 1
+
+        return getDelay(currentAttempt - 1)
     }
 
-    fun shouldRetry(attempt: Int): Boolean = maxAttempts?.let { attempt < maxAttempts } ?: true
+    fun reset() {
+        currentAttempt = 0
+    }
+
+    fun shouldRetry(): Boolean = maxAttempts?.let { currentAttempt < maxAttempts } ?: true
 
 }
