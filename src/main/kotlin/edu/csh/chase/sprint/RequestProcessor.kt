@@ -60,7 +60,7 @@ class RequestProcessor(val request: Request,
             }
         } catch (e: IOException) {
 
-            while (retries.shouldRetry()) {
+            if (retries.shouldRetry()) {
                 Thread.sleep(retries.getNextDelay())
                 return internSyncExecute()
             }
