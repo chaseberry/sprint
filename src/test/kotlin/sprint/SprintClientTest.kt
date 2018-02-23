@@ -20,10 +20,10 @@ class SprintClientTest : SprintClient("https://reqres.in/api/") {
         get(
             "users/1"
         ) {
-            assertTrue("Request should be a ServerResponse", it is Response.ServerResponse)
+            assertTrue("Request should be a Success", it is Response.Success)
 
             when (it) {
-                is Response.ServerResponse -> {
+                is Response.Success -> {
                     assertEquals("StatusCode was not 200", 200, it.statusCode)
 
                     it.bodyAsJson ?: fail("Body was not Json")
@@ -40,10 +40,10 @@ class SprintClientTest : SprintClient("https://reqres.in/api/") {
         get(
             "unknown/23"
         ) {
-            assertTrue("Request should be a ServerResponse", it is Response.ServerResponse)
+            assertTrue("Request should be a Failure", it is Response.Failure)
 
             when (it) {
-                is Response.ServerResponse -> {
+                is Response.Failure -> {
                     assertEquals("StatusCode was not 404", 404, it.statusCode)
 
                 }

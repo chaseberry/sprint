@@ -77,29 +77,31 @@ class RequestProcessor(val request: Request,
             return
         }
 
-        listener?.springRequestError(Response.ConnectionError(this.request, e))
+        listener?.sprintConnectionError(Response.ConnectionError(this.request, e))
     }
 
     override fun onResponse(request: Call, response: OkResponse) {
         with(response) {
             val code = response.code()
-            listener?.sprintResponseReceived(
-                if (code in 200..299) {
+            if (code in 200..299) {
+                listener?.sprintSuccess(
                     Response.Success(
                         request = this@RequestProcessor.request,
                         statusCode = code,
                         body = body()?.use { it.bytes() },
                         headers = headers()
                     )
-                } else {
+                )
+            } else {
+                listener?.sprintFailure(
                     Response.Failure(
                         request = this@RequestProcessor.request,
                         statusCode = code,
                         body = body()?.use { it.bytes() },
                         headers = headers()
                     )
-                }
-            )
+                )
+            }
         }
 
     }
