@@ -36,11 +36,15 @@ abstract class SprintClient(val urlBase: String) {
         return executeRequest(
             request = request,
             listener = object : SprintListener {
-                override fun sprintResponseReceived(response: Response.ServerResponse) {
+                override fun sprintFailure(response: Response.Failure) {
                     listener?.invoke(response)
                 }
 
-                override fun springRequestError(response: Response.ConnectionError) {
+                override fun sprintSuccess(response: Response.Success) {
+                    listener?.invoke(response)
+                }
+
+                override fun sprintConnectionError(response: Response.ConnectionError) {
                     listener?.invoke(response)
                 }
             }
