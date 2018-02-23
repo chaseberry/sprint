@@ -13,6 +13,9 @@ abstract class SprintClient(val urlBase: String) {
 
     abstract val defaultRequestSerializer: RequestSerializer
 
+    open val defaultBackoffTimeout: BackoffTimeout
+        get() = BackoffTimeout.Exponential(500, 2, 300000L, 6)
+
     open fun configureRequest(request: Request) {
 
     }
@@ -27,7 +30,7 @@ abstract class SprintClient(val urlBase: String) {
 
     fun executeRequest(request: Request, listener: SprintListener?): RequestProcessor {
         configureRequest(request)
-        return RequestProcessor(request, client, listener).asyncExecute()
+        return RequestProcessor(request, client, listener, defaultBackoffTimeout).asyncExecute()
     }
 
     fun executeRequest(request: Request, listener: RequestFinished?):
