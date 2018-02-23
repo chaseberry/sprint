@@ -74,7 +74,7 @@ abstract class BackoffTimeout(val maxAttempts: Int?) {
      * @param maxTimeout The maximum timeout this backoff can output. If the value of the next delay would exceed maxTimeout,
      * maxTimeout will return instead
      *
-     * @throws IllegalArgumentException if any of step, start, or maxTimeout are less than 1
+     * @throws IllegalArgumentException if any of step, or maxTimeout are less than 1. Or if start is < 0
      */
     class Linear(val start: Long, val step: Long, val maxTimeout: Long, maxAttempts: Int?) : BackoffTimeout(maxAttempts) {
 
@@ -83,8 +83,8 @@ abstract class BackoffTimeout(val maxAttempts: Int?) {
                 throw IllegalArgumentException("step must be > 0")
             }
 
-            if (start < 1) {
-                throw IllegalArgumentException("start must be > 0")
+            if (start < 0) {
+                throw IllegalArgumentException("start must be >= 0")
             }
 
             if (maxTimeout < 1) {
