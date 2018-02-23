@@ -24,7 +24,7 @@ abstract class BackoffTimeout(val maxAttempts: Int?) {
      * A class representing an exponential backoff
      *
      * Example:
-     * With a start of 500, power of 2, and maxTimeout of 60s
+     * With a start of 500ms, power of 2, and maxTimeout of 60s
      * The first 5 values will be 500, 1000, 2000, 4000, 8000
      *
      * @param start The length of the first backoff
@@ -66,7 +66,7 @@ abstract class BackoffTimeout(val maxAttempts: Int?) {
      * A class representing a linear backoff
      *
      * Example:
-     * With a start of 100, step of 100, and maxTimeout of 60s
+     * With a start of 100ms, step of 100ms, and maxTimeout of 60s
      * The first 5 values will be 100, 200, 300, 400, 500
      *
      * @param start The length of the first backoff
@@ -107,7 +107,7 @@ abstract class BackoffTimeout(val maxAttempts: Int?) {
     /**
      * A class representing a constant backoff
      * Example:
-     * With a step of 100
+     * With a step of 100ms
      * The first 5 values will be 100, 100, 100, 100, 100
      *
      * @param step The amount of time each backoff will be
@@ -134,6 +134,11 @@ abstract class BackoffTimeout(val maxAttempts: Int?) {
 
     protected abstract fun getDelay(attempt: Int): Long
 
+    /**
+     * Gets the next delay for this backoff
+     *
+     * @return The delay in Milliseconds
+     */
     fun getNextDelay(): Long {
         maxAttempts?.let {
             if (currentAttempt >= it) {
