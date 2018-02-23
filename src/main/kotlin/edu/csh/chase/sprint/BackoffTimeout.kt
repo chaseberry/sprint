@@ -151,10 +151,20 @@ abstract class BackoffTimeout(val maxAttempts: Int?) {
         return getDelay(currentAttempt - 1)
     }
 
+    /**
+     * Resets the internal attempt tracker to 0
+     */
     fun reset() {
         currentAttempt = 0
     }
 
+    /**
+     * Checks to see if another retry attempt can be made
+     * Always is true if maxAttempts is null
+     * Else checks that currentAttempts < maxAttempts
+     *
+     * @return true if another attempt can be made, false otherwise
+     */
     fun shouldRetry(): Boolean = maxAttempts?.let { currentAttempt < maxAttempts } ?: true
 
 }
