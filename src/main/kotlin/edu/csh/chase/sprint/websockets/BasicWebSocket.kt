@@ -1,9 +1,6 @@
 package edu.csh.chase.sprint.websockets
 
-import edu.csh.chase.sprint.GetRequest
-import edu.csh.chase.sprint.Request
-import edu.csh.chase.sprint.Response
-import edu.csh.chase.sprint.Sprint
+import edu.csh.chase.sprint.*
 import edu.csh.chase.sprint.parameters.UrlParameters
 import okhttp3.Headers
 import okhttp3.OkHttpClient
@@ -13,8 +10,8 @@ import java.io.IOException
 class BasicWebSocket(request: Request,
                      private val callbacks: WebSocketCallbacks,
                      client: OkHttpClient,
-                     retryCount: Int = 4,
-                     autoConnect: Boolean = false) : WebSocket(request, client, retryCount, autoConnect) {
+                     retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L, 5),
+                     autoConnect: Boolean = false) : WebSocket(request, client, retries, autoConnect) {
 
     constructor(url: String,
                 client: OkHttpClient = Sprint.webSocketClient,
@@ -22,9 +19,9 @@ class BasicWebSocket(request: Request,
                 urlParameters: UrlParameters? = null,
                 headers: Headers.Builder = Headers.Builder(),
                 extraData: Any? = null,
-                retryCount: Int = 4,
+                retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L, 5),
                 autoConnect: Boolean = false) : this(GetRequest(url, urlParameters, headers, extraData), callbacks,
-        client, retryCount, autoConnect)
+        client, retries, autoConnect)
 
     override fun onConnect(response: Response) {
         callbacks.onConnect(response)

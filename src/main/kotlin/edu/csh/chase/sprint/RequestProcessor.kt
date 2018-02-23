@@ -10,11 +10,7 @@ import okhttp3.Response as OkResponse
 class RequestProcessor(val request: Request,
                        val client: OkHttpClient,
                        private val listener: SprintListener?,
-                       val retryLimit: Int = 0) : Callback {
-
-    private var attemptCount = 0
-
-    private var sleepTime = 1
+                       val retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L, 6)) : Callback {
 
     private var currentCall: Call? = null
 
@@ -32,13 +28,17 @@ class RequestProcessor(val request: Request,
 
         executed = true
 
+        listener?.sprintRequestQueued(request)
+
+        internalAsyncExecute()
+
+        return this
+    }
+
+    private fun internalAsyncExecute() {
         currentCall = client.newCall(request.okHttpRequest)
 
         currentCall!!.enqueue(this)
-        if (attemptCount == 0) {
-            listener?.sprintRequestQueued(request)
-        }
-        return this
     }
 
     fun syncExecute(): Response {
@@ -48,13 +48,23 @@ class RequestProcessor(val request: Request,
 
         executed = true
 
+        return internSyncExecute()
+    }
+
+    private fun internSyncExecute(): Response {
         currentCall = client.newCall(request.okHttpRequest)
 
         return try {
-            val r = currentCall!!.execute()
-
-            Response.Success(request, r.code(), r.body()?.use { it.bytes() }, r.headers())
+            currentCall!!.execute().let {
+                Response.Success(request, it.code(), it.body()?.use { it.bytes() }, it.headers())
+            }
         } catch (e: IOException) {
+
+            if (retries.shouldRetry()) {
+                Thread.sleep(retries.getNextDelay())
+                return internSyncExecute()
+            }
+
             Response.ConnectionError(request, e)
         }
     }
@@ -65,15 +75,10 @@ class RequestProcessor(val request: Request,
         currentCall = null
     }
 
-    private fun retry() {
-        attemptCount++
-        Thread.sleep((sleepTime * 1000).toLong())
-        sleepTime *= 2
-    }
-
     override fun onFailure(request: Call?, e: IOException) {
-        if (attemptCount < retryLimit) {
-            retry()
+        if (retries.shouldRetry()) {
+            Thread.sleep(retries.getNextDelay())
+            internalAsyncExecute()
             return
         }
 
