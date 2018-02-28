@@ -39,6 +39,7 @@ abstract class WebSocket(protected val request: Request,
         }
 
         override fun onClosing(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
+            this@WebSocket.onClose(code, reason)
         }
 
         override fun onClosed(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
@@ -201,7 +202,7 @@ abstract class WebSocket(protected val request: Request,
     open fun shouldRetry(reason: RetryReason): Boolean {
         return when (reason) {
             is RetryReason.Error -> true
-            is RetryReason.Disconnect -> reason.code !in listOf(1000, 1004, 1010)
+            is RetryReason.Disconnect -> reason.code !in listOf(1000, 1004, 1008,1010)
         }
     }
 
