@@ -43,7 +43,6 @@ abstract class WebSocket(protected val request: Request,
         }
 
         override fun onClosed(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
-            this@WebSocket.onClose(code, reason)
         }
 
         override fun onFailure(webSocket: okhttp3.WebSocket?, t: Throwable?, response: okhttp3.Response?) {

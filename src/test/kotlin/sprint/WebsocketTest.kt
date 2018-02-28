@@ -25,19 +25,19 @@ class WebsocketTest {
                 when (it) {
                     is WebSocketEvent.Connect -> {
 
-                        assertEquals("Connection was not the first message received", msgNum, 0)
+                        assertEquals("Connection was not the first message received", 0, msgNum)
                         socket.sendText("ping")
 
                     }
                     is WebSocketEvent.Disconnect -> {
 
-                        assertEquals("Disconnection was not the third message received", msgNum, 2)
+                        assertEquals("Disconnection was not the third message received", 2, msgNum)
                         timeoutTimer.cancel()
 
                     }
                     is WebSocketEvent.Message -> {
 
-                        assertEquals("Message was not the second message received", msgNum, 1)
+                        assertEquals("Message was not the second message received", 1, msgNum)
                         assertEquals("Message sent != message received", it.message, "ping")
 
                         socket.disconnect(WebSocketDisconnect.normalClosure, null)
