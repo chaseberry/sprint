@@ -16,7 +16,7 @@ import okhttp3.WebSocket as OkWebSocket
 abstract class WebSocket(protected val request: Request,
                          client: OkHttpClient = Sprint.webSocketClient,
                          val retries: BackoffTimeout = BackoffTimeout.Exponential(500L, 2, 300000L, 5),
-                         val autoConnect: Boolean = false) : WebSocketCallbacks {
+                         autoConnect: Boolean = false) : WebSocketCallbacks {
 
     private val listeners: ArrayList<WebSocketCallbacks> = ArrayList()
     private var socket: OkWebSocket? = null
@@ -39,7 +39,7 @@ abstract class WebSocket(protected val request: Request,
         }
 
         override fun onClosing(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
-            this@WebSocket.onClose(code, reason)
+            this@WebSocket.onClose(code, reason, webSocket)
         }
 
         override fun onClosed(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
@@ -72,7 +72,7 @@ abstract class WebSocket(protected val request: Request,
         client, retries, autoConnect)
 
     init {
-        listeners.add(this)
+        addCallback(this)
 
         if (client.readTimeoutMillis() == 0) {
             this.client = client
@@ -92,9 +92,9 @@ abstract class WebSocket(protected val request: Request,
 
         try {
             socket!!.send(text)
-        } catch(e: IOException) {
+        } catch (e: IOException) {
             socket!!.close(WebSocketDisconnect.protocolError, e.message)
-        } catch(e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
 
         }
     }
@@ -138,7 +138,11 @@ abstract class WebSocket(protected val request: Request,
 
     private fun onOpen(webSocket: OkWebSocket, okResponse: OkResponse) {
         state = State.Connected
-        socket = webSocket
+
+        if (socket != webSocket) {
+            socket = webSocket
+        }
+
         retries.reset() //Reset the retry count as a new connection was established
 
         val response = Response.Success(this.request, okResponse)
@@ -152,12 +156,19 @@ abstract class WebSocket(protected val request: Request,
         safeListeners.forEach { it.pongReceived(payload) }
     }
 
-    private fun onClose(code: Int, reason: String?) {
+    private fun onClose(code: Int, reason: String?, webSocket: okhttp3.WebSocket) {
         if (state == State.Resetting) {
             return
         }
 
+        state = State.Disconnected
+
         safeListeners.forEach { it.onDisconnect(code, reason) }
+
+
+        if (socket == webSocket) {
+            socket = null
+        }
 
         //If the server closes the connection, state will be Connected here
         //If the client disconnects closed will be true
@@ -165,16 +176,13 @@ abstract class WebSocket(protected val request: Request,
             state = State.Disconnected//We are not disconnected
             doRetry(RetryReason.Disconnect(code, reason))
         }
-
-        state = State.Disconnected
-        socket = null
     }
 
     private fun onFailure(exception: IOException, response: OkResponse?) {
+        socket = null
+        state = State.Errored
         val res = Response.ConnectionError(this.request, exception)
         safeListeners.forEach { it.onError(exception, res) }
-        state = State.Errored
-        socket = null
 
         if (shouldRetry(RetryReason.Error(exception))) {
             doRetry(RetryReason.Error(exception))
@@ -201,7 +209,7 @@ abstract class WebSocket(protected val request: Request,
     open fun shouldRetry(reason: RetryReason): Boolean {
         return when (reason) {
             is RetryReason.Error -> true
-            is RetryReason.Disconnect -> reason.code !in listOf(1000, 1004, 1008,1010)
+            is RetryReason.Disconnect -> reason.code !in listOf(1000, 1004, 1008, 1010)
         }
     }
 
