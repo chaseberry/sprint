@@ -58,7 +58,7 @@ abstract class BackoffTimeout(val maxAttempts: Int?) {
             unit.toMillis(start), power, unit.toMillis(maxTimeout), maxAttempts
         )
 
-        override fun getDelay(attempt: Int): Long = Math.min(start * Math.pow(power.toDouble(), attempt.toDouble()).toLong(), maxTimeout)
+        override fun getDelay(attempt: Int): Long = Math.min(start.toDouble() * Math.pow(power.toDouble(), attempt.toDouble()), maxTimeout.toDouble()).toLong()
 
     }
 
