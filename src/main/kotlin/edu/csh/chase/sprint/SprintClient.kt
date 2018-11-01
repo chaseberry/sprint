@@ -28,6 +28,11 @@ abstract class SprintClient(val urlBase: String) {
         }
     }
 
+    fun executeRequest(request: Request): Response {
+        configureRequest(request)
+        return RequestProcessor(request, client, null, defaultBackoffTimeout).syncExecute()
+    }
+
     fun executeRequest(request: Request, listener: SprintListener?): RequestProcessor {
         configureRequest(request)
         return RequestProcessor(request, client, listener, defaultBackoffTimeout).asyncExecute()
@@ -55,6 +60,19 @@ abstract class SprintClient(val urlBase: String) {
     }
 
     fun get(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+            extraData: Any? = null): Response {
+
+        return executeRequest(
+            GetRequest(
+                url = buildEndpoint(urlBase, endpoint),
+                urlParams = urlParameters,
+                headers = headers,
+                extraData = extraData
+            )
+        )
+    }
+
+    fun get(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
             extraData: Any? = null, listener: SprintListener?): RequestProcessor {
 
         return executeRequest(GetRequest(
@@ -75,6 +93,20 @@ abstract class SprintClient(val urlBase: String) {
             headers = headers,
             extraData = extraData),
             listener = listener)
+    }
+
+    fun post(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+             body: Any? = null, serializer: RequestSerializer? = null, extraData: Any? = null): Response {
+
+        return executeRequest(
+            PostRequest(
+                url = buildEndpoint(urlBase, endpoint),
+                urlParams = urlParameters,
+                headers = headers,
+                extraData = extraData,
+                body = serializeBody(serializer, body)
+            )
+        )
     }
 
     fun post(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
@@ -104,6 +136,20 @@ abstract class SprintClient(val urlBase: String) {
     }
 
     fun put(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+            body: Any? = null, serializer: RequestSerializer? = null, extraData: Any? = null): Response {
+
+        return executeRequest(
+            PutRequest(
+                url = buildEndpoint(urlBase, endpoint),
+                urlParams = urlParameters,
+                headers = headers,
+                extraData = extraData,
+                body = serializeBody(serializer, body)
+            )
+        )
+    }
+
+    fun put(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
             body: Any? = null, serializer: RequestSerializer? = null, extraData: Any? = null,
             listener: SprintListener? = null): RequestProcessor {
 
@@ -127,6 +173,20 @@ abstract class SprintClient(val urlBase: String) {
             extraData = extraData,
             body = serializeBody(serializer, body)),
             listener = listener)
+    }
+
+    fun delete(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+               body: Any? = null, serializer: RequestSerializer? = null, extraData: Any? = null): Response {
+
+        return executeRequest(
+            DeleteRequest(
+                url = buildEndpoint(urlBase, endpoint),
+                urlParams = urlParameters,
+                headers = headers,
+                extraData = extraData,
+                body = serializeBody(serializer, body)
+            )
+        )
     }
 
     fun delete(endpoint: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),

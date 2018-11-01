@@ -14,7 +14,10 @@ class RequestProcessor(val request: Request,
 
     private var currentCall: Call? = null
 
-    private var executed = false
+    private var future: ResponseFuture? = null
+
+    var executed = false
+        private set
 
     @Deprecated("use asyncExecute", ReplaceWith("asyncExecute()"))
     fun executeRequest(): RequestProcessor {
@@ -41,36 +44,19 @@ class RequestProcessor(val request: Request,
         currentCall!!.enqueue(this)
     }
 
-    fun syncExecute(): Response {
+    fun syncExecute(): ResponseFuture {
         if (executed) {
-            return Response.ConnectionError(request, IOException("Request has already been executed"))
+            return future ?: throw Exception("---")
         }
 
         executed = true
 
-        return internSyncExecute()
-    }
-
-    private fun internSyncExecute(): Response {
-        currentCall = client.newCall(request.okHttpRequest)
-
-        return try {
-            currentCall!!.execute().let {
-                Response.Success(request, it.code(), it.body()?.use { it.bytes() }, it.headers())
-            }
-        } catch (e: IOException) {
-
-            if (retries.shouldRetry()) {
-                Thread.sleep(retries.getNextDelay())
-                return internSyncExecute()
-            }
-
-            Response.ConnectionError(request, e)
-        }
+        return ResponseFuture(request, client, retries)
     }
 
     fun cancelRequest() {
         currentCall?.cancel()
+        future?.cancel(true)
         listener?.sprintRequestCanceled(request)
         currentCall = null
     }
@@ -86,27 +72,11 @@ class RequestProcessor(val request: Request,
     }
 
     override fun onResponse(request: Call, response: OkResponse) {
-        with(response) {
-            val code = response.code()
-            if (code in 200..299) {
-                listener?.sprintSuccess(
-                    Response.Success(
-                        request = this@RequestProcessor.request,
-                        statusCode = code,
-                        body = body()?.use { it.bytes() },
-                        headers = headers()
-                    )
-                )
-            } else {
-                listener?.sprintFailure(
-                    Response.Failure(
-                        request = this@RequestProcessor.request,
-                        statusCode = code,
-                        body = body()?.use { it.bytes() },
-                        headers = headers()
-                    )
-                )
-            }
+        val r = Response.from(response, this.request)
+
+        when (r) {
+            is Response.Success -> listener?.sprintSuccess(r)
+            is Response.Failure -> listener?.sprintFailure(r)
         }
 
     }

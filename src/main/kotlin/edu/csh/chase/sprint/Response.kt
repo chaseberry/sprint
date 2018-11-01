@@ -50,5 +50,27 @@ sealed class Response(val request: Request) {
             else -> null
         }
 
+    companion object {
+        fun from(response: okhttp3.Response, request: Request): Response {
+            val code = response.code()
+            return if (code in 200..299) {
+                Response.Success(
+                    request = request,
+                    statusCode = code,
+                    body = response.body()?.use { it.bytes() },
+                    headers = response.headers()
+                )
+
+            } else {
+                Response.Failure(
+                    request = request,
+                    statusCode = code,
+                    body = response.body()?.use { it.bytes() },
+                    headers = response.headers()
+                )
+
+            }
+        }
+    }
 
 }

@@ -48,8 +48,26 @@ object Sprint {
         })
     }
 
-    fun executeRequest(request: Request, sprintListener: SprintListener?): RequestProcessor {
+    fun executeRequest(request: Request): Response {
+        return RequestProcessor(request, client, null).syncExecute()
+    }
+
+    fun executeRequest(request: Request, sprintListener: SprintListener): RequestProcessor {
         return RequestProcessor(request, client, sprintListener).asyncExecute()
+    }
+
+    fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+            extraData: Any? = null): Response {
+
+        return executeRequest(
+            Request(
+                url = url,
+                requestType = RequestType.Get,
+                urlParams = urlParameters,
+                extraData = extraData,
+                headers = headers
+            )
+        )
     }
 
     fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
@@ -74,6 +92,20 @@ object Sprint {
             extraData = extraData,
             headers = headers),
             requestFinished)
+    }
+
+    fun post(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+             body: RequestBody? = null, extraData: Any? = null): Response {
+
+        return executeRequest(
+            Request(
+                url = url,
+                requestType = RequestType.Post,
+                urlParams = urlParameters,
+                headers = headers,
+                body = body,
+                extraData = extraData)
+        )
     }
 
     fun post(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
@@ -104,6 +136,21 @@ object Sprint {
     }
 
     fun put(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+            body: RequestBody? = null, extraData: Any? = null): Response {
+
+        return executeRequest(
+            Request(
+                url = url,
+                requestType = RequestType.Put,
+                urlParams = urlParameters,
+                extraData = extraData,
+                body = body,
+                headers = headers
+            )
+        )
+    }
+
+    fun put(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
             body: RequestBody? = null, extraData: Any? = null, requestFinished: RequestFinished):
         RequestProcessor {
 
@@ -129,6 +176,21 @@ object Sprint {
             body = body,
             extraData = extraData),
             requestFinished)
+    }
+
+    fun delete(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
+               body: RequestBody? = null, extraData: Any? = null): Response {
+
+        return executeRequest(
+            Request(
+                url = url,
+                requestType = RequestType.Delete,
+                urlParams = urlParameters,
+                extraData = extraData,
+                body = body,
+                headers = headers
+            )
+        )
     }
 
     fun delete(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
@@ -185,7 +247,7 @@ object Sprint {
                         urlParameters: UrlParameters? = null,
                         headers: Headers.Builder = Headers.Builder(),
                         client: OkHttpClient = webSocketClient,
-                        retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L,5),
+                        retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L, 5),
                         extraData: Any? = null,
                         onConnect: ((Response) -> Unit)? = null,
                         onDisconnect: ((Int, String?) -> Unit)? = null,
@@ -230,7 +292,7 @@ object Sprint {
                         urlParameters: UrlParameters? = null,
                         headers: Headers.Builder = Headers.Builder(),
                         client: OkHttpClient = webSocketClient,
-                        retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L,5),
+                        retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L, 5),
                         extraData: Any? = null,
                         callbacks: WebSocketCallbacks): WebSocket {
         return BasicWebSocket(GetRequest(url, urlParameters, headers, extraData), callbacks, client, retries)
