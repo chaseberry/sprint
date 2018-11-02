@@ -20,7 +20,7 @@ class WebsocketTest {
         val timeoutTimer = Timer()
 
         socket = Sprint.createWebSocket(
-            url = "wss://echo.websocket.org",
+            url = "ws://echo.websocket.org",
             listener = {
                 when (it) {
                     is WebSocketEvent.Connect -> {
