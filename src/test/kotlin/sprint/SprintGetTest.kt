@@ -1,9 +1,11 @@
 package sprint
 
 import edu.csh.chase.sprint.Response
+import edu.csh.chase.sprint.ResponseFuture
 import edu.csh.chase.sprint.Sprint
 import org.junit.Assert
 import org.junit.Test
+import java.util.concurrent.TimeUnit
 
 class SprintGetTest() {
 
@@ -74,6 +76,24 @@ class SprintGetTest() {
 
         Assert.assertTrue("Sync finished before async was executed", asyncFinished)
 
+    }
+
+    lateinit var threadTestFuture: ResponseFuture
+
+    @Test
+    fun testThreadException() {
+        threadTestFuture = Sprint.get(
+            "https://reqres.in/api/users/1"
+        ) {
+            try {
+                threadTestFuture.get()
+            } catch (e: IllegalStateException) {
+                return@get
+            }
+            Assert.fail("Failed to throw IllegalStateException")
+        }
+
+        threadTestFuture.get(3, TimeUnit.SECONDS)
     }
 
 }

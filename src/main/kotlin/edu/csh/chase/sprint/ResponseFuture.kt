@@ -16,7 +16,10 @@ class ResponseFuture(val request: Request,
 
     private var canceled = false
 
+    private var workerThread: Thread? = null
+
     private val worker = client.dispatcher().executorService().submit {
+        workerThread = Thread.currentThread()
         listener?.sprintRequestQueued(request)
 
         while (retries.shouldRetry() && !canceled) {
@@ -58,6 +61,7 @@ class ResponseFuture(val request: Request,
     override fun isCancelled(): Boolean = canceled
 
     override fun get(): Response {
+        checkThread()
         if (isCancelled) {
             throw CancellationException()
         }
@@ -68,6 +72,7 @@ class ResponseFuture(val request: Request,
     }
 
     override fun get(timeout: Long, unit: TimeUnit): Response {
+        checkThread()
         if (isCancelled) {
             throw CancellationException()
         }
@@ -75,6 +80,12 @@ class ResponseFuture(val request: Request,
         worker.get(timeout, unit)
 
         return response ?: throw TimeoutException("Timed out after $timeout ms")
+    }
+
+    private fun checkThread() {
+        if (Thread.currentThread() == workerThread) {
+            throw IllegalStateException("Calling get() from the responses async block")
+        }
     }
 
     override fun cancel(mayInterruptIfRunning: Boolean): Boolean {
