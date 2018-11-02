@@ -6,11 +6,13 @@ A get request is as easy as
 
 ```Kotlin
 
-Sprint.get(url = "http://someUrl.com/api/users"){
+Sprint.get(url = "http://someurl.com/api/users"){
     if(response.successful){
         //Do something
     }
 }
+
+val response = Sprint.get("https://someurl.com/api/users").get()
 
 ```
 
@@ -43,6 +45,10 @@ class myClient() : SprintClient("https://mybase.com/api/") {
 }
 
 ```
+
+## Gradle
+
+`compile 'edu.csh.chase.sprint:sprint:0.1.15'`
 
 This library comes with KJson bundled in
 https://github.com/chaseberry/KJson
