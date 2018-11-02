@@ -30,7 +30,7 @@ class SprintGetTest() {
     }
 
     @Test
-    fun testSyncGet(){
+    fun testSyncGet() {
         val r = Sprint.get(
             "https://reqres.in/api/users/1"
         ).get()
@@ -47,6 +47,33 @@ class SprintGetTest() {
 
             }
         }
+    }
+
+
+    @Test
+    fun sameResponse() {
+        var response: Response? = null
+        val future = Sprint.get(
+            "https://reqres.in/api/users/1"
+        ) {
+            response = it
+        }
+
+        Assert.assertSame("Sync and Async Responses were different", future.get(), response)
+    }
+
+    @Test
+    fun responseOrder() {
+        var asyncFinished = false
+
+        Sprint.get(
+            "https://reqres.in/api/users/1"
+        ) {
+            asyncFinished = true
+        }.get()
+
+        Assert.assertTrue("Sync finished before async was executed", asyncFinished)
+
     }
 
 }
