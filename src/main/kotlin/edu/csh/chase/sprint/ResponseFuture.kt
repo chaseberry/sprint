@@ -7,6 +7,7 @@ import java.util.concurrent.*
 
 class ResponseFuture(val request: Request,
                      val client: OkHttpClient,
+                     private val listener: SprintListener?,
                      val retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L, 6)) : Future<Response> {
 
     private var currentCall: Call? = null
@@ -15,7 +16,8 @@ class ResponseFuture(val request: Request,
 
     private var canceled = false
 
-    private val worker = Thread {
+    private val worker = client.dispatcher().executorService().submit {
+        listener?.sprintRequestQueued(request)
 
         while (retries.shouldRetry() && !canceled) {
             invoke()
@@ -27,7 +29,16 @@ class ResponseFuture(val request: Request,
             Thread.sleep(retries.getNextDelay())
         }
 
-    }.also { it.start() }
+        response?.let {
+            when (it) {
+                is Response.Success -> listener?.sprintSuccess(it)
+                is Response.Failure -> listener?.sprintFailure(it)
+                is Response.ConnectionError -> listener?.sprintConnectionError(it)
+            }
+        }
+
+
+    }
 
     private fun invoke() {
         if (canceled) {
@@ -42,7 +53,7 @@ class ResponseFuture(val request: Request,
         }
     }
 
-    override fun isDone(): Boolean = currentCall?.isExecuted ?: false
+    override fun isDone(): Boolean = worker.isDone
 
     override fun isCancelled(): Boolean = canceled
 
@@ -51,7 +62,7 @@ class ResponseFuture(val request: Request,
             throw CancellationException()
         }
 
-        worker.join()
+        worker.get()
 
         return response ?: throw ExecutionException("Response was null", null)
     }
@@ -61,16 +72,16 @@ class ResponseFuture(val request: Request,
             throw CancellationException()
         }
 
-        worker.join(unit.toMillis(timeout))
+        worker.get(timeout, unit)
 
         return response ?: throw TimeoutException("Timed out after $timeout ms")
     }
 
     override fun cancel(mayInterruptIfRunning: Boolean): Boolean {
-        if (isDone) {
+        if (isDone || !mayInterruptIfRunning) {
             return false
         }
-
+        listener?.sprintRequestCanceled(request)
         currentCall?.cancel()
         canceled = true
 

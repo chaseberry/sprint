@@ -1,7 +1,7 @@
 package sprint
 
 import edu.csh.chase.sprint.GetRequest
-import edu.csh.chase.sprint.RequestProcessor
+import edu.csh.chase.sprint.ResponseFuture
 import edu.csh.chase.sprint.parameters.UrlParameters
 import okhttp3.OkHttpClient
 import org.junit.Test
@@ -14,7 +14,7 @@ class RequestTest() {
                 url = "https://test.com",
                 urlParams = UrlParameters("key" to "value")
         )
-        val proccessor = RequestProcessor(request, OkHttpClient(), null)
+        val proccessor = ResponseFuture(request, OkHttpClient(), null)
         val builtRequest = proccessor.request.okHttpRequest
         assertEquals("https://test.com/?key=value", builtRequest.url().toString())
     }
@@ -23,7 +23,7 @@ class RequestTest() {
         val request = GetRequest(
                 url = "https://test.com"
         )
-        val proccessor = RequestProcessor(request, OkHttpClient(), null)
+        val proccessor = ResponseFuture(request, OkHttpClient(), null)
         val builtRequest = proccessor.request.okHttpRequest
         assertEquals("https://test.com/", builtRequest.url().toString())
     }

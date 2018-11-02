@@ -16,7 +16,8 @@ class SprintClientTest : SprintClient("https://reqres.in/api/") {
 
     override val defaultRequestSerializer: RequestSerializer = JsonRequestSerializer()
 
-    @Test fun getUserOne() {
+    @Test
+    fun getUserOne() {
         get(
             "users/1"
         ) {
@@ -36,7 +37,8 @@ class SprintClientTest : SprintClient("https://reqres.in/api/") {
         }
     }
 
-    @Test fun fourOFour() {
+    @Test
+    fun fourOFour() {
         get(
             "unknown/23"
         ) {
@@ -50,6 +52,24 @@ class SprintClientTest : SprintClient("https://reqres.in/api/") {
                 is Response.ConnectionError -> {
 
                 }
+            }
+        }
+    }
+
+    @Test
+    fun syncUserTwo() {
+        get(
+            "users/2"
+        ).get().let{
+            assertTrue("Request should be a Success", it is Response.Success)
+
+            when (it) {
+                is Response.Success -> {
+                    assertEquals("StatusCode was not 200", 200, it.statusCode)
+
+                    it.bodyAsJson ?: fail("Body was not Json")
+                }
+                else -> Unit
             }
         }
     }
