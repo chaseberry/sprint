@@ -4,6 +4,13 @@ import okhttp3.MediaType
 import okhttp3.RequestBody
 import okio.BufferedSink
 
+@Deprecated(
+    message = "Use RequestBody.create()",
+    replaceWith = ReplaceWith(
+        expression = "RequestBody.create(MediaType.parse(contentType), rawBody)",
+        imports = ["okhttp3.MediaType", "okhttp3.RequestBody"]
+    )
+)
 class RawBody(val rawBody: Any, val contentType: String) : RequestBody() {
 
     override fun writeTo(sink: BufferedSink) {
