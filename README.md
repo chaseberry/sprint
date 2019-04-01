@@ -48,7 +48,7 @@ class myClient() : SprintClient("https://mybase.com/api/") {
 
 ## Gradle
 
-`compile 'edu.csh.chase.sprint:sprint:0.1.5'`
+`compile 'edu.csh.chase.sprint:sprint:0.1.6'`
 
 This library comes with KJson bundled in
 https://github.com/chaseberry/KJson
