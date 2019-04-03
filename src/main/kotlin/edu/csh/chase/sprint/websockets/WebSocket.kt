@@ -181,6 +181,7 @@ abstract class WebSocket(protected val request: Request,
 
 
         if (socket == webSocket) {
+            socket?.cancel()
             socket = null
         }
 
