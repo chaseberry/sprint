@@ -99,6 +99,20 @@ abstract class WebSocket(protected val request: Request,
         }
     }
 
+    fun sendBytes(bytes: ByteArray) {
+        if (state != State.Connected) {
+            return
+        }
+
+        try {
+            socket!!.send(ByteString.of(*bytes))
+        } catch (e: IOException) {
+            socket!!.close(WebSocketDisconnect.protocolError, e.message)
+        } catch (e: IllegalArgumentException) {
+
+        }
+    }
+
     //TODO consider returning a boolean success/failure
     //Success for will attempt to connect
     //Error for already connected/already attempting to connect
@@ -179,6 +193,7 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onFailure(exception: IOException, response: OkResponse?) {
+        socket?.cancel()
         socket = null
         state = State.Errored
         val res = Response.ConnectionError(this.request, exception)
