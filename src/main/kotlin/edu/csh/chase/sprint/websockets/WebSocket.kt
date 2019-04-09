@@ -159,12 +159,6 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onOpen(webSocket: OkWebSocket, okResponse: OkResponse) {
-        val response = Response.Success(this.request, okResponse)
-
-        safeListeners.forEach {
-            it.onConnect(response)
-        }
-
         synchronized(this) {
             if (socket != webSocket) {
                 socket?.cancel()//Cancel the old one.
@@ -175,6 +169,12 @@ abstract class WebSocket(protected val request: Request,
 
             shouldReconnect = false
             retries.reset() //Reset the retry count as a new connection was established
+        }
+
+        val response = Response.Success(this.request, okResponse)
+
+        safeListeners.forEach {
+            it.onConnect(response)
         }
     }
 
