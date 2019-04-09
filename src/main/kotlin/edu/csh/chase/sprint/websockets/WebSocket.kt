@@ -189,8 +189,7 @@ abstract class WebSocket(protected val request: Request,
     private fun onClose(code: Int, reason: String?, webSocket: okhttp3.WebSocket) {
         safeListeners.forEach { it.onDisconnect(code, reason) }
 
-        synchronized(this) {
-            val oldState = state
+        val shouldConnect = synchronized(this) {
 
             //Clean up everything
             webSocket.cancel()
@@ -199,11 +198,13 @@ abstract class WebSocket(protected val request: Request,
 
             state = State.Disconnected
 
-            //If the server closes the connection, state will be Connected here
-            //If the client disconnects closed will be true
-            if ((shouldRetry(RetryReason.Disconnect(code, reason)) && oldState == State.Connected) || shouldReconnect) {
-                doRetry(RetryReason.Disconnect(code, reason))
-            }
+            shouldReconnect
+        }
+
+        //If the server closes the connection, state will be Connected here
+        //If the client disconnects closed will be true
+        if (shouldRetry(RetryReason.Disconnect(code, reason)) || shouldConnect) {
+            doRetry(RetryReason.Disconnect(code, reason))
         }
     }
 
@@ -215,10 +216,10 @@ abstract class WebSocket(protected val request: Request,
             socket?.cancel()
             socket = null
             state = State.Errored
+        }
 
-            if (shouldRetry(RetryReason.Error(exception))) {
-                doRetry(RetryReason.Error(exception))
-            }
+        if (shouldRetry(RetryReason.Error(exception))) {
+            doRetry(RetryReason.Error(exception))
         }
     }
 
