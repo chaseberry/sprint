@@ -22,6 +22,8 @@ abstract class WebSocket(protected val request: Request,
     private var socket: OkWebSocket? = null
     private val client: OkHttpClient
 
+    private var shouldReconnect = false
+
     private val safeListeners: List<WebSocketCallbacks>
         get() = synchronized(listeners) { listeners.toList() }
 
@@ -58,7 +60,6 @@ abstract class WebSocket(protected val request: Request,
         Connected,
         Disconnecting,
         Disconnected,
-        Resetting,
         Errored//Functions the same as Disconnected, just notes that an error has occurred
     }
 
@@ -117,52 +118,63 @@ abstract class WebSocket(protected val request: Request,
     //Success for will attempt to connect
     //Error for already connected/already attempting to connect
     fun connect() {
-        if (state == State.Connected || state == State.Connecting) {
-            //Already connected or attempting to connect
-            return
-        }
+        synchronized(this) {
+            if (state == State.Connected || state == State.Connecting || state == State.Disconnecting) {
+                //Already connected or attempting to connect
+                return
+            }
 
-        if (request.requestType != RequestType.Get) {
-            throw IllegalArgumentException("WebSocket requests must have a HTTP Method of GET, got ${request.requestType}.")
-        }
+            if (request.requestType != RequestType.Get) {
+                throw IllegalArgumentException("WebSocket requests must have a HTTP Method of GET, got ${request.requestType}.")
+            }
 
-        if (!request.url.startsWith("ws://") && !request.url.startsWith("wss://")) {
-            throw IllegalArgumentException("WebSocket requests must have the URL Schema of ws:// or wss://.")
-        }
+            if (!request.url.startsWith("ws://") && !request.url.startsWith("wss://")) {
+                throw IllegalArgumentException("WebSocket requests must have the URL Schema of ws:// or wss://.")
+            }
 
-        state = State.Connecting
-        socket = client.newWebSocket(request.okHttpRequest, listenerCallBacks)
+            socket = client.newWebSocket(request.okHttpRequest, listenerCallBacks)
+            state = State.Connecting
+        }
     }
 
     fun disconnect(code: Int, reason: String?) {
-        if (state != State.Connected && state != State.Connecting) {
-            //Already closed
-            return
+        synchronized(this) {
+            if (state != State.Connected && state != State.Connecting) {
+                //Already closed
+                return
+            }
+
+            socket!!.close(code, reason)
+            socket = null
+
+            state = State.Disconnecting
         }
-        state = State.Disconnecting
-        socket!!.close(code, reason)
-        socket = null
     }
 
     fun resetConnection() {
-        disconnect(WebSocketDisconnect.normalClosure, null)
-        state = State.Resetting
-        connect()
+        synchronized(this) {
+            shouldReconnect = true
+            disconnect(WebSocketDisconnect.normalClosure, null)
+        }
     }
 
     private fun onOpen(webSocket: OkWebSocket, okResponse: OkResponse) {
-        state = State.Connected
-
-        if (socket != webSocket) {
-            socket = webSocket
-        }
-
-        retries.reset() //Reset the retry count as a new connection was established
-
         val response = Response.Success(this.request, okResponse)
 
         safeListeners.forEach {
             it.onConnect(response)
+        }
+
+        synchronized(this) {
+            if (socket != webSocket) {
+                socket?.cancel()//Cancel the old one.
+                socket = webSocket
+            }
+
+            state = State.Connected
+
+            shouldReconnect = false
+            retries.reset() //Reset the retry count as a new connection was established
         }
     }
 
@@ -171,37 +183,38 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onClose(code: Int, reason: String?, webSocket: okhttp3.WebSocket) {
-        if (state == State.Resetting) {
-            return
-        }
-
-        state = State.Disconnected
-
         safeListeners.forEach { it.onDisconnect(code, reason) }
 
+        synchronized(this) {
+            val oldState = state
 
-        if (socket == webSocket) {
+            //Clean up everything
+            webSocket.cancel()
             socket?.cancel()
             socket = null
-        }
 
-        //If the server closes the connection, state will be Connected here
-        //If the client disconnects closed will be true
-        if (shouldRetry(RetryReason.Disconnect(code, reason)) && state == State.Connected) {
-            state = State.Disconnected//We are not disconnected
-            doRetry(RetryReason.Disconnect(code, reason))
+            state = State.Disconnected
+
+            //If the server closes the connection, state will be Connected here
+            //If the client disconnects closed will be true
+            if ((shouldRetry(RetryReason.Disconnect(code, reason)) && oldState == State.Connected) || shouldReconnect) {
+                doRetry(RetryReason.Disconnect(code, reason))
+            }
         }
     }
 
     private fun onFailure(exception: IOException, response: OkResponse?) {
-        socket?.cancel()
-        socket = null
-        state = State.Errored
         val res = Response.ConnectionError(this.request, exception)
         safeListeners.forEach { it.onError(exception, res) }
 
-        if (shouldRetry(RetryReason.Error(exception))) {
-            doRetry(RetryReason.Error(exception))
+        synchronized(this) {
+            socket?.cancel()
+            socket = null
+            state = State.Errored
+
+            if (shouldRetry(RetryReason.Error(exception))) {
+                doRetry(RetryReason.Error(exception))
+            }
         }
     }
 
