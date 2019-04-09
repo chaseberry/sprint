@@ -137,8 +137,10 @@ abstract class WebSocket(protected val request: Request,
         }
     }
 
-    fun disconnect(code: Int, reason: String?) {
+    fun disconnect(code: Int, reason: String?, reconnect: Boolean = false) {
         synchronized(this) {
+            this.shouldReconnect = reconnect
+
             if (state != State.Connected && state != State.Connecting) {
                 //Already closed
                 return
@@ -151,11 +153,13 @@ abstract class WebSocket(protected val request: Request,
         }
     }
 
+    @Deprecated(
+        message = "disconnect now takes a reconnect",
+        replaceWith = ReplaceWith("disconnect(WebSocketDisconnect.normalClosure, null, true)")
+    )
     fun resetConnection() {
-        synchronized(this) {
-            shouldReconnect = true
-            disconnect(WebSocketDisconnect.normalClosure, null)
-        }
+        disconnect(WebSocketDisconnect.normalClosure, null, true)
+
     }
 
     private fun onOpen(webSocket: OkWebSocket, okResponse: OkResponse) {
