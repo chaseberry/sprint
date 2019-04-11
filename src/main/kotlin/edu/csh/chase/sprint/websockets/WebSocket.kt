@@ -80,6 +80,14 @@ abstract class WebSocket(protected val request: Request,
         } else {
             this.client = client.newBuilder().readTimeout(0L, TimeUnit.MILLISECONDS).build()
         }
+        
+        if (request.requestType != RequestType.Get) {
+            throw IllegalArgumentException("WebSocket requests must have a HTTP Method of GET, got ${request.requestType}.")
+        }
+
+        if (!request.url.startsWith("ws://") && !request.url.startsWith("wss://")) {
+            throw IllegalArgumentException("WebSocket requests must have the URL Schema of ws:// or wss://.")
+        }
 
         if (autoConnect) {
             connect()
@@ -122,14 +130,6 @@ abstract class WebSocket(protected val request: Request,
             if (state == State.Connected || state == State.Connecting || state == State.Disconnecting) {
                 //Already connected or attempting to connect
                 return
-            }
-
-            if (request.requestType != RequestType.Get) {
-                throw IllegalArgumentException("WebSocket requests must have a HTTP Method of GET, got ${request.requestType}.")
-            }
-
-            if (!request.url.startsWith("ws://") && !request.url.startsWith("wss://")) {
-                throw IllegalArgumentException("WebSocket requests must have the URL Schema of ws:// or wss://.")
             }
 
             socket = client.newWebSocket(request.okHttpRequest, listenerCallBacks)
