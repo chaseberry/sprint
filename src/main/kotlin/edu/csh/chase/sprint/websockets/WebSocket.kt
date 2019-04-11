@@ -80,7 +80,7 @@ abstract class WebSocket(protected val request: Request,
         } else {
             this.client = client.newBuilder().readTimeout(0L, TimeUnit.MILLISECONDS).build()
         }
-        
+
         if (request.requestType != RequestType.Get) {
             throw IllegalArgumentException("WebSocket requests must have a HTTP Method of GET, got ${request.requestType}.")
         }
@@ -139,12 +139,12 @@ abstract class WebSocket(protected val request: Request,
 
     fun disconnect(code: Int, reason: String?, reconnect: Boolean = false) {
         synchronized(this) {
-            this.shouldReconnect = reconnect
-
             if (state != State.Connected && state != State.Connecting) {
                 //Already closed
                 return
             }
+
+            this.shouldReconnect = reconnect
 
             socket!!.close(code, reason)
             socket = null
