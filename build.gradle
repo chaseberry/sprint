@@ -30,7 +30,7 @@ repositories {
 dependencies {
     testCompile 'junit:junit:4.11'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    compile 'com.squareup.okhttp3:okhttp:4.0.0'
     compile 'edu.csh.chase.kjson:kjson:0.0.22'
 }
 

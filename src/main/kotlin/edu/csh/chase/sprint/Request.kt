@@ -4,7 +4,9 @@ import com.sun.javafx.fxml.builder.URLBuilder
 import edu.csh.chase.sprint.parameters.UrlParameters
 import okhttp3.Headers
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URI
 import java.net.URL
 import okhttp3.Request as OkRequest
@@ -23,8 +25,8 @@ data class Request(val url: String, val requestType: RequestType,
         })
         when (requestType) {
             RequestType.Get -> builder.get()
-            RequestType.Post -> builder.post(body ?: RequestBody.create(MediaType.parse("text/plain"), ""))
-            RequestType.Put -> builder.put(body ?: RequestBody.create(MediaType.parse("text/plain"), ""))
+            RequestType.Post -> builder.post(body ?: "".toRequestBody("text/plain".toMediaTypeOrNull()))
+            RequestType.Put -> builder.put(body ?: "".toRequestBody("text/plain".toMediaTypeOrNull()))
             RequestType.Delete -> builder.delete(body)
         }
         builder.headers(headers.build())

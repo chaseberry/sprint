@@ -18,7 +18,7 @@ class ResponseFuture(val request: Request,
 
     private var workerThread: Thread? = null
 
-    private val worker = client.dispatcher().executorService().submit {
+    private val worker = client.dispatcher.executorService.submit {
         workerThread = Thread.currentThread()
         listener?.sprintRequestQueued(request)
 

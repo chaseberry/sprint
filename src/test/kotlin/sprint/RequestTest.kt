@@ -16,7 +16,7 @@ class RequestTest() {
         )
         val proccessor = ResponseFuture(request, OkHttpClient(), null)
         val builtRequest = proccessor.request.okHttpRequest
-        assertEquals("https://test.com/?key=value", builtRequest.url().toString())
+        assertEquals("https://test.com/?key=value", builtRequest.url.toString())
     }
 
     @Test fun buildUrlNoParametersTest() {
@@ -25,7 +25,7 @@ class RequestTest() {
         )
         val proccessor = ResponseFuture(request, OkHttpClient(), null)
         val builtRequest = proccessor.request.okHttpRequest
-        assertEquals("https://test.com/", builtRequest.url().toString())
+        assertEquals("https://test.com/", builtRequest.url.toString())
     }
 
 }

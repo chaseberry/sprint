@@ -4,6 +4,7 @@ import edu.csh.chase.kjson.JsonArray
 import edu.csh.chase.kjson.JsonBase
 import edu.csh.chase.kjson.JsonObject
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okio.BufferedSink
 
@@ -20,7 +21,7 @@ class JsonBody(json: JsonBase) : RequestBody() {
     }
 
     override fun contentType(): MediaType? {
-        return MediaType.parse("application/json; charset=utf-8")
+        return "application/json; charset=utf-8".toMediaTypeOrNull()
     }
 
     override fun writeTo(sink: BufferedSink) {

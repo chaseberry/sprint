@@ -47,7 +47,7 @@ abstract class WebSocket(protected val request: Request,
         override fun onClosed(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
         }
 
-        override fun onFailure(webSocket: okhttp3.WebSocket?, t: Throwable?, response: okhttp3.Response?) {
+        override fun onFailure(webSocket: okhttp3.WebSocket, t: Throwable, response: okhttp3.Response?) {
             this@WebSocket.onFailure(IOException(t), response)
         }
     }
@@ -75,7 +75,7 @@ abstract class WebSocket(protected val request: Request,
     init {
         addCallback(this)
 
-        if (client.readTimeoutMillis() == 0) {
+        if (client.readTimeoutMillis == 0) {
             this.client = client
         } else {
             this.client = client.newBuilder().readTimeout(0L, TimeUnit.MILLISECONDS).build()

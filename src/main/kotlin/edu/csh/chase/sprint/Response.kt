@@ -12,7 +12,7 @@ sealed class Response(val request: Request) {
 
     class Success(request: Request, val statusCode: Int, val body: ByteArray?, val headers: Headers?) : Response(request) {
 
-        constructor(request: Request, response: OkResponse) : this(request, response.code(), response.body()?.bytes(), response.headers())
+        constructor(request: Request, response: OkResponse) : this(request, response.code, response.body?.bytes(), response.headers)
 
         val bodyAsJson: JsonBase?
             get() = bodyAsString?.let { Json.parse(it) }
@@ -26,7 +26,7 @@ sealed class Response(val request: Request) {
 
     class Failure(request: Request, val statusCode: Int, val body: ByteArray?, val headers: Headers?) : Response(request) {
 
-        constructor(request: Request, response: OkResponse) : this(request, response.code(), response.body()?.bytes(), response.headers())
+        constructor(request: Request, response: OkResponse) : this(request, response.code, response.body?.bytes(), response.headers)
 
         val bodyAsJson: JsonBase?
             get() = bodyAsString?.let { Json.parse(it) }
@@ -52,21 +52,21 @@ sealed class Response(val request: Request) {
 
     companion object {
         fun from(response: okhttp3.Response, request: Request): Response {
-            val code = response.code()
+            val code = response.code
             return if (code in 200..299) {
                 Response.Success(
                     request = request,
                     statusCode = code,
-                    body = response.body()?.use { it.bytes() },
-                    headers = response.headers()
+                    body = response.body?.use { it.bytes() },
+                    headers = response.headers
                 )
 
             } else {
                 Response.Failure(
                     request = request,
                     statusCode = code,
-                    body = response.body()?.use { it.bytes() },
-                    headers = response.headers()
+                    body = response.body?.use { it.bytes() },
+                    headers = response.headers
                 )
 
             }
