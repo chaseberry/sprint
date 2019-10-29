@@ -295,7 +295,7 @@ object Sprint {
                         retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L, 5),
                         extraData: Any? = null,
                         callbacks: WebSocketCallbacks): WebSocket {
-        return BasicWebSocket(GetRequest(url, urlParameters, headers, extraData), callbacks, client, retries)
+        return BasicWebSocket(getRequest(url, urlParameters, headers, extraData), callbacks, client, retries)
     }
 
 

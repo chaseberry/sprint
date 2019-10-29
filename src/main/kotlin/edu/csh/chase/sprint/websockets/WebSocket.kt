@@ -69,7 +69,7 @@ abstract class WebSocket(protected val request: Request,
                 headers: Headers.Builder = Headers.Builder(),
                 extraData: Any? = null,
                 retries: BackoffTimeout = BackoffTimeout.Exponential(500L, 2, 300000L, 5),
-                autoConnect: Boolean = false) : this(GetRequest(url, urlParameters, headers, extraData),
+                autoConnect: Boolean = false) : this(getRequest(url, urlParameters, headers, extraData),
         client, retries, autoConnect)
 
     init {
@@ -178,16 +178,16 @@ abstract class WebSocket(protected val request: Request,
         val response = Response.Success(this.request, okResponse)
 
         safeListeners.forEach {
-            it.onConnect(response)
+            queitly { it.onConnect(response) }
         }
     }
 
     private fun onPong(payload: Buffer?) {
-        safeListeners.forEach { it.pongReceived(payload) }
+        safeListeners.forEach { queitly { it.pongReceived(payload) } }
     }
 
     private fun onClose(code: Int, reason: String?, webSocket: okhttp3.WebSocket) {
-        safeListeners.forEach { it.onDisconnect(code, reason) }
+        safeListeners.forEach { queitly { it.onDisconnect(code, reason) } }
 
         val (wasConnected, shouldConnect) = synchronized(this) {
             val oldState = state
@@ -210,7 +210,7 @@ abstract class WebSocket(protected val request: Request,
 
     private fun onFailure(exception: IOException, response: OkResponse?) {
         val res = Response.ConnectionError(this.request, exception)
-        safeListeners.forEach { it.onError(exception, res) }
+        safeListeners.forEach { queitly { it.onError(exception, res) } }
 
         synchronized(this) {
             socket?.cancel()
@@ -224,7 +224,7 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onMessage(message: String) {
-        safeListeners.forEach { it.messageReceived(message) }
+        safeListeners.forEach { queitly { it.messageReceived(message) } }
     }
 
     private fun doRetry(reason: RetryReason) {

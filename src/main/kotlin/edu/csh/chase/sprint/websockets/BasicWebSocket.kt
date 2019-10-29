@@ -20,7 +20,7 @@ class BasicWebSocket(request: Request,
                 headers: Headers.Builder = Headers.Builder(),
                 extraData: Any? = null,
                 retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L, 5),
-                autoConnect: Boolean = false) : this(GetRequest(url, urlParameters, headers, extraData), callbacks,
+                autoConnect: Boolean = false) : this(getRequest(url, urlParameters, headers, extraData), callbacks,
         client, retries, autoConnect)
 
     override fun onConnect(response: Response) {
