@@ -8,7 +8,7 @@ import edu.csh.chase.sprint.websockets.WebSocketEvent
 import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
-import okio.Buffer
+import okio.ByteString
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -230,7 +230,8 @@ object Sprint {
                         extraData: Any? = null,
                         listener: (WebSocketEvent) -> Unit): WebSocket {
 
-        return createWebSocket(url = url,
+        return createWebSocket(
+            url = url,
             urlParameters = urlParameters,
             headers = headers,
             client = client,
@@ -239,8 +240,9 @@ object Sprint {
             onConnect = { response -> listener(WebSocketEvent.Connect(response)) },
             onDisconnect = { code, reason -> listener(WebSocketEvent.Disconnect(code, reason)) },
             onError = { exception, response -> listener(WebSocketEvent.Error(exception, response)) },
-            onPong = { payload -> listener(WebSocketEvent.Pong(payload)) },
-            onMessage = { response -> listener(WebSocketEvent.Message(response)) })
+            onMessage = { response -> listener(WebSocketEvent.Message(response)) },
+            onByteMessage = { message -> listener(WebSocketEvent.ByteMessage(message)) }
+        )
     }
 
     fun createWebSocket(url: String,
@@ -252,8 +254,8 @@ object Sprint {
                         onConnect: ((Response) -> Unit)? = null,
                         onDisconnect: ((Int, String?) -> Unit)? = null,
                         onError: ((IOException, Response?) -> Unit)? = null,
-                        onPong: ((Buffer?) -> Unit)? = null,
-                        onMessage: ((String) -> Unit)? = null): WebSocket {
+                        onMessage: ((String) -> Unit)? = null,
+                        onByteMessage: ((ByteString) -> Unit)? = null): WebSocket {
 
         return createWebSocket(
             url = url,
@@ -280,8 +282,8 @@ object Sprint {
                     onMessage?.invoke(message)
                 }
 
-                override fun pongReceived(payload: Buffer?) {
-                    onPong?.invoke(payload)
+                override fun messageReceived(message: ByteString) {
+                    onByteMessage?.invoke(message)
                 }
             }
         )

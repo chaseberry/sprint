@@ -2,6 +2,7 @@ package edu.csh.chase.sprint.websockets
 
 import edu.csh.chase.sprint.Response
 import okio.Buffer
+import okio.ByteString
 import java.io.IOException
 
 /**
@@ -17,8 +18,7 @@ interface WebSocketCallbacks {
 
     fun onError(exception: IOException, response: Response?)
 
-    fun pongReceived(payload: Buffer?) {}
-
     fun messageReceived(message: String)
 
+    fun messageReceived(message: ByteString)
 }

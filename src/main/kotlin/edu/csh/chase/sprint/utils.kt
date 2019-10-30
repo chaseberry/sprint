@@ -8,6 +8,7 @@ import edu.csh.chase.sprint.websockets.WebSocketEvent
 import okhttp3.Headers
 import okhttp3.RequestBody
 import okio.Buffer
+import okio.ByteString
 import java.io.IOException
 import java.net.URL
 
@@ -44,8 +45,8 @@ fun ((WebSocketEvent) -> Unit).toWebSocketCallback(): WebSocketCallbacks {
             this@toWebSocketCallback(WebSocketEvent.Message(message))
         }
 
-        override fun pongReceived(payload: Buffer?) {
-            this@toWebSocketCallback(WebSocketEvent.Pong(payload))
+        override fun messageReceived(message: ByteString) {
+            this@toWebSocketCallback(WebSocketEvent.ByteMessage(message))
         }
     }
 }

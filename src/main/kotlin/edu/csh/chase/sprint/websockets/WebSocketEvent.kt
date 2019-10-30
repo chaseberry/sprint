@@ -1,7 +1,7 @@
 package edu.csh.chase.sprint.websockets
 
 import edu.csh.chase.sprint.Response
-import okio.Buffer
+import okio.ByteString
 import java.io.IOException
 
 sealed class WebSocketEvent {
@@ -12,9 +12,8 @@ sealed class WebSocketEvent {
 
     class Error(val exception: IOException, response: Response?) : WebSocketEvent()
 
-    class Pong(val payload: Buffer?) : WebSocketEvent()
-
     class Message(val message: String) : WebSocketEvent()
 
+    class ByteMessage(val message: ByteString) : WebSocketEvent()
 }
 

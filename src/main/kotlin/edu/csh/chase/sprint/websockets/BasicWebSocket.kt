@@ -4,7 +4,7 @@ import edu.csh.chase.sprint.*
 import edu.csh.chase.sprint.parameters.UrlParameters
 import okhttp3.Headers
 import okhttp3.OkHttpClient
-import okio.Buffer
+import okio.ByteString
 import java.io.IOException
 
 class BasicWebSocket(request: Request,
@@ -39,7 +39,7 @@ class BasicWebSocket(request: Request,
         callbacks.messageReceived(message)
     }
 
-    override fun pongReceived(payload: Buffer?) {
-        callbacks.pongReceived(payload)
+    override fun messageReceived(message: ByteString) {
+        callbacks.messageReceived(message)
     }
 }

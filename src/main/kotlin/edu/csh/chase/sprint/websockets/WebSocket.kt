@@ -38,6 +38,7 @@ abstract class WebSocket(protected val request: Request,
         }
 
         override fun onMessage(webSocket: okhttp3.WebSocket, bytes: ByteString) {
+            this@WebSocket.onMessage(bytes)
         }
 
         override fun onClosing(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
@@ -182,10 +183,6 @@ abstract class WebSocket(protected val request: Request,
         }
     }
 
-    private fun onPong(payload: Buffer?) {
-        safeListeners.forEach { quietly { it.pongReceived(payload) } }
-    }
-
     private fun onClose(code: Int, reason: String?, webSocket: okhttp3.WebSocket) {
         safeListeners.forEach { quietly { it.onDisconnect(code, reason) } }
 
@@ -224,6 +221,10 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onMessage(message: String) {
+        safeListeners.forEach { quietly { it.messageReceived(message) } }
+    }
+
+    private fun onMessage(message: ByteString) {
         safeListeners.forEach { quietly { it.messageReceived(message) } }
     }
 
