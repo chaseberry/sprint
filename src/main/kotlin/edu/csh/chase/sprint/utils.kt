@@ -114,7 +114,7 @@ fun deleteRequest(url: String,
     )
 }
 
-inline fun queitly(block: () -> Unit) = try {
+inline fun quietly(block: () -> Unit) = try {
     block()
 } catch (_: Exception) {
 }

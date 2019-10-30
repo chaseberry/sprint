@@ -178,16 +178,16 @@ abstract class WebSocket(protected val request: Request,
         val response = Response.Success(this.request, okResponse)
 
         safeListeners.forEach {
-            queitly { it.onConnect(response) }
+            quietly { it.onConnect(response) }
         }
     }
 
     private fun onPong(payload: Buffer?) {
-        safeListeners.forEach { queitly { it.pongReceived(payload) } }
+        safeListeners.forEach { quietly { it.pongReceived(payload) } }
     }
 
     private fun onClose(code: Int, reason: String?, webSocket: okhttp3.WebSocket) {
-        safeListeners.forEach { queitly { it.onDisconnect(code, reason) } }
+        safeListeners.forEach { quietly { it.onDisconnect(code, reason) } }
 
         val (wasConnected, shouldConnect) = synchronized(this) {
             val oldState = state
@@ -210,7 +210,7 @@ abstract class WebSocket(protected val request: Request,
 
     private fun onFailure(exception: IOException, response: OkResponse?) {
         val res = Response.ConnectionError(this.request, exception)
-        safeListeners.forEach { queitly { it.onError(exception, res) } }
+        safeListeners.forEach { quietly { it.onError(exception, res) } }
 
         synchronized(this) {
             socket?.cancel()
@@ -224,7 +224,7 @@ abstract class WebSocket(protected val request: Request,
     }
 
     private fun onMessage(message: String) {
-        safeListeners.forEach { queitly { it.messageReceived(message) } }
+        safeListeners.forEach { quietly { it.messageReceived(message) } }
     }
 
     private fun doRetry(reason: RetryReason) {
