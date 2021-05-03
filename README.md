@@ -53,6 +53,7 @@ To download through Gradle include this in your repositories
 ```Groovy
 maven {
         url  "https://dl.cloudsmith.io/public/chase-s-projects/sprint/maven/" 
+        url  "https://dl.cloudsmith.io/public/chase-s-projects/kjson/maven/" 
     }
 ```
 
