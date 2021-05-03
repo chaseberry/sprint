@@ -47,7 +47,7 @@ class myClient() : SprintClient("https://mybase.com/api/") {
 ```
 
 ## Gradle
-[![This version of 'sprint' @ Cloudsmith](https://api-prd.cloudsmith.io/v1/badges/version/chase-s-projects/sprint/maven/sprint/0.1.9/a=noarch;xg=edu.csh.chase.sprint/?render=true)](https://cloudsmith.io/~chase-s-projects/repos/sprint/packages/detail/maven/sprint/0.1.9/a=noarch;xg=edu.csh.chase.sprint/)
+[![Latest version of 'sprint' @ Cloudsmith](https://api-prd.cloudsmith.io/v1/badges/version/chase-s-projects/sprint/maven/sprint/latest/a=noarch;xg=edu.csh.chase.sprint/?render=true&show_latest=true)](https://cloudsmith.io/~chase-s-projects/repos/sprint/packages/detail/maven/sprint/latest/a=noarch;xg=edu.csh.chase.sprint/)
 
 To download through Gradle include this in your repositories
 ```Groovy
