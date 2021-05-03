@@ -51,10 +51,8 @@ class myClient() : SprintClient("https://mybase.com/api/") {
 
 To download through Gradle include this in your repositories
 ```Groovy
-maven {
-        url  "https://dl.cloudsmith.io/public/chase-s-projects/sprint/maven/" 
-        url  "https://dl.cloudsmith.io/public/chase-s-projects/kjson/maven/" 
-    }
+maven { url  "https://dl.cloudsmith.io/public/chase-s-projects/sprint/maven/" }
+maven { url  "https://dl.cloudsmith.io/public/chase-s-projects/kjson/maven/" }
 ```
 
 `compile 'edu.csh.chase.sprint:sprint:0.1.9'`
