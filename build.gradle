@@ -16,14 +16,13 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
     }
 }
 
 repositories {
     mavenCentral()
     jcenter()
-    maven { url 'http://dl.bintray.com/chaseberry/maven' }
+    maven { url 'https://dl.cloudsmith.io/public/chase-s-projects/kjson/maven/' }
 }
 
 dependencies {
