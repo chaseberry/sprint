@@ -20,27 +20,34 @@ class WebsocketTest {
         val timeoutTimer = Timer()
 
         socket = Sprint.createWebSocket(
-            url = "ws://echo.websocket.org",
+            url = "ws://ws.ifelse.io",
             listener = {
                 when (it) {
                     is WebSocketEvent.Connect -> {
 
                         assertEquals("Connection was not the first message received", 0, msgNum)
-                        socket.sendText("ping")
-
+                        //msgNum=1 is `Request served by $id`
                     }
                     is WebSocketEvent.Disconnect -> {
 
-                        assertEquals("Disconnection was not the third message received", 2, msgNum)
+                        assertEquals("Disconnection was not the third message received", 3, msgNum)
                         timeoutTimer.cancel()
 
                     }
                     is WebSocketEvent.Message -> {
+                        if (it.message.startsWith("Request served")) {
+                            socket.sendText("ping")
+                        } else {
+                            assertEquals("Message was not the second message received", 2, msgNum)
+                            assertEquals("Message sent != message received", it.message, "ping")
 
-                        assertEquals("Message was not the second message received", 1, msgNum)
-                        assertEquals("Message sent != message received", it.message, "ping")
+                            socket.disconnect(WebSocketDisconnect.normalClosure, null)
+                        }
 
-                        socket.disconnect(WebSocketDisconnect.normalClosure, null)
+                    }
+                    is WebSocketEvent.Error -> {
+                        it.exception.printStackTrace()
+                        fail("Received an error!")
                     }
                 }
 
