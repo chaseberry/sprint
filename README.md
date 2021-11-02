@@ -55,7 +55,7 @@ maven { url  "https://dl.cloudsmith.io/public/chase-s-projects/sprint/maven/" }
 maven { url  "https://dl.cloudsmith.io/public/chase-s-projects/kjson/maven/" }
 ```
 
-`compile 'edu.csh.chase.sprint:sprint:0.1.9'`
+`compile 'edu.csh.chase.sprint:sprint:0.1.10'`
 
 This library comes with KJson bundled in
 https://github.com/chaseberry/KJson
