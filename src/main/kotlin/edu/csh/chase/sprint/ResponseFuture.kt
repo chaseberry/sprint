@@ -22,15 +22,22 @@ class ResponseFuture(val request: Request,
         workerThread = Thread.currentThread()
         listener?.sprintRequestQueued(request)
 
-        while (retries.shouldRetry() && !canceled) {
+        do {
             invoke()
 
-            if (response !is Response.ConnectionError) {
+            // If the response is not a connection error, we get data and can move on
+            // If the retry mechanism says no retrying, we want to bail out
+            // If the request has been canceled, don't even wait for the next retry sleep, just bail
+            if (response !is Response.ConnectionError || !retries.shouldRetry() || canceled) {
                 break
             }
 
-            Thread.sleep(retries.getNextDelay())
-        }
+            // No need to wait if the delay is less than 3ms, just skip it.
+            retries.getNextDelay().takeIf { it > 3 }?.let {
+                Thread.sleep(it)
+            }
+            // Double-check the request hasn't been cancelled during the sleep
+        } while (!canceled)
 
         response?.let {
             when (it) {

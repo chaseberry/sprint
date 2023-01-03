@@ -15,7 +15,7 @@ abstract class BackoffTimeout(val maxAttempts: Int?) {
         private set
 
     init {
-        if (maxAttempts ?: 0 < 0) {
+        if ((maxAttempts ?: 0) < 0) {
             throw IllegalArgumentException("Cannot have negative maxAttempts")
         }
     }
