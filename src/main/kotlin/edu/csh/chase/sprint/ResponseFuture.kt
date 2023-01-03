@@ -39,15 +39,16 @@ class ResponseFuture(val request: Request,
             // Double-check the request hasn't been cancelled during the sleep
         } while (!canceled)
 
-        response?.let {
-            when (it) {
-                is Response.Success -> listener?.sprintSuccess(it)
-                is Response.Failure -> listener?.sprintFailure(it)
-                is Response.ConnectionError -> listener?.sprintConnectionError(it)
+        if (!canceled) {
+            response?.let {
+                when (it) {
+                    is Response.Success -> listener?.sprintSuccess(it)
+                    is Response.Failure -> listener?.sprintFailure(it)
+                    is Response.ConnectionError -> listener?.sprintConnectionError(it)
+                }
             }
         }
-
-
+        
     }
 
     private fun invoke() {
