@@ -8,7 +8,7 @@ import java.util.concurrent.*
 class ResponseFuture(val request: Request,
                      val client: OkHttpClient,
                      private val listener: SprintListener?,
-                     val retries: BackoffTimeout = BackoffTimeout.Exponential(500, 2, 300000L, 6)) : Future<Response> {
+                     val retries: BackoffTimeout = BackoffTimeout.NoRetry()) : Future<Response> {
 
     private var currentCall: Call? = null
 

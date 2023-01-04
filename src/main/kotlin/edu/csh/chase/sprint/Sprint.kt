@@ -30,34 +30,44 @@ object Sprint {
             .pingInterval(10, TimeUnit.SECONDS).build()
     }
 
-    fun executeRequest(request: Request, requestFinished: RequestFinished): ResponseFuture {
-
-        return executeRequest(request, object : SprintListener {
-
-            override fun sprintFailure(response: Response.Failure) {
-                requestFinished(response)
-            }
-
-            override fun sprintSuccess(response: Response.Success) {
-                requestFinished(response)
-            }
-
-            override fun sprintConnectionError(response: Response.ConnectionError) {
-                requestFinished(response)
-            }
-        })
+    private fun wrap(requestFinished: RequestFinished): SprintListener = object : SprintListener {
+        override fun sprintFailure(response: Response.Failure) { requestFinished(response) }
+        override fun sprintSuccess(response: Response.Success) { requestFinished(response) }
+        override fun sprintConnectionError(response: Response.ConnectionError) { requestFinished(response) }
     }
 
-    fun executeRequest(request: Request): ResponseFuture {
-        return ResponseFuture(request, client, null)
+    fun executeRequest(request: Request, retries: BackoffTimeout, requestFinished: RequestFinished): ResponseFuture {
+        return executeRequest(request, retries, wrap(requestFinished))
     }
 
-    fun executeRequest(request: Request, sprintListener: SprintListener): ResponseFuture {
-        return ResponseFuture(request, client, sprintListener)
+    fun executeRequest(request: Request, retries: BackoffTimeout, sprintListener: SprintListener? = null): ResponseFuture {
+        return ResponseFuture(request, client, sprintListener, retries)
     }
 
-    fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-            extraData: Any? = null): ResponseFuture {
+    fun get(url: String,
+            urlParameters: UrlParameters? = null,
+            headers: Headers.Builder = Headers.Builder(),
+            extraData: Any? = null,
+            retries: BackoffTimeout = BackoffTimeout.NoRetry()): ResponseFuture {
+
+        return executeRequest(
+            Request(
+                url = url,
+                requestType = RequestType.Get,
+                urlParams = urlParameters,
+                extraData = extraData,
+                headers = headers,
+            ),
+            retries
+        )
+    }
+
+    fun get(url: String,
+            urlParameters: UrlParameters? = null,
+            headers: Headers.Builder = Headers.Builder(),
+            extraData: Any? = null,
+            retries: BackoffTimeout = BackoffTimeout.NoRetry(),
+            requestFinished: RequestFinished): ResponseFuture {
 
         return executeRequest(
             Request(
@@ -66,36 +76,38 @@ object Sprint {
                 urlParams = urlParameters,
                 extraData = extraData,
                 headers = headers
-            )
+            ),
+            retries,
+            requestFinished,
         )
     }
 
-    fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-            extraData: Any? = null, requestFinished: RequestFinished): ResponseFuture {
+    fun get(url: String,
+            urlParameters: UrlParameters? = null,
+            headers: Headers.Builder = Headers.Builder(),
+            extraData: Any? = null,
+            retries: BackoffTimeout = BackoffTimeout.NoRetry(),
+            requestFinished: SprintListener): ResponseFuture {
 
-        return executeRequest(Request(
-            url = url,
-            requestType = RequestType.Get,
-            urlParams = urlParameters,
-            extraData = extraData,
-            headers = headers),
-            requestFinished)
+        return executeRequest(
+            Request(
+                url = url,
+                requestType = RequestType.Get,
+                urlParams = urlParameters,
+                extraData = extraData,
+                headers = headers
+            ),
+            retries,
+            requestFinished
+        )
     }
 
-    fun get(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-            extraData: Any? = null, requestFinished: SprintListener): ResponseFuture {
-
-        return executeRequest(Request(
-            url = url,
-            requestType = RequestType.Get,
-            urlParams = urlParameters,
-            extraData = extraData,
-            headers = headers),
-            requestFinished)
-    }
-
-    fun post(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-             body: RequestBody? = null, extraData: Any? = null): ResponseFuture {
+    fun post(url: String,
+             urlParameters: UrlParameters? = null,
+             headers: Headers.Builder = Headers.Builder(),
+             body: RequestBody? = null,
+             retries: BackoffTimeout = BackoffTimeout.NoRetry(),
+             extraData: Any? = null): ResponseFuture {
 
         return executeRequest(
             Request(
@@ -104,39 +116,61 @@ object Sprint {
                 urlParams = urlParameters,
                 headers = headers,
                 body = body,
-                extraData = extraData)
+                extraData = extraData
+            ),
+            retries
         )
     }
 
-    fun post(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-             body: RequestBody? = null, extraData: Any? = null, requestFinished: RequestFinished):
+    fun post(url: String,
+             urlParameters: UrlParameters? = null,
+             headers: Headers.Builder = Headers.Builder(),
+             body: RequestBody? = null,
+             retries: BackoffTimeout = BackoffTimeout.NoRetry(),
+             extraData: Any? = null, requestFinished: RequestFinished):
         ResponseFuture {
 
-        return executeRequest(Request(
-            url = url,
-            requestType = RequestType.Post,
-            urlParams = urlParameters,
-            headers = headers,
-            body = body,
-            extraData = extraData),
-            requestFinished)
+        return executeRequest(
+            Request(
+                url = url,
+                requestType = RequestType.Post,
+                urlParams = urlParameters,
+                headers = headers,
+                body = body,
+                extraData = extraData
+            ),
+            retries,
+            requestFinished
+        )
     }
 
-    fun post(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-             body: RequestBody? = null, extraData: Any? = null, requestFinished: SprintListener):
+    fun post(url: String,
+             urlParameters: UrlParameters? = null,
+             headers: Headers.Builder = Headers.Builder(),
+             body: RequestBody? = null,
+             retries: BackoffTimeout = BackoffTimeout.NoRetry(),
+             extraData: Any? = null, requestFinished: SprintListener):
         ResponseFuture {
 
-        return executeRequest(Request(
-            url = url, requestType = RequestType.Post,
-            urlParams = urlParameters,
-            headers = headers,
-            body = body,
-            extraData = extraData),
-            requestFinished)
+        return executeRequest(
+            Request(
+                url = url, requestType = RequestType.Post,
+                urlParams = urlParameters,
+                headers = headers,
+                body = body,
+                extraData = extraData
+            ),
+            retries,
+            requestFinished,
+        )
     }
 
-    fun put(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-            body: RequestBody? = null, extraData: Any? = null): ResponseFuture {
+    fun put(url: String,
+            urlParameters: UrlParameters? = null,
+            headers: Headers.Builder = Headers.Builder(),
+            body: RequestBody? = null,
+            retries: BackoffTimeout = BackoffTimeout.NoRetry(),
+            extraData: Any? = null): ResponseFuture {
 
         return executeRequest(
             Request(
@@ -146,40 +180,61 @@ object Sprint {
                 extraData = extraData,
                 body = body,
                 headers = headers
-            )
+            ),
+            retries
         )
     }
 
-    fun put(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-            body: RequestBody? = null, extraData: Any? = null, requestFinished: RequestFinished):
+    fun put(url: String,
+            urlParameters: UrlParameters? = null,
+            headers: Headers.Builder = Headers.Builder(),
+            body: RequestBody? = null,
+            retries: BackoffTimeout = BackoffTimeout.NoRetry(),
+            extraData: Any? = null, requestFinished: RequestFinished):
         ResponseFuture {
 
-        return executeRequest(Request(
-            url = url,
-            requestType = RequestType.Put,
-            urlParams = urlParameters,
-            headers = headers,
-            body = body,
-            extraData = extraData),
-            requestFinished)
+        return executeRequest(
+            Request(
+                url = url,
+                requestType = RequestType.Put,
+                urlParams = urlParameters,
+                headers = headers,
+                body = body,
+                extraData = extraData
+            ),
+            retries,
+            requestFinished
+        )
     }
 
-    fun put(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-            body: RequestBody? = null, extraData: Any? = null, requestFinished: SprintListener):
+    fun put(url: String,
+            urlParameters: UrlParameters? = null,
+            headers: Headers.Builder = Headers.Builder(),
+            body: RequestBody? = null,
+            retries: BackoffTimeout = BackoffTimeout.NoRetry(),
+            extraData: Any? = null, requestFinished: SprintListener):
         ResponseFuture {
 
-        return executeRequest(Request(
-            url = url,
-            requestType = RequestType.Put,
-            urlParams = urlParameters,
-            headers = headers,
-            body = body,
-            extraData = extraData),
-            requestFinished)
+        return executeRequest(
+            Request(
+                url = url,
+                requestType = RequestType.Put,
+                urlParams = urlParameters,
+                headers = headers,
+                body = body,
+                extraData = extraData
+            ),
+            retries,
+            requestFinished,
+        )
     }
 
-    fun delete(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-               body: RequestBody? = null, extraData: Any? = null): ResponseFuture {
+    fun delete(url: String,
+               urlParameters: UrlParameters? = null,
+               headers: Headers.Builder = Headers.Builder(),
+               body: RequestBody? = null,
+               retries: BackoffTimeout = BackoffTimeout.NoRetry(),
+               extraData: Any? = null): ResponseFuture {
 
         return executeRequest(
             Request(
@@ -189,38 +244,56 @@ object Sprint {
                 extraData = extraData,
                 body = body,
                 headers = headers
-            )
+            ),
+            retries
         )
     }
 
-    fun delete(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-               body: RequestBody? = null, extraData: Any? = null, requestFinished: RequestFinished):
+    fun delete(url: String,
+               urlParameters: UrlParameters? = null,
+               headers: Headers.Builder = Headers.Builder(),
+               body: RequestBody? = null,
+               extraData: Any? = null,
+               retries: BackoffTimeout = BackoffTimeout.NoRetry(),
+               requestFinished: RequestFinished):
         ResponseFuture {
 
-        return executeRequest(Request(
-            url = url,
-            requestType = RequestType.Delete,
-            urlParams = urlParameters,
-            headers = headers,
-            body = body,
-            extraData = extraData),
-            requestFinished)
+        return executeRequest(
+            Request(
+                url = url,
+                requestType = RequestType.Delete,
+                urlParams = urlParameters,
+                headers = headers,
+                body = body,
+                extraData = extraData
+            ),
+            retries,
+            requestFinished,
+        )
     }
 
-    fun delete(url: String, urlParameters: UrlParameters? = null, headers: Headers.Builder = Headers.Builder(),
-               body: RequestBody? = null, extraData: Any? = null, requestFinished: SprintListener):
+    fun delete(url: String,
+               urlParameters: UrlParameters? = null,
+               headers: Headers.Builder = Headers.Builder(),
+               body: RequestBody? = null,
+               extraData: Any? = null,
+               retries: BackoffTimeout = BackoffTimeout.NoRetry(),
+               requestFinished: SprintListener):
         ResponseFuture {
 
-        return executeRequest(Request(
-            url = url,
-            requestType = RequestType.Delete,
-            urlParams = urlParameters,
-            headers = headers,
-            body = body,
-            extraData = extraData),
-            requestFinished)
+        return executeRequest(
+            Request(
+                url = url,
+                requestType = RequestType.Delete,
+                urlParams = urlParameters,
+                headers = headers,
+                body = body,
+                extraData = extraData
+            ),
+            retries,
+            requestFinished,
+        )
     }
-
 
     fun createWebSocket(url: String,
                         urlParameters: UrlParameters? = null,
@@ -299,6 +372,5 @@ object Sprint {
                         callbacks: WebSocketCallbacks): WebSocket {
         return BasicWebSocket(getRequest(url, urlParameters, headers, extraData), callbacks, client, retries)
     }
-
 
 }
