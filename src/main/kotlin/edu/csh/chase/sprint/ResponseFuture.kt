@@ -28,7 +28,7 @@ class ResponseFuture(val request: Request,
             // If the response is not a connection error, we get data and can move on
             // If the retry mechanism says no retrying, we want to bail out
             // If the request has been canceled, don't even wait for the next retry sleep, just bail
-            if (response !is Response.ConnectionError || !retries.shouldRetry() || canceled) {
+            if ((response != null && response !is Response.ConnectionError) || !retries.shouldRetry() || canceled) {
                 break
             }
 
