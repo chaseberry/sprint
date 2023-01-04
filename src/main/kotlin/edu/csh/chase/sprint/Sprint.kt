@@ -31,9 +31,17 @@ object Sprint {
     }
 
     private fun wrap(requestFinished: RequestFinished): SprintListener = object : SprintListener {
-        override fun sprintFailure(response: Response.Failure) { requestFinished(response) }
-        override fun sprintSuccess(response: Response.Success) { requestFinished(response) }
-        override fun sprintConnectionError(response: Response.ConnectionError) { requestFinished(response) }
+        override fun sprintFailure(response: Response.Failure) {
+            requestFinished(response)
+        }
+
+        override fun sprintSuccess(response: Response.Success) {
+            requestFinished(response)
+        }
+
+        override fun sprintConnectionError(response: Response.ConnectionError) {
+            requestFinished(response)
+        }
     }
 
     fun executeRequest(request: Request, retries: BackoffTimeout, requestFinished: RequestFinished): ResponseFuture {
@@ -127,8 +135,7 @@ object Sprint {
              headers: Headers.Builder = Headers.Builder(),
              body: RequestBody? = null,
              retries: BackoffTimeout = BackoffTimeout.NoRetry(),
-             extraData: Any? = null, requestFinished: RequestFinished):
-        ResponseFuture {
+             extraData: Any? = null, requestFinished: RequestFinished): ResponseFuture {
 
         return executeRequest(
             Request(
@@ -149,8 +156,7 @@ object Sprint {
              headers: Headers.Builder = Headers.Builder(),
              body: RequestBody? = null,
              retries: BackoffTimeout = BackoffTimeout.NoRetry(),
-             extraData: Any? = null, requestFinished: SprintListener):
-        ResponseFuture {
+             extraData: Any? = null, requestFinished: SprintListener): ResponseFuture {
 
         return executeRequest(
             Request(
@@ -190,8 +196,7 @@ object Sprint {
             headers: Headers.Builder = Headers.Builder(),
             body: RequestBody? = null,
             retries: BackoffTimeout = BackoffTimeout.NoRetry(),
-            extraData: Any? = null, requestFinished: RequestFinished):
-        ResponseFuture {
+            extraData: Any? = null, requestFinished: RequestFinished): ResponseFuture {
 
         return executeRequest(
             Request(
@@ -212,8 +217,7 @@ object Sprint {
             headers: Headers.Builder = Headers.Builder(),
             body: RequestBody? = null,
             retries: BackoffTimeout = BackoffTimeout.NoRetry(),
-            extraData: Any? = null, requestFinished: SprintListener):
-        ResponseFuture {
+            extraData: Any? = null, requestFinished: SprintListener): ResponseFuture {
 
         return executeRequest(
             Request(
@@ -255,8 +259,7 @@ object Sprint {
                body: RequestBody? = null,
                extraData: Any? = null,
                retries: BackoffTimeout = BackoffTimeout.NoRetry(),
-               requestFinished: RequestFinished):
-        ResponseFuture {
+               requestFinished: RequestFinished): ResponseFuture {
 
         return executeRequest(
             Request(
@@ -278,8 +281,7 @@ object Sprint {
                body: RequestBody? = null,
                extraData: Any? = null,
                retries: BackoffTimeout = BackoffTimeout.NoRetry(),
-               requestFinished: SprintListener):
-        ResponseFuture {
+               requestFinished: SprintListener): ResponseFuture {
 
         return executeRequest(
             Request(
