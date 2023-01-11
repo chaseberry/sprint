@@ -12,7 +12,12 @@ sealed class Response(val request: Request) {
 
     class Success(request: Request, val statusCode: Int, val body: ByteArray?, val headers: Headers?) : Response(request) {
 
-        constructor(request: Request, response: OkResponse) : this(request, response.code, response.body?.bytes(), response.headers)
+        constructor(request: Request, response: OkResponse) : this(
+            request,
+            response.code,
+            if ((response.body?.contentLength() ?: -1) > 0) response.body?.bytes() else null,
+            response.headers
+        )
 
         val bodyAsJson: JsonBase?
             get() = bodyAsString?.let { Json.parse(it) }
@@ -26,7 +31,12 @@ sealed class Response(val request: Request) {
 
     class Failure(request: Request, val statusCode: Int, val body: ByteArray?, val headers: Headers?) : Response(request) {
 
-        constructor(request: Request, response: OkResponse) : this(request, response.code, response.body?.bytes(), response.headers)
+        constructor(request: Request, response: OkResponse) : this(
+            request,
+            response.code,
+            if ((response.body?.contentLength() ?: -1) > 0) response.body?.bytes() else null,
+            response.headers
+        )
 
         val bodyAsJson: JsonBase?
             get() = bodyAsString?.let { Json.parse(it) }
